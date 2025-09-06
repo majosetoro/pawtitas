@@ -5,23 +5,36 @@
   "main": "index.js",
   "scripts": {
     "start": "expo start",
+    "start:app": "cross-env EXPO_PUBLIC_APP_TYPE=app expo start",
+    "start:landing": "cross-env EXPO_PUBLIC_APP_TYPE=landing expo start",
     "android": "expo start --android",
+    "android:app": "cross-env EXPO_PUBLIC_APP_TYPE=app expo start --android",
+    "android:landing": "cross-env EXPO_PUBLIC_APP_TYPE=landing expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "ios:app": "cross-env EXPO_PUBLIC_APP_TYPE=app expo start --ios",
+    "ios:landing": "cross-env EXPO_PUBLIC_APP_TYPE=landing expo start --ios",
+    "web": "expo start --web",
+    "web:app": "cross-env EXPO_PUBLIC_APP_TYPE=app expo start --web",
+    "web:landing": "cross-env EXPO_PUBLIC_APP_TYPE=landing expo start --web",
+    "test:entry-points": "node scripts/test-entry-points.js"
   },
   "dependencies": {
+    "@expo-google-fonts/montserrat": "^0.4.1",
     "@expo/metro-runtime": "~5.0.4",
-    "expo": "~53.0.20",
+    "expo": "~53.0.22",
+    "expo-constants": "^17.1.7",
+    "expo-font": "^13.3.2",
     "expo-status-bar": "~2.2.3",
     "firebase": "^12.1.0",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
     "react-native": "0.79.5",
     "react-native-dotenv": "^3.4.11",
-    "react-native-web": "^0.21.0"
+    "react-native-web": "~0.20.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "cross-env": "^7.0.3"
   },
   "private": true
 }

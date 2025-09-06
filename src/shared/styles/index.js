@@ -3,12 +3,14 @@
 
 // Definición de colores
 export const colors = {
+
   primary: '#fab7f3ff',
   secondary: '#fcb4b4ff',
   background: '#FDFDFD',
   text: '#333333',
   textSecondary: '#666666',
   border: '#fceeeeff',
+
   success: '#4CAF50',
   error: '#F44336',
   warning: '#FFC107',
