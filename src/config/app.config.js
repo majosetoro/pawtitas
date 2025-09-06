@@ -13,7 +13,7 @@ const baseConfig = {
   icon: "./assets/icon.png",
   userInterfaceStyle: "light",
   splash: {
-    image: "./assets/splash-icon.png",
+    image: "./assets/icon.png",
     resizeMode: "contain",
     backgroundColor: "#ffffff"
   },
@@ -21,7 +21,7 @@ const baseConfig = {
     supportsTablet: true
   },
   web: {
-    favicon: "./assets/favicon.png"
+    favicon: "./assets/icon.png"
   },
   // Añadir variables de entorno que serán accesibles en la app
   extra: {
@@ -37,7 +37,7 @@ const appConfigs = {
     android: {
       package: "com.pawtitas.app",
       adaptiveIcon: {
-        foregroundImage: "./assets/adaptive-icon.png",
+        foregroundImage: "./assets/icon.png",
         backgroundColor: "#FDFDFD"
       },
       edgeToEdgeEnabled: true
@@ -49,7 +49,7 @@ const appConfigs = {
     android: {
       package: "com.pawtitas.landing",
       adaptiveIcon: {
-        foregroundImage: "./assets/adaptive-icon.png",
+        foregroundImage: "./assets/icon.png",
         backgroundColor: "#FDFDFD"
       },
       edgeToEdgeEnabled: true
