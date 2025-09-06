@@ -10,7 +10,6 @@ export const colors = {
   text: '#333333',
   textSecondary: '#666666',
   border: '#fceeeeff',
-
   success: '#4CAF50',
   error: '#F44336',
   warning: '#FFC107',
