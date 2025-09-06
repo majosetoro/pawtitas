@@ -21,16 +21,16 @@
   "dependencies": {
     "@expo-google-fonts/montserrat": "^0.4.1",
     "@expo/metro-runtime": "~5.0.4",
-    "expo": "~53.0.20",
+    "expo": "~53.0.22",
     "expo-constants": "^17.1.7",
     "expo-font": "^13.3.2",
     "expo-status-bar": "~2.2.3",
     "firebase": "^12.1.0",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
     "react-native": "0.79.5",
     "react-native-dotenv": "^3.4.11",
-    "react-native-web": "^0.21.0"
+    "react-native-web": "~0.20.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
