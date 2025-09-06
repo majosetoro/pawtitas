@@ -13,9 +13,8 @@ const baseConfig = {
   icon: "./assets/icon.png",
   userInterfaceStyle: "light",
   splash: {
-    image: "./assets/splash-icon.png",
-    resizeMode: "contain",
-    backgroundColor: "#ffffff"
+    backgroundColor: "#ffffff",
+    resizeMode: "contain"
   },
   ios: {
     supportsTablet: true
