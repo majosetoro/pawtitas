@@ -6,12 +6,15 @@ const plans = [
     category: "Para Dueños de Mascotas",
     options: [
       { name: "Plan Básico", price: "GRATIS" },
-      { name: "Plan Premium", price: "$4.00 MENSUAL" },
+      { name: "Plan Premium", price: "$8000 MENSUAL" },
     ],
   },
   {
     category: "Para Prestadores de Servicios",
-    options: [{ name: "Plan Pro", price: "$8.00 MENSUAL" }],
+    options: [
+        { name: "Plan Básico", price: "$8000 MENSUAL" },
+        { name: "Plan Premium", price: "$10000 MENSUAL" }
+    ],
   },
 ];
 
@@ -20,8 +23,7 @@ export default function Suscripciones() {
     <View style={styles.section}>
       <Text style={styles.title}>Suscripciones</Text>
       <Text style={styles.subtitle}>
-        Lorem ipsum dolor sit amet consectetur adipiscing elit. Consectetur
-        adipiscing elit quisque faucibus ex sapien vitae.
+        Suscribite a nuestros planes para una mejor experiencia.
       </Text>
 
       <View style={styles.cardsContainer}>
@@ -33,7 +35,7 @@ export default function Suscripciones() {
                 <Text style={styles.planName}>{opt.name}</Text>
                 <Text style={styles.planPrice}>{opt.price}</Text>
                 <TouchableOpacity style={styles.button}>
-                  <Text style={styles.buttonText}>Adquirir plan</Text>
+                  <Text style={styles.buttonText}>Consultar plan</Text>
                 </TouchableOpacity>
               </View>
             ))}

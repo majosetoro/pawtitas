@@ -4,8 +4,9 @@ import { View, Text, StyleSheet } from "react-native";
 // Podrías usar íconos de react-native-vector-icons o imágenes
 const services = [
   { title: "Cuidadores", icon: "🏠" },
-  { title: "Paseadores", icon: "📍" },
-  { title: "Emergencias", icon: "🐾" },
+  { title: "Paseadores", icon: "🦮" },
+  { title: "Emergencias", icon: "🚑" },
+  { title: "Veterinarios", icon: "🐾" },
 ];
 
 export default function Servicios() {
@@ -13,8 +14,9 @@ export default function Servicios() {
     <View style={styles.section}>
       <Text style={styles.title}>Nuestros servicios</Text>
       <Text style={styles.subtitle}>
-        Lorem ipsum dolor sit amet consectetur adipiscing elit. Consectetur
-        adipiscing elit quisque faucibus ex sapien vitae.
+        Contamos con todas las opciones para el cuidado de tu mascota, ¿Te vas de viaje y necesitas cuidador?
+        ¿Buscás paseador? ¿Necesitás veterinaria cercana o a domicilio? ¿Tenés una emergencia?
+        Todo y más lo podés encontraca acá.
       </Text>
 
       <View style={styles.cardContainer}>
@@ -23,7 +25,7 @@ export default function Servicios() {
             <Text style={styles.icon}>{service.icon}</Text>
             <Text style={styles.cardTitle}>{service.title}</Text>
             <Text style={styles.cardSubtitle}>
-              Lorem ipsum dolor sit amet consectetur adipiscing elit.
+              Encontrar servicio cercano.
             </Text>
           </View>
         ))}
