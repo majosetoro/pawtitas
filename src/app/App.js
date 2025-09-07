@@ -3,6 +3,9 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, Image, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useFonts } from "expo-font";
 import { colors, typography } from "../shared/styles";
+import SplashScreen from "./splash";
+import BienvenidaScreen from "./bienvenida";
+import RegistroScreen from "./registro";
 
 // Importar fuentes de Google
 import {
