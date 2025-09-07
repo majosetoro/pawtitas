@@ -13,58 +13,68 @@ import {
 import app from "../firebase/firebaseConfig";
 import { FirebaseStatus } from "../shared/components";
 import { colors } from "../shared/styles";
+import Servicios from "./servicios";
+import Suscripciones from "./suscripciones";
+
 
 export default function LandingApp() {
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.logo}>PAWTITAS</Text>
-          <View style={styles.navMenu}>
-            {["Inicio", "Servicios", "Suscripciones", "Nosotros", "Contacto"].map(
-              (item, idx) => (
-                <Text key={idx} style={styles.navItem}>
-                  {item}
-                </Text>
-              )
-            )}
-          </View>
+  <SafeAreaView style={styles.container}>
+    <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
+    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.logo}>PAWTITAS</Text>
+        <View style={styles.navMenu}>
+          {["Inicio", "Servicios", "Suscripciones", "Nosotros", "Contacto"].map(
+            (item, idx) => (
+              <Text key={idx} style={styles.navItem}>
+                {item}
+              </Text>
+            )
+          )}
+        </View>
+      </View>
+
+      {/* Hero Section */}
+      <View style={styles.hero}>
+        <Text style={styles.heroTitle}>
+          Cuidados para tu <Text style={styles.highlight}>mascota</Text>
+        </Text>
+        <Text style={styles.heroSubtitle}>
+          Bienvenidos a la App que te ayuda con el cuidado de tu mejor amigo
+        </Text>
+
+        {/* Botones */}
+        <View style={styles.buttonRow}>
+          <TouchableOpacity style={[styles.button, styles.playStore]}>
+            <Text style={styles.buttonText}>Play Store</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.button, styles.appStore]}>
+            <Text style={styles.buttonText}>App Store</Text>
+          </TouchableOpacity>
         </View>
 
-        {/* Hero Section */}
-        <View style={styles.hero}>
-          <Text style={styles.heroTitle}>
-            Cuidados para tu <Text style={styles.highlight}>mascota</Text>
-          </Text>
-          <Text style={styles.heroSubtitle}>
-            Bienvenidos a la App que te ayuda con el cuidado de tu mejor amigo
-          </Text>
+        {/* Imagen central */}
+        <Image
+          source={{ uri: "https://via.placeholder.com/680x300" }}
+          style={styles.heroImage}
+          resizeMode="contain"
+        />
+      </View>
 
-          {/* Botones */}
-          <View style={styles.buttonRow}>
-            <TouchableOpacity style={[styles.button, styles.playStore]}>
-              <Text style={styles.buttonText}>Play Store</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.button, styles.appStore]}>
-              <Text style={styles.buttonText}>App Store</Text>
-            </TouchableOpacity>
-          </View>
+      {/* Secciones */}
+      <Servicios />
+      <Suscripciones />
 
-          {/* Imagen central (temporal con placeholder) */}
-          <Image
-            source={{ uri: "https://via.placeholder.com/680x300" }}
-            style={styles.heroImage}
-            resizeMode="contain"
-          />
-        </View>
+      {/* Footer técnico */}
+      <FirebaseStatus />
 
-        {/* Estado Firebase */}
-        <FirebaseStatus />
-      </ScrollView>
-    </SafeAreaView>
-  );
+    </ScrollView>
+  </SafeAreaView>
+);
+
 }
 
 const styles = StyleSheet.create({
