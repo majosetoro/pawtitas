@@ -1,7 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
-// Podrías usar íconos de react-native-vector-icons o imágenes
 const services = [
   { title: "Cuidadores", icon: "🏠" },
   { title: "Paseadores", icon: "🦮" },
@@ -12,7 +11,7 @@ const services = [
 export default function Servicios() {
   return (
     <View style={styles.section}>
-      <Text style={styles.title}>Nuestros servicios</Text>
+      <Text style={styles.title}>Servicios disponibles</Text>
       <Text style={styles.subtitle}>
         Contamos con todas las opciones para el cuidado de tu mascota, ¿Te vas de viaje y necesitas cuidador?
         ¿Buscás paseador? ¿Necesitás veterinaria cercana o a domicilio? ¿Tenés una emergencia?

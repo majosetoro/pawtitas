@@ -17,6 +17,7 @@ import Servicios from "./servicios";
 import Suscripciones from "./suscripciones";
 import Contacto from "./contacto";
 import Nosotros from "./nosotros";
+import Footer from "./footer";
 import { colors, typography } from "../shared/styles";
 
 // Importar las fuentes
@@ -108,6 +109,7 @@ export default function LandingApp() {
       <Suscripciones />
       <Nosotros />
       <Contacto />
+      <Footer />
 
       {/* Footer técnico */}
       <FirebaseStatus />
