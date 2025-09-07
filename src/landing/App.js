@@ -13,10 +13,10 @@ import {
 } from "react-native";
 import app from "../firebase/firebaseConfig";
 import { FirebaseStatus } from "../shared/components";
-
-
 import Servicios from "./servicios";
 import Suscripciones from "./suscripciones";
+import Contacto from "./contacto";
+import Nosotros from "./nosotros";
 import { colors, typography } from "../shared/styles";
 
 // Importar las fuentes
@@ -103,8 +103,11 @@ export default function LandingApp() {
       </View>
 
       {/* Secciones */}
+      
       <Servicios />
       <Suscripciones />
+      <Nosotros />
+      <Contacto />
 
       {/* Footer técnico */}
       <FirebaseStatus />
