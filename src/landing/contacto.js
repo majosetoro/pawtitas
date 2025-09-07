@@ -7,16 +7,15 @@ export default function Contacto() {
     <View style={styles.section}>
       <Text style={styles.title}>Contacto</Text>
       <Text style={styles.subtitle}>
-        Lorem ipsum dolor sit amet consectetur adipiscing elit.{"\n"}
-        Consectetur adipiscing elit quisque faucibus ex sapien vitae.
+        Cualquier inquietud no dudes en consultarnos
       </Text>
 
       {/* Formulario */}
       <View style={styles.form}>
-        <TextInput placeholder="Nombre y Apellido" style={styles.input} />
+        <TextInput placeholder="Nombre completo" style={styles.input} />
         <TextInput placeholder="Email" style={styles.input} keyboardType="email-address" />
         <TextInput
-          placeholder="Envíanos tus dudas/consultas y con gusto te responderemos"
+          placeholder="Envíanos tus dudas/consultas y con gusto te responderemos a la brevedad"
           style={[styles.input, styles.textArea]}
           multiline
           numberOfLines={4}
