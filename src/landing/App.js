@@ -9,15 +9,53 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import app from "../firebase/firebaseConfig";
 import { FirebaseStatus } from "../shared/components";
+
 import { colors } from "../shared/styles";
 import Servicios from "./servicios";
 import Suscripciones from "./suscripciones";
+import { colors, typography } from "../shared/styles";
 
+// Importar las fuentes
+import {
+  Quicksand_400Regular,
+  Quicksand_500Medium,
+  Quicksand_600SemiBold,
+  Quicksand_700Bold,
+} from "@expo-google-fonts/quicksand";
+import {
+  Nunito_400Regular,
+  Nunito_500Medium,
+  Nunito_600SemiBold,
+  Nunito_700Bold,
+} from "@expo-google-fonts/nunito";
+import { useFonts } from "expo-font";
 
 export default function LandingApp() {
+  // Cargar fuentes
+  const [fontsLoaded, fontError] = useFonts({
+    Quicksand_400Regular,
+    Quicksand_500Medium,
+    Quicksand_600SemiBold,
+    Quicksand_700Bold,
+    Nunito_400Regular,
+    Nunito_500Medium,
+    Nunito_600SemiBold,
+    Nunito_700Bold,
+  });
+
+  if (!fontsLoaded && !fontError) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={colors.primary} />
+        <Text style={styles.loadingText}>Loading...</Text>
+      </View>
+    );
+  }
+
   return (
   <SafeAreaView style={styles.container}>
     <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
@@ -34,7 +72,6 @@ export default function LandingApp() {
               </Text>
             )
           )}
-        </View>
       </View>
 
       {/* Hero Section */}
@@ -74,13 +111,23 @@ export default function LandingApp() {
     </ScrollView>
   </SafeAreaView>
 );
-
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background || "#fff",
+    backgroundColor: colors.background,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: colors.background,
+  },
+  loadingText: {
+    fontSize: 16,
+    color: colors.text.secondary,
+    marginTop: 16,
   },
   header: {
     paddingHorizontal: 20,
@@ -90,17 +137,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   logo: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#feb9d2ff",
+    ...typography.styles.h2,
+    color: colors.brand.logo,
   },
   navMenu: {
     flexDirection: "row",
     gap: 20,
   },
   navItem: {
-    fontSize: 14,
-    color: "#333",
+    ...typography.styles.caption,
+    color: colors.text.secondary,
     marginHorizontal: 8,
   },
   hero: {
@@ -109,18 +155,17 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   heroTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#333",
+    ...typography.styles.h1,
+    color: colors.text.primary,
     marginBottom: 10,
     textAlign: "center",
   },
   highlight: {
-    color: "#fea5c6ff",
+    color: colors.brand.accent,
   },
   heroSubtitle: {
-    fontSize: 16,
-    color: "#555",
+    ...typography.styles.body,
+    color: colors.text.secondary,
     marginBottom: 20,
     textAlign: "center",
     maxWidth: 600,
@@ -136,14 +181,15 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   playStore: {
-    backgroundColor: "#4d2d21",
+    backgroundColor: colors.button.playStore,
   },
   appStore: {
-    backgroundColor: "#c94f7c",
+    backgroundColor: colors.button.appStore,
   },
   buttonText: {
-    color: "#fff",
-    fontWeight: "bold",
+    ...typography.styles.button,
+    color: colors.text.inverse,
+    textAlign: "center",
   },
   heroImage: {
     width: "100%",

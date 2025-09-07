@@ -1,9 +1,46 @@
 import React from "react";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
-import { colors } from "../shared/styles";
+import { StyleSheet, Text, View, Image, TouchableOpacity, ActivityIndicator } from "react-native";
+import { useFonts } from "expo-font";
+import { colors, typography } from "../shared/styles";
+
+// Importar fuentes de Google
+import {
+  Quicksand_400Regular,
+  Quicksand_500Medium,
+  Quicksand_600SemiBold,
+  Quicksand_700Bold,
+} from "@expo-google-fonts/quicksand";
+import {
+  Nunito_400Regular,
+  Nunito_500Medium,
+  Nunito_600SemiBold,
+  Nunito_700Bold,
+} from "@expo-google-fonts/nunito";
 
 export default function MobilePage() {
+  const [fontsLoaded, fontError] = useFonts({
+    Quicksand_400Regular,
+    Quicksand_500Medium,
+    Quicksand_600SemiBold,
+    Quicksand_700Bold,
+    Nunito_400Regular,
+    Nunito_500Medium,
+    Nunito_600SemiBold,
+    Nunito_700Bold,
+  });
+
+  if (!fontsLoaded && !fontError) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={colors.primary} />
+        <Text style={[typography.styles.body, styles.loadingText]}>
+          Loading... 
+        </Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
@@ -55,7 +92,17 @@ export default function MobilePage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background || "#fff",
+    backgroundColor: colors.background,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: colors.background,
+  },
+  loadingText: {
+    color: colors.text.secondary,
+    marginTop: 16,
   },
   header: {
     paddingHorizontal: 20,
@@ -65,17 +112,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   logo: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#fe9fc2ff", // color del Figma
+    ...typography.styles.h2,
+    color: colors.brand.logo,
   },
   navMenu: {
     flexDirection: "row",
     gap: 20,
   },
   navItem: {
-    fontSize: 14,
-    color: "#333",
+    ...typography.styles.caption,
+    color: colors.text.secondary,
   },
   hero: {
     alignItems: "center",
@@ -83,18 +129,17 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   heroTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#333",
+    ...typography.styles.h1,
+    color: colors.text.primary,
     marginBottom: 10,
     textAlign: "center",
   },
   highlight: {
-    color: "#f9bbd2ff", // rosado del Figma
+    color: colors.brand.accent,
   },
   heroSubtitle: {
-    fontSize: 16,
-    color: "#555",
+    ...typography.styles.body,
+    color: colors.text.secondary,
     marginBottom: 20,
     textAlign: "center",
     maxWidth: 600,
@@ -110,14 +155,15 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   playStore: {
-    backgroundColor: "#4d2d21", // marrón Play Store
+    backgroundColor: colors.button.playStore,
   },
   appStore: {
-    backgroundColor: "#f5a3c1ff", // rosado App Store
+    backgroundColor: colors.button.appStore,
   },
   buttonText: {
-    color: "#fff",
-    fontWeight: "bold",
+    ...typography.styles.button,
+    color: colors.text.inverse,
+    textAlign: "center",
   },
   heroImage: {
     width: "100%",
