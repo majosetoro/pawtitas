@@ -14,7 +14,7 @@ import {
 import app from "../firebase/firebaseConfig";
 import { FirebaseStatus } from "../shared/components";
 
-import { colors } from "../shared/styles";
+
 import Servicios from "./servicios";
 import Suscripciones from "./suscripciones";
 import { colors, typography } from "../shared/styles";
@@ -56,7 +56,7 @@ export default function LandingApp() {
     );
   }
 
-  return (
+ return (
   <SafeAreaView style={styles.container}>
     <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
     <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
@@ -72,6 +72,7 @@ export default function LandingApp() {
               </Text>
             )
           )}
+        </View>
       </View>
 
       {/* Hero Section */}
@@ -111,6 +112,7 @@ export default function LandingApp() {
     </ScrollView>
   </SafeAreaView>
 );
+
 }
 
 const styles = StyleSheet.create({
