@@ -1,5 +1,6 @@
 // Componente principal de la Landing Page
 import React from "react";
+import Logo from "../../assets/icon.png";
 import {
   View,
   Text,
@@ -82,7 +83,10 @@ export default function LandingApp() {
           Cuidados para tu <Text style={styles.highlight}>mascota</Text>
         </Text>
         <Text style={styles.heroSubtitle}>
-          Bienvenidos a la App que te ayuda con el cuidado de tu mejor amigo
+          Bienvenidos a la App que te ayuda con el cuidado de tu mejor amigo.
+        </Text>
+        <Text style={styles.heroSubtitle}>
+        Disponible en       
         </Text>
 
         {/* Botones */}
@@ -97,7 +101,7 @@ export default function LandingApp() {
 
         {/* Imagen central */}
         <Image
-          source={{ uri: "https://via.placeholder.com/680x300" }}
+          source={Logo}
           style={styles.heroImage}
           resizeMode="contain"
         />
