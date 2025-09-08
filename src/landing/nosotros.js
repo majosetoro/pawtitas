@@ -12,7 +12,7 @@ export default function Nosotros() {
     {
       nombre: "María José Toro",
       descripcion: "Fundadora",
-      avatar: require("../../assets/avatar/avatar-maria-toro.jpg"),
+      avatar:"../../assets/avatar-maria-toro.jpg",
     },
     {
       nombre: "María Elisa Zubiri",
