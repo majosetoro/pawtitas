@@ -25,7 +25,9 @@ export default function BienvenidaScreen({ navigation }) {
       </View>
 
       {/* Botones */}
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button}
+        onPress={() => navigation.navigate("Inicio")}
+        >
         <Text style={styles.buttonText}>Iniciar Sesión</Text>
       </TouchableOpacity>
 

@@ -8,7 +8,7 @@ export default function Footer() {
       {/* Logo + nombre */}
       <View style={styles.brand}>
         <Image
-          source="./assets/icon.png"
+          source="../../assets/icon.png"
           style={styles.logo}
           resizeMode="contain"
         />

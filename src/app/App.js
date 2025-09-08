@@ -6,6 +6,7 @@ import { colors, typography } from "../shared/styles";
 import SplashScreen from "./splash";
 import BienvenidaScreen from "./bienvenida";
 import RegistroScreen from "./registro";
+import InicioScreen from "./inicio";
 
 // React Navigation
 import { NavigationContainer } from "@react-navigation/native";
@@ -105,6 +106,7 @@ export default function App() {
         <Stack.Screen name="Splash" component={SplashScreen} />
         <Stack.Screen name="Bienvenida" component={BienvenidaScreen} />
         <Stack.Screen name="Registro" component={RegistroScreen} />
+        <Stack.Screen name="Inicio" component={InicioScreen} />
         <Stack.Screen name="Home" component={MobilePage} />
       </Stack.Navigator>
     </NavigationContainer>
