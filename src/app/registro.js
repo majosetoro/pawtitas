@@ -150,7 +150,7 @@ export default function RegistroScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: { flexGrow: 1, backgroundColor: "#fff", padding: 20 },
-  title: { fontSize: 24, fontWeight: "bold", marginBottom: 20 },
+  title: { fontSize: 24, fontWeight: "bold", marginBottom: 20 ,marginTop:50},
   input: {
     borderWidth: 1,
     borderColor: "#ccc",
