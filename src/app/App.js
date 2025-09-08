@@ -7,6 +7,10 @@ import SplashScreen from "./splash";
 import BienvenidaScreen from "./bienvenida";
 import RegistroScreen from "./registro";
 
+// React Navigation
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
 // Importar fuentes de Google
 import {
   Quicksand_400Regular,
@@ -21,29 +25,9 @@ import {
   Nunito_700Bold,
 } from "@expo-google-fonts/nunito";
 
-export default function MobilePage() {
-  const [fontsLoaded, fontError] = useFonts({
-    Quicksand_400Regular,
-    Quicksand_500Medium,
-    Quicksand_600SemiBold,
-    Quicksand_700Bold,
-    Nunito_400Regular,
-    Nunito_500Medium,
-    Nunito_600SemiBold,
-    Nunito_700Bold,
-  });
+const Stack = createNativeStackNavigator();
 
-  if (!fontsLoaded && !fontError) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={colors.primary} />
-        <Text style={[typography.styles.body, styles.loadingText]}>
-          Loading... 
-        </Text>
-      </View>
-    );
-  }
-
+function MobilePage() {
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
@@ -89,6 +73,41 @@ export default function MobilePage() {
         />
       </View>
     </View>
+  );
+}
+
+export default function App() {
+  const [fontsLoaded, fontError] = useFonts({
+    Quicksand_400Regular,
+    Quicksand_500Medium,
+    Quicksand_600SemiBold,
+    Quicksand_700Bold,
+    Nunito_400Regular,
+    Nunito_500Medium,
+    Nunito_600SemiBold,
+    Nunito_700Bold,
+  });
+
+  if (!fontsLoaded && !fontError) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={colors.primary} />
+        <Text style={[typography.styles.body, styles.loadingText]}>
+          Loading...
+        </Text>
+      </View>
+    );
+  }
+
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Splash" component={SplashScreen} />
+        <Stack.Screen name="Bienvenida" component={BienvenidaScreen} />
+        <Stack.Screen name="Registro" component={RegistroScreen} />
+        <Stack.Screen name="Home" component={MobilePage} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
