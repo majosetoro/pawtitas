@@ -76,6 +76,12 @@ export default function LandingApp() {
           )}
         </View>
       </View>
+      {/* Imagen central */}
+        <Image
+          source={Logo}
+          style={styles.heroImage}
+          resizeMode="contain"
+        />
 
       {/* Hero Section */}
       <View style={styles.hero}>
@@ -99,12 +105,7 @@ export default function LandingApp() {
           </TouchableOpacity>
         </View>
 
-        {/* Imagen central */}
-        <Image
-          source={Logo}
-          style={styles.heroImage}
-          resizeMode="contain"
-        />
+        
       </View>
 
       {/* Secciones */}

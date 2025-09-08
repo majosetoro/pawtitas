@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
-
+import Logo from "../../assets/icon.png";
 export default function SplashScreen({ navigation }) {
   useEffect(() => {
     const timer = setTimeout(() => {
       navigation.replace("Bienvenida");
-    }, 2000); // 2 segundos
+    }, 3000); // 3 segundos
 
     return () => clearTimeout(timer);
   }, []);
@@ -13,7 +13,7 @@ export default function SplashScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Image
-        source="./assets/icon.png"
+        source={Logo}
         style={styles.logo}
       />
       <Text style={styles.title}>PAWTITAS</Text>

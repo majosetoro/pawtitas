@@ -12,8 +12,8 @@ export default function InicioScreen({ navigation }) {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Iniciar sesión</Text>
 
-      <TextInput placeholder="Correo Electrónico" style={styles.input} keyboardType="email-address" />
-      <TextInput placeholder="Contraseña" style={styles.input} keyboardType="password" />
+      <TextInput placeholder="Correo Electrónico" style={styles.input} keyboardType="email-address" textContentType={'emailAddress'}/>
+      <TextInput placeholder="Contraseña" style={styles.input}  secureTextEntry={true}/>
       
       <View style={styles.buttonRow}>
         <TouchableOpacity
