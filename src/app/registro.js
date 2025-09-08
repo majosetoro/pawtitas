@@ -1,7 +1,17 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
+import { Picker } from "@react-native-picker/picker";
 
 export default function RegistroScreen({ navigation }) {
+  const [perfil, setPerfil] = useState(""); // dueño o prestador
+  const [especialidad, setEspecialidad] = useState("");
   const [form, setForm] = useState({
     nombre: "",
     edad: "",
@@ -10,8 +20,6 @@ export default function RegistroScreen({ navigation }) {
     telefono: "",
     ubicacion: "",
     documento: "",
-    rol: "",
-    especialidad: "",
     experiencia: "",
     certificados: "",
   });
@@ -20,23 +28,110 @@ export default function RegistroScreen({ navigation }) {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Registrarse</Text>
 
-      <TextInput placeholder="Nombre y Apellido" style={styles.input} />
-      <TextInput placeholder="Edad" style={styles.input} keyboardType="numeric" />
-      <TextInput placeholder="Correo Electrónico" style={styles.input} keyboardType="email-address" />
-      <TextInput placeholder="Contraseña" style={styles.input} keyboardType="password" />
-      <TextInput placeholder="Número Telefónico" style={styles.input} keyboardType="phone-pad" />
-      <TextInput placeholder="Ubicación" style={styles.input} />
-      <TextInput placeholder="Documento de Identidad" style={styles.input} keyboardType="numeric"  />
+      {/* Campos básicos */}
+      <TextInput
+        placeholder="Nombre y Apellido"
+        style={styles.input}
+        value={form.nombre}
+        onChangeText={(v) => setForm({ ...form, nombre: v })}
+      />
+      <TextInput
+        placeholder="Edad"
+        style={styles.input}
+        keyboardType="numeric"
+        value={form.edad}
+        onChangeText={(v) => setForm({ ...form, edad: v })}
+      />
+      <TextInput
+        placeholder="Correo Electrónico"
+        style={styles.input}
+        keyboardType="email-address"
+        textContentType="emailAddress"
+        value={form.correo}
+        onChangeText={(v) => setForm({ ...form, correo: v })}
+      />
+      <TextInput
+        placeholder="Contraseña"
+        style={styles.input}
+        secureTextEntry={true}
+        value={form.password}
+        onChangeText={(v) => setForm({ ...form, password: v })}
+      />
+      <TextInput
+        placeholder="Número Telefónico"
+        style={styles.input}
+        keyboardType="phone-pad"
+        value={form.telefono}
+        onChangeText={(v) => setForm({ ...form, telefono: v })}
+      />
+      <TextInput
+        placeholder="Ubicación"
+        style={styles.input}
+        value={form.ubicacion}
+        onChangeText={(v) => setForm({ ...form, ubicacion: v })}
+      />
+      <TextInput
+        placeholder="Documento de Identidad"
+        style={styles.input}
+        keyboardType="numeric"
+        value={form.documento}
+        onChangeText={(v) => setForm({ ...form, documento: v })}
+      />
 
+      {/* Perfil */}
       <Text style={styles.subtitle}>Defina su rol</Text>
-      <Text>⬜ Dueño   ⬜ Prestador de Servicio</Text>
+      <Picker
+        selectedValue={perfil}
+        style={styles.picker}
+        onValueChange={(itemValue) => setPerfil(itemValue)}
+      >
+        <Picker.Item label="Seleccione un rol..." value="" />
+        <Picker.Item label="Dueño" value="dueno" />
+        <Picker.Item label="Prestador de Servicio" value="prestador" />
+      </Picker>
 
-      <Text style={styles.subtitle}>Defina su especialidad</Text>
-      <Text>⬜ Cuidador   ⬜ Paseador   ⬜ Clínica Veterinaria   ⬜ Veterinario a domicilio</Text>
+      {/* Mostrar solo si es prestador */}
+      {perfil === "prestador" && (
+        <>
+          <Text style={styles.subtitle}>Defina su especialidad</Text>
+          <Picker
+            selectedValue={especialidad}
+            style={styles.picker}
+            onValueChange={(itemValue) => setEspecialidad(itemValue)}
+          >
+            <Picker.Item label="Seleccione una especialidad..." value="" />
+            <Picker.Item label="Cuidador" value="Cuidador" />
+            <Picker.Item label="Paseador" value="Paseador" />
+            <Picker.Item label="Veterinaria" value="Veterinaria" />
+            <Picker.Item
+              label="Veterinaria a domicilio"
+              value="VeterinariaDomicilio"
+            />
+          </Picker>
 
-      <TextInput placeholder="Experiencia" style={styles.input} />
-      <TextInput placeholder="Certificados" style={styles.input} />
+          {/* Experiencia como textarea */}
+          <TextInput
+            placeholder="Experiencia"
+            style={[styles.input, styles.textArea]}
+            multiline
+            numberOfLines={4}
+            value={form.experiencia}
+            onChangeText={(v) => setForm({ ...form, experiencia: v })}
+          />
 
+          {/* Certificados como textarea */}
+          <TextInput
+            placeholder="Certificados"
+            style={[styles.input, styles.textArea]}
+            multiline
+            numberOfLines={4}
+            value={form.certificados}
+            onChangeText={(v) => setForm({ ...form, certificados: v })}
+          />
+        </>
+      )}
+
+      {/* Botones */}
       <View style={styles.buttonRow}>
         <TouchableOpacity
           style={[styles.button, styles.cancel]}
@@ -63,9 +158,29 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 12,
   },
+  textArea: {
+    minHeight: 80,
+    textAlignVertical: "top",
+  },
   subtitle: { fontSize: 16, fontWeight: "600", marginTop: 10, marginBottom: 5 },
-  buttonRow: { flexDirection: "row", justifyContent: "space-between", marginTop: 20 },
-  button: { flex: 1, paddingVertical: 12, borderRadius: 10, alignItems: "center", marginHorizontal: 5 },
+  picker: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 10,
+    marginBottom: 12,
+  },
+  buttonRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 20,
+  },
+  button: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: "center",
+    marginHorizontal: 5,
+  },
   cancel: { backgroundColor: "#eee" },
   confirm: { backgroundColor: "#6b4226" },
   cancelText: { color: "#333", fontWeight: "600" },
