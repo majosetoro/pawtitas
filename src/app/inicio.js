@@ -1,42 +1,20 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from "react-native";
 
-export default function RegistroScreen({ navigation }) {
+export default function InicioScreen({ navigation }) {
   const [form, setForm] = useState({
-    nombre: "",
-    edad: "",
+   
     correo: "",
     password: "",
-    telefono: "",
-    ubicacion: "",
-    documento: "",
-    rol: "",
-    especialidad: "",
-    experiencia: "",
-    certificados: "",
   });
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Registrarse</Text>
+      <Text style={styles.title}>Iniciar sesión</Text>
 
-      <TextInput placeholder="Nombre y Apellido" style={styles.input} />
-      <TextInput placeholder="Edad" style={styles.input} keyboardType="numeric" />
       <TextInput placeholder="Correo Electrónico" style={styles.input} keyboardType="email-address" />
       <TextInput placeholder="Contraseña" style={styles.input} keyboardType="password" />
-      <TextInput placeholder="Número Telefónico" style={styles.input} keyboardType="phone-pad" />
-      <TextInput placeholder="Ubicación" style={styles.input} />
-      <TextInput placeholder="Documento de Identidad" style={styles.input} keyboardType="numeric"  />
-
-      <Text style={styles.subtitle}>Defina su rol</Text>
-      <Text>⬜ Dueño   ⬜ Prestador de Servicio</Text>
-
-      <Text style={styles.subtitle}>Defina su especialidad</Text>
-      <Text>⬜ Cuidador   ⬜ Paseador   ⬜ Clínica Veterinaria   ⬜ Veterinario a domicilio</Text>
-
-      <TextInput placeholder="Experiencia" style={styles.input} />
-      <TextInput placeholder="Certificados" style={styles.input} />
-
+      
       <View style={styles.buttonRow}>
         <TouchableOpacity
           style={[styles.button, styles.cancel]}
@@ -46,7 +24,7 @@ export default function RegistroScreen({ navigation }) {
         </TouchableOpacity>
 
         <TouchableOpacity style={[styles.button, styles.confirm]}>
-          <Text style={styles.confirmText}>Confirmar</Text>
+          <Text style={styles.confirmText}>Ingresar</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
