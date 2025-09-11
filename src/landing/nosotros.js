@@ -12,12 +12,12 @@ export default function Nosotros() {
     {
       nombre: "María José Toro",
       descripcion: "Fundadora",
-      avatar: "https://emojipedia.org/apple/ios-14.5/woman-raising-hand-light-skin-tone",
+      avatar:"../../assets/avatar-maria-toro.jpg",
     },
     {
       nombre: "María Elisa Zubiri",
       descripcion: "Fundadora",
-      avatar: "../../assets/maria-elisa.png",
+      avatar: "../../assets/avatar-maria-elisa.jpg",
     },
   ];
 
@@ -34,7 +34,10 @@ export default function Nosotros() {
       <View style={styles.teamRow}>
         {equipo.map((persona, idx) => (
           <View key={idx} style={styles.card}>
-            <Image source={{ uri: persona.avatar }} style={styles.avatar} />
+            <Image 
+              source={typeof persona.avatar === 'string' ? { uri: persona.avatar } : persona.avatar} 
+              style={styles.avatar} 
+            />
             <Text style={styles.name}>{persona.nombre}</Text>
             <Text style={styles.desc}>{persona.descripcion}</Text>
           </View>
@@ -71,8 +74,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   avatar: {
-    width: 80,
-    height: 80,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
     marginBottom: 8,
   },
   name: {
