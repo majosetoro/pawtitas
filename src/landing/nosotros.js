@@ -17,7 +17,7 @@ export default function Nosotros() {
     {
       nombre: "María Elisa Zubiri",
       descripcion: "Fundadora",
-      avatar: "https://em-content.zobj.net/thumbs/240/apple/354/woman-raising-hand_1f64b-1f3fb.png",
+      avatar: "../../assets/avatar-maria-elisa.jpg",
     },
   ];
 
