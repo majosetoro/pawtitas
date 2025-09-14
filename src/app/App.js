@@ -6,7 +6,7 @@ import { colors, typography } from "../shared/styles";
 import SplashScreen from "./splash";
 import BienvenidaScreen from "./bienvenida";
 import RegistroScreen from "./registro";
-import InicioScreen from "./inicio";
+import InicioScreen from "./screens/inicio/inicio";
 
 // React Navigation
 import { NavigationContainer } from "@react-navigation/native";
