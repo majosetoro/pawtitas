@@ -1,10 +1,7 @@
 import { StyleSheet, Dimensions } from 'react-native';
 import { colors } from '../../../shared/styles';
 
-/**
- * Estilos para el componente BottomNavbar
- * Separación de estilos siguiendo el principio de Separación de Responsabilidades
- */
+// Estilos para el componente BottomNavbar
 export const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
