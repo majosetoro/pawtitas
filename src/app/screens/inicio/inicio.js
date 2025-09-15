@@ -24,9 +24,11 @@ export default function InicioScreen({ navigation }) {
   };
 
   const handleLogin = () => {
-    // Lógica de autenticación
-
+    // Lógica de autenticación.
     console.log("Datos de login:", form); // Luego de implementar la lógica y testear, eliminar esta línea
+    
+    // Navegar a la pantalla Home después del login
+    navigation.navigate("Home");
   };
 
   return (
