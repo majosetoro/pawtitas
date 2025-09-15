@@ -7,6 +7,7 @@ import SplashScreen from "./splash";
 import BienvenidaScreen from "./bienvenida";
 import RegistroScreen from "./registro";
 import InicioScreen from "./screens/inicio/inicio";
+import HomeScreen from "./screens/home/home";
 import EditarPerfil from "./screens/perfil/editarPerfil/editarPerfil";
 
 // React Navigation
@@ -108,7 +109,7 @@ export default function App() {
         <Stack.Screen name="Bienvenida" component={BienvenidaScreen} />
         <Stack.Screen name="Registro" component={RegistroScreen} />
         <Stack.Screen name="Inicio" component={InicioScreen} />
-        <Stack.Screen name="Home" component={MobilePage} />
+        <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="EditarPerfil" component={EditarPerfil} />
       </Stack.Navigator>
     </NavigationContainer>
