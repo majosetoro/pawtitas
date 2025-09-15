@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
 //import { useNavigation } from '@react-navigation/native';
 import { styles } from './home.styles';
-import BottomNavbar from '../../components/bottomNavbar';
+import BottomNavbar from '../../components/BottomNavbar';
 import iconImage from '../../assets/icon.png';
 
 // Componentes de categoría de servicios
