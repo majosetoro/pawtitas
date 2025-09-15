@@ -24,7 +24,7 @@ export const styles = StyleSheet.create({
   },
   buttonContainer: {
     paddingVertical: 20,
-    paddingBottom: 40,
+    paddingBottom: 60,
   },
   // Estilos para el estado de carga
   loadingContainer: {

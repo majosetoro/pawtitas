@@ -8,7 +8,7 @@ import {
   Platform 
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ScreenHeader, GuardarCancelarBtn, FloatingMessage } from "../../../components";
+import { ScreenHeader, GuardarCancelarBtn, FloatingMessage, BottomNavbar } from "../../../components";
 import { styles } from "./editarPerfil.styles";
 import PerfilFactory from "./roles/PerfilFactory";
 import ROLES from "./roles/types";
@@ -189,6 +189,9 @@ export default function EditarPerfil({ navigation, route }) {
           />
         </View>
       </KeyboardAvoidingView>
+      
+      {/* Barra de navegación inferior */}
+      <BottomNavbar />
     </SafeAreaView>
   );
 }
