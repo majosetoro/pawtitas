@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   logo: {
-    ...typography.styles.h2,
+    ...typography.styles.h1,
     color: colors.brand.logo,
     textAlign: "center",
     marginVertical: 10,
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   heroTitle: {
-    ...typography.styles.h1,
+    ...typography.styles.h2,
     color: colors.text.primary,
     marginBottom: 10,
     textAlign: "center",
