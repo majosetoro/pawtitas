@@ -18,7 +18,7 @@ export const styles = StyleSheet.create({
     zIndex: 10,
   },
   statusBarSpace: {
-    height: 120, // Espacio para la barra de estado
+    height: 10, // Espacio para la barra de estado
     width: '100%',
   },
   logoContainer: {
@@ -172,7 +172,7 @@ modalOption: {
 },
 closeButton: {
   marginTop: 15,
-  backgroundColor: "#00897B",
+  backgroundColor: "#fcd5edff",
   paddingVertical: 10,
   borderRadius: 8,
   alignItems: "center",

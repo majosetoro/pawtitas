@@ -32,7 +32,7 @@ const HomeHeader = () => {
           <Ionicons name="search" size={18} color="#888" style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
-            placeholder="Buscar servicios, productos..."
+            placeholder="Buscar servicios, veterinarias..."
             placeholderTextColor="#999"
           />
         </View>
@@ -69,7 +69,7 @@ const HomeHeader = () => {
               style={styles.modalOption}
               onPress={() => setLocationModalVisible(false)}
             >
-              <Text>Detectar ubicación automáticamente</Text>
+              <Text>Activar ubicación</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.modalOption}
