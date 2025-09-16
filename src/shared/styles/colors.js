@@ -3,12 +3,12 @@
 
 export const colors = {
   // Colores principales (basados en el diseño actual)
-  primary: '#fab7f3ff',      // Rosa principal
+  primary: '#fccaeaff',      // Rosa principal
   primaryDark: '#f9bbd2ff',  // Rosa más oscuro
   primaryLight: '#fceeeeff', // Rosa claro
   
   secondary: '#fcb4b4ff',    // Rosa secundario
-  secondaryDark: '#f5a3c1ff', // Rosa secundario oscuro
+  secondaryDark: '#fcbad2ff', // Rosa secundario oscuro
   
   // Colores de fondo
   background: '#FDFDFD',     // Fondo principal
@@ -38,22 +38,22 @@ export const colors = {
   
   // Colores específicos de la app
   brand: {
-    logo: '#fe9fc2ff',       // Color del logo
+    logo: '#ffabcaff',       // Color del logo
     accent: '#f9bbd2ff',     // Color de acento
     highlight: '#f5a3c1ff',  // Color de resaltado
   },
   
   // Colores de botones
   button: {
-    primary: '#fab7f3ff',    // Botón primario
+    primary: '#f5a3c1ff',    // Botón primario
     secondary: '#fcb4b4ff',  // Botón secundario
     playStore: '#4d2d21',    // Botón Play Store
-    appStore: '#f5a3c1ff',   // Botón App Store
+    appStore: '#ffb4cfff',   // Botón App Store
   },
   
   // Colores de navegación
   navigation: {
-    active: '#fe9fc2ff',     // Elemento activo
+    active: '#f5a3c1ff',     // Elemento activo
     inactive: '#666666',     // Elemento inactivo
   },
 };

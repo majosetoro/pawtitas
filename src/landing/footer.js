@@ -54,7 +54,7 @@ export default function Footer() {
 
 const styles = StyleSheet.create({
   footer: {
-    backgroundColor: "#f8bfecff", // verde pawtitas (ajustar a tu branding)
+    backgroundColor: "#f5a3c1ff",
     padding: 20,
     alignItems: "center",
     marginTop: 40,

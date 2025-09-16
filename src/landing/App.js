@@ -152,8 +152,6 @@ const scrollToSection = (key) => {
         {/* Footer */}
         <Footer />
 
-        {/* Footer técnico */}
-        <FirebaseStatus />
       </ScrollView>
     </SafeAreaView>
   );
