@@ -5,6 +5,7 @@ import iconImage from '../../assets/icon.png';
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Modal, ScrollView, Image} from "react-native";
 import { Ionicons } from "@expo/vector-icons"; // librería de íconos
+import { useNavigation } from "@react-navigation/native";
 
 // Componentes de categoría de servicios
 const ServiceCategory = ({ emoji, title, description, onPress }) => (
@@ -20,6 +21,7 @@ const ServiceCategory = ({ emoji, title, description, onPress }) => (
 // Componente para el encabezado de la pantalla Home
 const HomeHeader = () => {
   const [locationModalVisible, setLocationModalVisible] = useState(false);
+  
 
   return (
   <>
@@ -51,8 +53,8 @@ const HomeHeader = () => {
         style={styles.locationButton}
         onPress={() => setLocationModalVisible(true)}
       >
-        <Ionicons name="location-outline" size={18} color="#00897B" />
-        <Text style={styles.locationText}>Elegí tu ubicación</Text>
+        <Ionicons name="location-outline" size={18} color="#4f0d01ff" />
+        <Text style={styles.backText}>Elegí tu ubicación</Text>
       </TouchableOpacity>
 
       {/* Modal de ubicación */}
@@ -107,36 +109,33 @@ const HomeHeader = () => {
 };
 
 const HomeScreen = () => {
-  
+  const navigation = useNavigation();
+
   // Categorías de servicios
   const serviceCategories = [
     {
-      id: '1',
-      emoji: '🏠',
-      title: 'Cuidadores',
-      description: 'Encontrá el cuidador ideal',
-      //onPress: () => navigation.navigate('Cuidadores'),
+      id: "1",
+      emoji: "🏠",
+      title: "Cuidadores",
+      description: "Encontrá el cuidador ideal",
     },
     {
-      id: '2',
-      emoji: '🦮',
-      title: 'Paseadores',
-      description: 'Caminatas seguras cerca de tu zona',
-      //onPress: () => navigation.navigate('Paseadores'),
+      id: "2",
+      emoji: "🦮",
+      title: "Paseadores",
+      description: "Caminatas seguras cerca de tu zona",
     },
     {
-      id: '3',
-      emoji: '🚑',
-      title: 'Salud y Bienestar',
-      description: 'Médicos veterinarios y clínicas cercanas',
-      //onPress: () => navigation.navigate('Emergencia'),
+      id: "3",
+      emoji: "🚑",
+      title: "Salud y Bienestar",
+      description: "Médicos veterinarios y clínicas cercanas",
     },
     {
-      id: '4',
-      emoji: '👥',
-      title: 'Mis conexiones',
-      description: 'Tu red de confianza en un solo lugar',
-      //onPress: () => navigation.navigate('Conexiones'),
+      id: "4",
+      emoji: "👥",
+      title: "Mis conexiones",
+      description: "Tu red de confianza en un solo lugar",
     },
   ];
 
@@ -144,6 +143,7 @@ const HomeScreen = () => {
     <View style={styles.container}>
       <HomeHeader />
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        {/* Bloque de categorías */}
         <View style={styles.categoriesContainer}>
           {serviceCategories.map((category) => (
             <ServiceCategory
@@ -155,8 +155,22 @@ const HomeScreen = () => {
             />
           ))}
         </View>
+
+        {/* Nuevo container de opciones */}
+        <View style={styles.extraContainer}>
+         
+          {/* Reseñas */}
+          <TouchableOpacity
+            style={styles.option}
+            onPress={() => navigation.navigate("Resenas")}
+          >
+            <Ionicons name="star-outline" size={15} color="#f9d2ec" />
+            <Text style={styles.backText}>Mis reseñas</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
-      
+
+      {/* Navbar abajo */}
       <BottomNavbar />
     </View>
   );

@@ -143,9 +143,9 @@ locationButton: {
   borderRadius: 20,
   marginTop:20
 },
-locationText: {
+backText: {
   marginLeft: 6,
-  color: "#00897B",
+  color: "#4f0d01ff",
   fontWeight: "500",
 },
 modalOverlay: {
@@ -177,6 +177,24 @@ closeButton: {
   borderRadius: 8,
   alignItems: "center",
 },
+ container: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
+  extraContainer: {
+    marginTop: 20,
+    paddingHorizontal: 16,
+    paddingBottom:100
+  },
+  option: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#f2f2f2",
+    padding: 16,
+    borderRadius: 10,
+    marginBottom: 12,
+  },
+ 
 
 });
 
