@@ -1,7 +1,8 @@
 // Componente principal de la Landing Page
-import React from "react";
+import React, { useRef } from "react";
 import Logo from "../../assets/icon.png";
 import {
+  ScrollView,
   View,
   Text,
   StyleSheet,
@@ -9,7 +10,6 @@ import {
   StatusBar,
   Image,
   TouchableOpacity,
-  ScrollView,
   ActivityIndicator,
 } from "react-native";
 import app from "../firebase/firebaseConfig";
@@ -37,6 +37,28 @@ import {
 import { useFonts } from "expo-font";
 
 export default function LandingApp() {
+  const scrollRef = useRef(null);
+  const serviciosRef = useRef(null);
+  const suscripcionesRef = useRef(null);
+  const nosotrosRef = useRef(null);
+  const contactoRef = useRef(null);
+
+  const sectionPositions = useRef({});
+
+const onSectionLayout = (key, event) => {
+  sectionPositions.current[key] = event.nativeEvent.layout.y;
+};
+
+const scrollToSection = (key) => {
+  if (sectionPositions.current[key] !== undefined) {
+    scrollRef.current.scrollTo({
+      y: sectionPositions.current[key],
+      animated: true,
+    });
+  }
+};
+
+
   // Cargar fuentes
   const [fontsLoaded, fontError] = useFonts({
     Quicksand_400Regular,
@@ -58,71 +80,83 @@ export default function LandingApp() {
     );
   }
 
- return (
-  <SafeAreaView style={styles.container}>
-    <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
-    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-      
-      {/* Header */}
-      <View style={styles.header}>
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView ref={scrollRef} contentContainerStyle={{ flexGrow: 1 }}>
+        {/* Header */}
+        <View style={styles.header}>
+          <View style={styles.navMenu}>
+            <TouchableOpacity
+              onPress={() => scrollRef.current.scrollTo({ y: 0, animated: true })}
+            >
+              <Text style={styles.navItem}>Inicio</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => scrollToSection(serviciosRef)}>
+              <Text style={styles.navItem}>Servicios</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => scrollToSection(suscripcionesRef)}>
+              <Text style={styles.navItem}>Suscripciones</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => scrollToSection(nosotrosRef)}>
+              <Text style={styles.navItem}>Nosotros</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => scrollToSection(contactoRef)}>
+              <Text style={styles.navItem}>Contacto</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Logo */}
         <Text style={styles.logo}>PAWTITAS</Text>
-        <View style={styles.navMenu}>
-          {["Inicio", "Servicios", "Suscripciones", "Nosotros", "Contacto"].map(
-            (item, idx) => (
-              <Text key={idx} style={styles.navItem}>
-                {item}
-              </Text>
-            )
-          )}
-        </View>
-      </View>
-      {/* Imagen central */}
-        <Image
-          source={Logo}
-          style={styles.heroImage}
-          resizeMode="contain"
-        />
 
-      {/* Hero Section */}
-      <View style={styles.hero}>
-        <Text style={styles.heroTitle}>
-          Cuidados para tu <Text style={styles.highlight}>mascota</Text>
-        </Text>
-        <Text style={styles.heroSubtitle}>
-          Bienvenidos a la App que te ayuda con el cuidado de tu mejor amigo.
-        </Text>
-        <Text style={styles.heroSubtitle}>
-        Disponible en       
-        </Text>
+        {/* Imagen central */}
+        <Image source={Logo} style={styles.heroImage} resizeMode="contain" />
 
-        {/* Botones */}
-        <View style={styles.buttonRow}>
-          <TouchableOpacity style={[styles.button, styles.playStore]}>
-            <Text style={styles.buttonText}>Play Store</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.button, styles.appStore]}>
-            <Text style={styles.buttonText}>App Store</Text>
-          </TouchableOpacity>
+        {/* Hero Section */}
+        <View style={styles.hero}>
+          <Text style={styles.heroTitle}>
+            Cuidados para tu <Text style={styles.highlight}>mascota</Text>
+          </Text>
+          <Text style={styles.heroSubtitle}>
+            Bienvenidos a la App que te ayuda con el cuidado de tu mejor amigo.
+          </Text>
+          <Text style={styles.heroSubtitle}>Disponible en</Text>
+
+          {/* Botones */}
+          <View style={styles.buttonRow}>
+            <TouchableOpacity style={[styles.button, styles.playStore]}>
+              <Text style={styles.buttonText}>Play Store</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.button, styles.appStore]}>
+              <Text style={styles.buttonText}>App Store</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
-        
-      </View>
-
-      {/* Secciones */}
-      
+        {/* Secciones con refs */}
+    <View onLayout={(e) => onSectionLayout("servicios", e)}>
       <Servicios />
+    </View>
+    <View onLayout={(e) => onSectionLayout("suscripciones", e)}>
       <Suscripciones />
+    </View>
+    <View onLayout={(e) => onSectionLayout("nosotros", e)}>
       <Nosotros />
+    </View>
+    <View onLayout={(e) => onSectionLayout("contacto", e)}>
       <Contacto />
-      <Footer />
+    </View>
 
-      {/* Footer técnico */}
-      <FirebaseStatus />
 
-    </ScrollView>
-  </SafeAreaView>
-);
 
+        {/* Footer */}
+        <Footer />
+
+        {/* Footer técnico */}
+        <FirebaseStatus />
+      </ScrollView>
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -151,6 +185,9 @@ const styles = StyleSheet.create({
   logo: {
     ...typography.styles.h2,
     color: colors.brand.logo,
+    textAlign: "center",
+    marginVertical: 10,
+    marginBottom: 5,
   },
   navMenu: {
     flexDirection: "row",
@@ -159,7 +196,7 @@ const styles = StyleSheet.create({
   navItem: {
     ...typography.styles.caption,
     color: colors.text.secondary,
-    marginHorizontal: 8,
+    marginHorizontal: 2,
   },
   hero: {
     alignItems: "center",

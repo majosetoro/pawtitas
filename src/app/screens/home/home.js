@@ -28,7 +28,7 @@ const HomeHeader = () => {
           resizeMode="contain"
         />
         <Text style={styles.logoText}>PAWTITAS</Text>
-        <Text style={styles.taglineText}>Todo lo que tu mascota necesita, cerca de vos</Text>
+        <Text style={styles.taglineText}>Todo lo que tu mascota necesita, cerca tuyo</Text>
       </View>
     </View>
   );

@@ -1,4 +1,4 @@
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { colors } from '../../../shared/styles';
 
 // Estilos para el componente BottomNavbar
@@ -48,8 +48,6 @@ export const styles = StyleSheet.create({
   inactiveText: {
     color: colors.navigation.inactive,
   },
-  activeColor: colors.navigation.active,
-  inactiveColor: colors.navigation.inactive,
   indicator: {
     position: 'absolute',
     height: 3,
@@ -58,7 +56,13 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.navigation.active,
     bottom: -2,
     opacity: 0.8,
-  }
+  },
 });
+
+// Colores extra que no son estilos
+export const navColors = {
+  active: colors.navigation.active,
+  inactive: colors.navigation.inactive,
+};
 
 export default styles;
