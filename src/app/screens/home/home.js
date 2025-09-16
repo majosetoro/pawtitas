@@ -1,9 +1,10 @@
-import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
 //import { useNavigation } from '@react-navigation/native';
 import { styles } from './home.styles';
 import BottomNavbar from '../../components/BottomNavbar';
 import iconImage from '../../assets/icon.png';
+import React, { useState } from "react";
+import { View, Text, TextInput, TouchableOpacity, Modal, ScrollView, Image} from "react-native";
+import { Ionicons } from "@expo/vector-icons"; // librería de íconos
 
 // Componentes de categoría de servicios
 const ServiceCategory = ({ emoji, title, description, onPress }) => (
@@ -18,7 +19,76 @@ const ServiceCategory = ({ emoji, title, description, onPress }) => (
 
 // Componente para el encabezado de la pantalla Home
 const HomeHeader = () => {
+  const [locationModalVisible, setLocationModalVisible] = useState(false);
+
   return (
+  <>
+    {/* Primer bloque: buscador, notificaciones, modal */}
+    <View style={styles.header}>
+      {/* Fila superior */}
+      <View style={styles.topRow}>
+        {/* Buscador */}
+        <View style={styles.searchContainer}>
+          <Ionicons name="search" size={18} color="#888" style={styles.searchIcon} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Buscar servicios, productos..."
+            placeholderTextColor="#999"
+          />
+        </View>
+
+        {/* Notificaciones */}
+        <TouchableOpacity style={styles.notificationButton}>
+          <Ionicons name="notifications-outline" size={24} color="#333" />
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>3</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+
+      {/* Fila inferior */}
+      <TouchableOpacity
+        style={styles.locationButton}
+        onPress={() => setLocationModalVisible(true)}
+      >
+        <Ionicons name="location-outline" size={18} color="#00897B" />
+        <Text style={styles.locationText}>Elegí tu ubicación</Text>
+      </TouchableOpacity>
+
+      {/* Modal de ubicación */}
+      <Modal
+        transparent
+        visible={locationModalVisible}
+        animationType="slide"
+        onRequestClose={() => setLocationModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Elegí tu ubicación</Text>
+            <TouchableOpacity
+              style={styles.modalOption}
+              onPress={() => setLocationModalVisible(false)}
+            >
+              <Text>Detectar ubicación automáticamente</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.modalOption}
+              onPress={() => setLocationModalVisible(false)}
+            >
+              <Text>Seleccionar manualmente</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setLocationModalVisible(false)}
+            >
+              <Text style={{ color: "#fff" }}>Cerrar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </View>
+
+    {/* Segundo bloque: logo y tagline */}
     <View style={styles.header}>
       <View style={styles.statusBarSpace} />
       <View style={styles.logoContainer}>
@@ -31,7 +101,9 @@ const HomeHeader = () => {
         <Text style={styles.taglineText}>Todo lo que tu mascota necesita, cerca tuyo</Text>
       </View>
     </View>
-  );
+  </>
+);
+
 };
 
 const HomeScreen = () => {

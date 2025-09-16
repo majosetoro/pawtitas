@@ -94,6 +94,90 @@ export const styles = StyleSheet.create({
     color: colors.text.secondary,
     textAlign: 'center',
   },
+  topRow: {
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "space-between",
+  paddingHorizontal: 15,
+  marginBottom: 10,
+},
+searchContainer: {
+  flex: 1,
+  flexDirection: "row",
+  alignItems: "center",
+  backgroundColor: "#f1f1f1",
+  borderRadius: 20,
+  paddingHorizontal: 10,
+  marginRight: 10,
+  marginTop:50
+},
+searchIcon: {
+  marginRight: 6,
+},
+searchInput: {
+  flex: 1,
+  height: 40,
+},
+notificationButton: {
+  position: "relative",
+  marginTop:50
+},
+badge: {
+  position: "absolute",
+  top: -5,
+  right: -5,
+  backgroundColor: "red",
+  borderRadius: 10,
+  paddingHorizontal: 5,
+},
+badgeText: {
+  color: "#fff",
+  fontSize: 12,
+},
+locationButton: {
+  flexDirection: "row",
+  alignItems: "center",
+  paddingHorizontal: 15,
+  paddingVertical: 8,
+  backgroundColor: "#f2e0f2ff",
+  borderRadius: 20,
+  marginTop:20
+},
+locationText: {
+  marginLeft: 6,
+  color: "#00897B",
+  fontWeight: "500",
+},
+modalOverlay: {
+  flex: 1,
+  backgroundColor: "rgba(0,0,0,0.4)",
+  justifyContent: "center",
+  alignItems: "center",
+},
+modalContent: {
+  backgroundColor: "#fff",
+  padding: 20,
+  borderRadius: 12,
+  width: "80%",
+},
+modalTitle: {
+  fontSize: 18,
+  fontWeight: "600",
+  marginBottom: 15,
+},
+modalOption: {
+  paddingVertical: 12,
+  borderBottomWidth: 1,
+  borderBottomColor: "#ddd",
+},
+closeButton: {
+  marginTop: 15,
+  backgroundColor: "#00897B",
+  paddingVertical: 10,
+  borderRadius: 8,
+  alignItems: "center",
+},
+
 });
 
 export default styles;
