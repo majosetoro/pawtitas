@@ -5,7 +5,7 @@ import { Alert, ActionSheetIOS, Platform } from 'react-native';
 export const SettingsMenu = {
   // Menú principal de opciones
   showMainMenu: (onContactSupport) => {
-    if (Platform.OS === 'ios' || Platform.OS === 'android') {
+    if (Platform.OS === 'ios') {
       ActionSheetIOS.showActionSheetWithOptions(
         {
           options: ['Cancelar', 'Contactar Soporte'],
@@ -22,10 +22,11 @@ export const SettingsMenu = {
     } else {
       // Para Android, usar Alert
       Alert.alert(
-        'Contáctanos por email para resolver tus dudas, sugerencias o inquietudes'
+        'Contáctanos',
+        'Contáctanos por email para resolver tus dudas, sugerencias o inquietudes',
         [
           { text: 'Cancelar', style: 'cancel' },
-          { text: 'Contactar Soporte', onPress: onContactSupport }
+          { text: 'Contactar Soporte', onPress: onContactSupport },
         ]
       );
     }
