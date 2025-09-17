@@ -14,7 +14,7 @@ const BottomNavbar = () => {
     { name: 'Home', icon: 'home-outline', activeIcon: 'home-sharp', route: 'Home' },
     { name: 'Mapa', icon: 'location-outline', activeIcon: 'location-sharp', route: 'Mapa' },
     { name: 'Chat', icon: 'chatbubble-ellipses-outline', activeIcon: 'chatbubble-ellipses', route: 'Chat' },
-    { name: 'Perfil', icon: 'person-outline', activeIcon: 'person-sharp', route: 'EditarPerfil' },
+    { name: 'Perfil', icon: 'person-outline', activeIcon: 'person-sharp', route: 'Perfil' },
   ];
 
   // Navega a la ruta
