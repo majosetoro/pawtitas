@@ -10,6 +10,7 @@ import InicioScreen from "./screens/inicio/inicio";
 import HomeScreen from "./screens/home/home";
 import PerfilScreen from "./screens/perfil/perfil";
 import EditarPerfil from "./screens/perfil/editarPerfil/editarPerfil";
+import MisMascotasScreen from "./screens/misMascotas/MisMascotas";
 
 // React Navigation
 import { NavigationContainer } from "@react-navigation/native";
@@ -113,6 +114,7 @@ export default function App() {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Perfil" component={PerfilScreen} />
         <Stack.Screen name="EditarPerfil" component={EditarPerfil} />
+        <Stack.Screen name="MisMascotas" component={MisMascotasScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

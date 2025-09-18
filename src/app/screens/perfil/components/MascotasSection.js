@@ -3,13 +3,15 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../../../../shared/styles';
 import { styles } from './MascotasSection.styles';
+import { useNavigation } from '@react-navigation/native';
 
 // Componente para la sección de mascotas del usuario
 export const MascotasSection = ({ petsCount, description, onPress }) => {
+  const navigation = useNavigation();
   return (
     <TouchableOpacity 
       style={styles.card}
-      onPress={onPress}
+      onPress={() => navigation.navigate('MisMascotas')}
       activeOpacity={0.7}
     >
       <View style={styles.content}>

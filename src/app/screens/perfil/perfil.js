@@ -32,9 +32,7 @@ const PerfilScreen = () => {
   };
 
   const handleNavigateToPets = () => {
-    // Navegar a la pantalla de mascotas.
-    //navigation.navigate('Mascotas');
-    Alert.alert('Próximamente', 'Esta pantalla estará disponible pronto');
+    navigation.navigate('MisMascotas');
   };
 
   const handleLogout = () => {
