@@ -16,7 +16,7 @@ const EmptyMascotasList = () => {
       />
       <Text style={styles.emptyTitle}>No se encuentran mascotas registradas</Text>
       <Text style={styles.emptySubtitle}>
-        Agrega a tus mascotas para brindar un cuidado personalizado
+        Agrega a tus mascotas para brindar un servicio personalizado
       </Text>
     </View>
   );
