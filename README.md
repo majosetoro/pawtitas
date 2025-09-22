@@ -5,7 +5,7 @@
 ### 📋 Prerrequisitos OBLIGATORIOS
 - **Node.js** (versión 18 o superior) - [Descargar aquí](https://nodejs.org/)
 - **Expo CLI** instalado globalmente: `npm install -g @expo/cli`
-- **Cuenta de Google** para Firebase (Todos los integrantes del equipo están invitados al proyecto)
+
 - **Git** instalado en tu computadora
 
 ### 🔧 Pasos de Configuración PASO A PASO
@@ -26,10 +26,7 @@ cd pawtitas
 npm install
 ```
 
-#### 4. Configurar Firebase (PASO CRÍTICO)
-**⚠️ SIN ESTE PASO LA APP NO FUNCIONARÁ:**
-
-1. Copiar la carpeta `firebase` completa al proyecto pawtitas
+#### 4. MySQL
 
 #### 5. Verificar que todo funciona
 ```bash
@@ -38,14 +35,11 @@ npx expo start
 
 ### ⚠️ Archivos Importantes
 
-- **`firebaseConfig.js`** - Tu configuración de Firebase (NO se sube a Git)
 - **`.env`** - Variables de entorno (opcional, NO se sube a Git)
 
 ### 🔒 Seguridad
 
-- **NUNCA** subas `firebaseConfig.js` a Git
-- **NUNCA** compartas tus claves de Firebase
-- **SÍ** puedes subir `firebaseConfig.example.js`
+
 
 ## 🔀 Sistema de Entry Points
 
@@ -117,8 +111,6 @@ Si tienes problemas con los entry points:
 ```
 pawtitas/
 ├── assets/                        ← Imágenes y recursos globales 
-├── firebase/                      ← Configuración de Firebase (NO en Git)
-│   ├── firebaseConfig.js          ← Tu configuración (NO en Git)
 ├── public/                        ← Archivos públicos para web
 │   ├── favicon.ico                ← Favicon para web
 ├── scripts/                       ← Scripts de utilidad
@@ -148,7 +140,6 @@ pawtitas/
 │   │   └── index.js               ← Entry point de la landing
 │   └── shared/                    ← Código compartido entre app y landing
 │       ├── components/            ← Componentes compartidos
-│       │   ├── FirebaseStatus.js  ← Componente de estado de Firebase
 │       │   └── index.js           ← Exportación de componentes
 │       ├── styles/                ← Estilos compartidos
 │       │   └── index.js           ← Exportación de estilos
@@ -165,15 +156,6 @@ pawtitas/
 ```
 
 ## 🆘 Problemas Comunes y Soluciones
-
-**Error: "Firebase not initialized"**
-- Verifica que `firebaseConfig.js` existe
-- Verifica que la configuración es correcta
-- Reinicia el servidor: `npx expo start --clear`
-
-**Error: "API key not valid"**
-- Verifica que copiaste la configuración correcta de Firebase Console
-- Asegúrate de que el proyecto esté activo en Firebase
 
 **Error: "Module not found"**
 - Ejecuta `npm install` para instalar dependencias
@@ -198,7 +180,6 @@ npx expo logs
 
 ## 📞 Soporte
 
-- **Documentación Firebase**: [https://firebase.google.com/docs](https://firebase.google.com/docs)
 - **Documentación Expo**: [https://docs.expo.dev/](https://docs.expo.dev/)
 
 ## 🔄 Flujo de Trabajo para el Equipo
