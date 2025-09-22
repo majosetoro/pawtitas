@@ -131,11 +131,22 @@ const HomeScreen = () => {
       title: "Salud y Bienestar",
       description: "Médicos veterinarios y clínicas cercanas",
     },
+
+    // Al implementar el sistema de roles, este botón debe estar visible para el rol clientes y prestadores de servicios.
     {
       id: "4",
       emoji: "👥",
       title: "Mis conexiones",
       description: "Tu red de confianza en un solo lugar",
+    },
+
+    // Al implementar el sistema de roles, este botón debe estar visible únicamente para el rol admin.
+    {
+      id: "5",
+      emoji: "👨‍💻",
+      title: "Panel de Administrador",
+      description: "Gestión de usuarios",
+      onPress: () => navigation.navigate("PanelAdmin"),
     },
   ];
 
