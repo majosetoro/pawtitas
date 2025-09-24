@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { ScreenHeader, BottomNavbar, BarraBuscador, Filtros } from '../../components';
 import { UsuarioCard, EstadisticasCard } from './components';
 import { styles } from './PanelAdmin.styles';
+import ValidarUsuario from './ValidarUsuario';
 
 // Pantalla del Panel de Administrador
 const PanelAdmin = () => {
@@ -15,8 +16,12 @@ const PanelAdmin = () => {
   const [selectedFilter, setSelectedFilter] = useState('todos');
   const [showFilters, setShowFilters] = useState(false);
   
+  // Estado para el bottom sheet
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
+  
   // Implementar la llamada a la API. Estos datos son de ejemplo.
-  const [users] = useState([
+  const [users, setUsers] = useState([
     {
       id: '1',
       nombre: 'Elisa Ying',
@@ -87,9 +92,45 @@ const PanelAdmin = () => {
 
   // Manejar selección de usuario
   const handleUserPress = (user) => {
-    // Navegar a detalles del usuario
-    console.log('Ver detalles de:', user.nombre);
-    // navigation.navigate('UserDetails', { userId: user.id });
+    setSelectedUser(user);
+    setIsBottomSheetVisible(true);
+  };
+
+  // Cerrar el bottom sheet
+  const handleCloseBottomSheet = () => {
+    setIsBottomSheetVisible(false);
+  };
+
+  // Activar usuario
+  const handleActivateUser = () => {
+    if (!selectedUser) return;
+    
+    setUsers(prevUsers => 
+      prevUsers.map(user => 
+        user.id === selectedUser.id 
+          ? { ...user, estado: 'Activado' } 
+          : user
+      )
+    );
+    
+    // Actualizar el usuario seleccionado
+    setSelectedUser(prev => ({ ...prev, estado: 'Activado' }));
+  };
+  
+  // Desactivar usuario
+  const handleDeactivateUser = () => {
+    if (!selectedUser) return;
+    
+    setUsers(prevUsers => 
+      prevUsers.map(user => 
+        user.id === selectedUser.id 
+          ? { ...user, estado: 'Desactivado' } 
+          : user
+      )
+    );
+    
+    // Actualizar el usuario seleccionado
+    setSelectedUser(prev => ({ ...prev, estado: 'Desactivado' }));
   };
 
   // Manejar búsqueda
@@ -108,7 +149,7 @@ const PanelAdmin = () => {
     <UsuarioCard 
       user={item} 
       onPress={() => handleUserPress(item)}
-      onStatusChange={() => console.log('Cambiar estado de:', item.nombre)}
+      onStatusChange={() => handleUserPress(item)}
     />
   );
 
@@ -120,7 +161,7 @@ const PanelAdmin = () => {
       {/* Header con ScreenHeader */}
       <ScreenHeader 
         title="Panel de Administrador"
-        subtitle="Usuarios registrados en el sistema. Activa o desactiva según sea necesario."
+        subtitle="Revisá la documentación del usuario para activar o desactivar el perfil."
         onBackPress={handleBackPress}
         showBackButton={true}
       />
@@ -185,6 +226,15 @@ const PanelAdmin = () => {
           bounces={true}
         />
       </View>
+      
+      {/* Bottom Sheet para validar usuario */}
+      <ValidarUsuario
+        isVisible={isBottomSheetVisible}
+        onClose={handleCloseBottomSheet}
+        usuario={selectedUser}
+        onActivate={handleActivateUser}
+        onDeactivate={handleDeactivateUser}
+      />
       
       {/* Navegación inferior */}
       <BottomNavbar />
