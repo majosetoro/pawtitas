@@ -73,7 +73,11 @@ const UsuarioCard = ({ user, onPress, onStatusChange }) => {
         </TouchableWithoutFeedback>
       )}
       
-      <View style={styles.content}>
+      <TouchableOpacity 
+        style={styles.content}
+        onPress={onPress}
+        activeOpacity={0.8}
+      >
         <View style={styles.infoContainer}>
           <View style={styles.headerRow}>
             <View style={styles.userInfo}>
@@ -112,7 +116,7 @@ const UsuarioCard = ({ user, onPress, onStatusChange }) => {
             Registrado el {formatDate(fechaRegistro)}
           </Text>
         </View>
-      </View>
+      </TouchableOpacity>
     </View>
   );
 };
