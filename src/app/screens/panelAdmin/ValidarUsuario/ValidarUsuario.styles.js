@@ -8,8 +8,8 @@ export const styles = StyleSheet.create({
   },
   contentContainer: {
     backgroundColor: 'white',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderTopLeftRadius: 40,
+    borderTopRightRadius: 40,
     paddingTop: 20,
     paddingHorizontal: 16,
     maxHeight: '85%',
