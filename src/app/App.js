@@ -12,7 +12,7 @@ import PerfilScreen from "./screens/perfil/perfil";
 import EditarPerfil from "./screens/perfil/editarPerfil/editarPerfil";
 import MisMascotasScreen from "./screens/misMascotas/MisMascotas";
 import PanelAdminScreen from "./screens/panelAdmin";
-
+import ValidarUsuarioScreen from "./screens/panelAdmin/ValidarUsuario/ValidarUsuario";
 // React Navigation
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -117,6 +117,7 @@ export default function App() {
         <Stack.Screen name="EditarPerfil" component={EditarPerfil} />
         <Stack.Screen name="MisMascotas" component={MisMascotasScreen} />
         <Stack.Screen name="PanelAdmin" component={PanelAdminScreen} />
+        <Stack.Screen name="ValidarUsuario" component={ValidarUsuarioScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
