@@ -118,6 +118,7 @@ const HomeScreen = () => {
       emoji: "🏠",
       title: "Cuidadores",
       description: "Encontrá el cuidador ideal",
+      onPress: () => navigation.navigate("Cuidadores"),
     },
     {
       id: "2",
