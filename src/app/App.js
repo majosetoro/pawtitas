@@ -3,7 +3,7 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, Image, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useFonts } from "expo-font";
 import { colors, typography } from "../shared/styles";
-import SplashScreen from "./splash";
+import SplashScreen from "./screens/splash/splash";
 import BienvenidaScreen from "./screens/bienvenida/bienvenida";
 import RegistroScreen from "./screens/registro/registro";
 import InicioScreen from "./screens/inicio/inicio";
