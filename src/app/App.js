@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, Image, TouchableOpacity, ActivityIndicator } fr
 import { useFonts } from "expo-font";
 import { colors, typography } from "../shared/styles";
 import SplashScreen from "./splash";
-import BienvenidaScreen from "./bienvenida";
+import BienvenidaScreen from "./screens/bienvenida/bienvenida";
 import RegistroScreen from "./screens/registro/registro";
 import InicioScreen from "./screens/inicio/inicio";
 import HomeScreen from "./screens/home/home";
