@@ -5,7 +5,7 @@ import { useFonts } from "expo-font";
 import { colors, typography } from "../shared/styles";
 import SplashScreen from "./splash";
 import BienvenidaScreen from "./bienvenida";
-import RegistroScreen from "./registro";
+import RegistroScreen from "./screens/registro/registro";
 import InicioScreen from "./screens/inicio/inicio";
 import HomeScreen from "./screens/home/home";
 import PerfilScreen from "./screens/perfil/perfil";
