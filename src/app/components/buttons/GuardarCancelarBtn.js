@@ -46,7 +46,7 @@ export default function GuardarCancelarBtn({
         >
           {loading ? (
             <ActivityIndicator 
-              color={variant === "primary" ? colors.text.inverse : "#B77B5D"} 
+              color={variant === "primary" ? colors.text.inverse : colors.primaryDark} 
               size="small" 
             />
           ) : (
@@ -67,7 +67,7 @@ export default function GuardarCancelarBtn({
     >
       {loading ? (
         <ActivityIndicator 
-          color={variant === "primary" ? colors.text.inverse : "#B77B5D"} 
+          color={variant === "primary" ? colors.text.inverse : colors.primaryDark} 
           size="small" 
         />
       ) : (
@@ -98,9 +98,9 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   primary: {
-    backgroundColor: "#B77B5D",
+    backgroundColor: colors.primaryDark,
     borderWidth: 0,
-    shadowColor: "#B77B5D",
+    shadowColor: colors.primaryDark,
     shadowOpacity: 0.15,
     shadowRadius: 12,
     shadowOffset: {
