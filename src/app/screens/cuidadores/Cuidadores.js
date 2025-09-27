@@ -48,7 +48,7 @@ const Cuidadores = ({ navigation }) => {
       providers={CUIDADORES_DATA}
       providerType="cuidador"
       screenTitle="Cuidadores"
-      screenSubtitle="Elige y contacta a cuidadores verificados, ordenados por mejor calificación"
+      screenSubtitle="Elige y contacta a cuidadores verificados, priorizando los más cercanos"
     />
   );
 };

@@ -14,7 +14,7 @@ import { styles } from './PrestadorServiciosScreen.styles';
 // Filtros
 const FILTROS_DATA = [
   { key: 'todos', label: 'Todos' },
-  { key: 'cercanos', label: 'Cercanos' },
+  { key: 'mejor-calificacion', label: 'Mejor calificación' },
   { key: 'mejor-precio', label: 'Mejor precio' },
 ];
 
@@ -45,8 +45,8 @@ const PrestadorServiciosScreen = ({
 
     // Filtrar por filtro seleccionado
     switch (selectedFilter) {
-      case 'cercanos':
-        // Implementar lógica de geolocalización
+      case 'mejor-calificacion':
+        filtered = filtered.sort((a, b) => b.rating - a.rating);
         break;
       case 'mejor-precio':
         filtered = filtered.sort((a, b) => {
@@ -56,8 +56,8 @@ const PrestadorServiciosScreen = ({
         });
         break;
       default:
-        // Por defecto, ordenar por mejor calificación
-        filtered = filtered.sort((a, b) => b.rating - a.rating);
+        // Por defecto, ordenar por cercanía
+        // Implementar lógica de geolocalización
         break;
     }
 

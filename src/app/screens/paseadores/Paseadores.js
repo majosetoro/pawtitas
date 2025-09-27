@@ -48,7 +48,7 @@ const Paseadores = ({ navigation }) => {
       providers={PASEADORES_DATA}
       providerType="paseador"
       screenTitle="Paseadores"
-      screenSubtitle="Elige y contacta a paseadores verificados, ordenados por mejor calificación"
+      screenSubtitle="Elige y contacta a paseadores verificados, priorizando los más cercanos"
     />
   );
 };
