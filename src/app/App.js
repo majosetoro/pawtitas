@@ -10,6 +10,7 @@ import InicioScreen from "./screens/inicio/inicio";
 import HomeScreen from "./screens/home/home";
 import CuidadoresScreen from "./screens/cuidadores/Cuidadores";
 import PaseadoresScreen from "./screens/paseadores/Paseadores";
+import SaludScreen from "./screens/salud/Salud";
 import PerfilScreen from "./screens/perfil/perfil";
 import EditarPerfil from "./screens/perfil/editarPerfil/editarPerfil";
 import MisMascotasScreen from "./screens/misMascotas/MisMascotas";
@@ -117,6 +118,7 @@ export default function App() {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Cuidadores" component={CuidadoresScreen} />
         <Stack.Screen name="Paseadores" component={PaseadoresScreen} />
+        <Stack.Screen name="Salud" component={SaludScreen} />
         <Stack.Screen name="Perfil" component={PerfilScreen} />
         <Stack.Screen name="EditarPerfil" component={EditarPerfil} />
         <Stack.Screen name="MisMascotas" component={MisMascotasScreen} />
