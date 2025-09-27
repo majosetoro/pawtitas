@@ -16,9 +16,9 @@ const CUIDADORES_DATA = [
   {
     id: '1',
     nombre: 'Juan Perez',
-    rating: 4,
+    rating: 5,
     descripcion: 'Cuidadora profesional con 5 años de experiencia en cuidado de mascotas.',
-    precio: '$25.000 - 30.000',
+    precio: '$30.000',
     ubicacion: 'Belgrano, CABA',
     disponibilidad: 'Lunes, Miércoles, Jueves',
     horario: 'A convenir',
@@ -28,9 +28,9 @@ const CUIDADORES_DATA = [
   {
     id: '2',
     nombre: 'Susana Jimenez',
-    rating: 4,
+    rating: 3,
     descripcion: 'Cuidadora con 1 año de experiencia en cuidado de mascotas.',
-    precio: '$10.000 - 25.000',
+    precio: '$15.000',
     ubicacion: 'Colegiales, CABA',
     disponibilidad: 'Viernes, Sábado',
     horario: '5-8 horas',
@@ -42,7 +42,7 @@ const CUIDADORES_DATA = [
     nombre: 'Paula Benal',
     rating: 4,
     descripcion: 'Cuidadora profesional con 3 años de experiencia. Solo cuido gatos.',
-    precio: '$25.000 - 40.000',
+    precio: '$25.000',
     ubicacion: 'Belgrano, CABA',
     disponibilidad: 'Lunes, Miércoles, Jueves',
     horario: 'A convenir',
@@ -55,7 +55,7 @@ const CUIDADORES_DATA = [
 const FILTROS_DATA = [
   { key: 'todos', label: 'Todos' },
   { key: 'cercanos', label: 'Cercanos' },
-  { key: 'mejor-valorados', label: 'Mejor valorados' },
+  { key: 'mejor-precio', label: 'Mejor precio' },
 ];
 
 const Cuidadores = ({ navigation }) => {
@@ -82,16 +82,17 @@ const Cuidadores = ({ navigation }) => {
       case 'cercanos':
         // Implementar lógica de geolocalización
         break;
-      case 'mejor-valorados':
-        filtered = filtered.sort((a, b) => b.rating - a.rating);
-        break;
-      default:
-        // Por defecto, ordenar de menor a mayor precio
+      case 'mejor-precio':
         filtered = filtered.sort((a, b) => {
-          const precioA = parseInt(a.precio.split(' - ')[0].replace(/[^0-9]/g, ''));
-          const precioB = parseInt(b.precio.split(' - ')[0].replace(/[^0-9]/g, ''));
+          const precioA = parseInt(a.precio.replace(/[^0-9]/g, ''));
+          const precioB = parseInt(b.precio.replace(/[^0-9]/g, ''));
           return precioA - precioB;
         });
+        break;
+      default:
+        // Por defecto, ordenar por mejor calificación
+        filtered = filtered.sort((a, b) => b.rating - a.rating);
+
         break;
     }
 
@@ -142,7 +143,7 @@ const Cuidadores = ({ navigation }) => {
       {/* Header */}
       <ScreenHeader
         title="Cuidadores"
-        subtitle="Busca, elige y contacta a tu cuidador favorito"
+        subtitle="Elige y contacta a cuidadores verificados, ordenados por mejor calificación"
         onBackPress={handleBackPress}
       />
 
