@@ -131,6 +131,7 @@ const HomeScreen = () => {
       emoji: "🚑",
       title: "Salud y Bienestar",
       description: "Médicos veterinarios y clínicas cercanas",
+      onPress: () => navigation.navigate("Salud"),
     },
 
     // Al implementar el sistema de roles, este botón debe estar visible para el rol clientes y prestadores de servicios.
