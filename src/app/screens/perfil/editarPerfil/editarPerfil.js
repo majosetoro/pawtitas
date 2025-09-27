@@ -159,7 +159,7 @@ export default function EditarPerfil({ navigation, route }) {
                 <View style={styles.infoItem}>
                   <Text style={styles.infoBullet}>•</Text>
                   <Text style={styles.additionalInfoText}>
-                    Tu información será visible para otros usuarios de la plataforma
+                    Tu información será visible para otros usuarios de la plataforma, a excepción de tu email y teléfono
                   </Text>
                 </View>
                 <View style={styles.infoItem}>
