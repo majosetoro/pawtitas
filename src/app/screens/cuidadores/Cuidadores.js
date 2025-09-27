@@ -12,8 +12,6 @@ const CUIDADORES_DATA = [
     ubicacion: 'Belgrano, CABA',
     disponibilidad: 'Lunes, Miércoles, Jueves',
     horario: 'A convenir',
-    email: 'juan.perez@gmail.com',
-    telefono: '+54 9 11 12345678',
   },
   {
     id: '2',
@@ -23,9 +21,7 @@ const CUIDADORES_DATA = [
     precio: '$15.000',
     ubicacion: 'Colegiales, CABA',
     disponibilidad: 'Viernes, Sábado',
-    horario: '5-8 horas',
-    email: 'susana.jimenez@gmail.com',
-    telefono: '+54 9 11 87654321',
+    horario: '5-8 horas'
   },
   {
     id: '3',
@@ -36,8 +32,6 @@ const CUIDADORES_DATA = [
     ubicacion: 'Belgrano, CABA',
     disponibilidad: 'Lunes, Miércoles, Jueves',
     horario: 'A convenir',
-    email: 'paula.benal@gmail.com',
-    telefono: '+54 9 11 11223344',
   }
 ];
 
