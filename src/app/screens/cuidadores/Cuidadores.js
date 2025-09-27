@@ -8,6 +8,7 @@ import BarraBuscador from '../../components/BarraBuscador/BarraBuscador';
 import Filtros from '../../components/Filtros/Filtros';
 import BottomNavbar from '../../components/BottomNavbar/BottomNavbar';
 import CuidadorCard from './components/CuidadorCard';
+import DetallesCuidadores from './DetallesCuidadores/DetallesCuidadores';
 import { styles } from './Cuidadores.styles';
 
 // Implementar la llamada a la API. Estos datos son de ejemplo.
@@ -21,6 +22,8 @@ const CUIDADORES_DATA = [
     ubicacion: 'Belgrano, CABA',
     disponibilidad: 'Lunes, Miércoles, Jueves',
     horario: 'A convenir',
+    email: 'juan.perez@gmail.com',
+    telefono: '+54 9 11 12345678',
   },
   {
     id: '2',
@@ -31,6 +34,8 @@ const CUIDADORES_DATA = [
     ubicacion: 'Colegiales, CABA',
     disponibilidad: 'Viernes, Sábado',
     horario: '5-8 horas',
+    email: 'susana.jimenez@gmail.com',
+    telefono: '+54 9 11 87654321',
   },
   {
     id: '3',
@@ -41,6 +46,8 @@ const CUIDADORES_DATA = [
     ubicacion: 'Belgrano, CABA',
     disponibilidad: 'Lunes, Miércoles, Jueves',
     horario: 'A convenir',
+    email: 'paula.benal@gmail.com',
+    telefono: '+54 9 11 11223344',
   }
 ];
 
@@ -55,6 +62,8 @@ const Cuidadores = ({ navigation }) => {
   const [searchText, setSearchText] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('todos');
   const [showFilters, setShowFilters] = useState(false);
+  const [selectedCuidador, setSelectedCuidador] = useState(null);
+  const [showDetalles, setShowDetalles] = useState(false);
 
   // Filtrar cuidadores basado en búsqueda y filtro seleccionado
   const filteredCuidadores = useMemo(() => {
@@ -102,8 +111,25 @@ const Cuidadores = ({ navigation }) => {
   };
 
   const handleCuidadorPress = (cuidador) => {
-    // Navegar a detalles del cuidador
-    console.log('Ver detalles de:', cuidador.nombre);
+    setSelectedCuidador(cuidador);
+    setShowDetalles(true);
+  };
+
+  const handleCloseDetalles = () => {
+    setShowDetalles(false);
+    setSelectedCuidador(null);
+  };
+
+  const handleResenas = (cuidador) => {
+    // Navegar a pantalla de reseñas del cuidador
+    console.log('Ver reseñas de:', cuidador.nombre);
+    handleCloseDetalles();
+  };
+
+  const handleConectar = (cuidador) => {
+    // Implementar lógica de conexión
+    console.log('Conectar con:', cuidador.nombre);
+    handleCloseDetalles();
   };
 
   const handleBackPress = () => {
@@ -154,6 +180,15 @@ const Cuidadores = ({ navigation }) => {
       
       {/* Bottom Navbar */}
       <BottomNavbar />
+
+      {/* Bottom Sheet de Detalles del Cuidador */}
+      <DetallesCuidadores
+        visible={showDetalles}
+        cuidador={selectedCuidador}
+        onClose={handleCloseDetalles}
+        onResenas={handleResenas}
+        onConectar={handleConectar}
+      />
     </SafeAreaView>
   );
 };
