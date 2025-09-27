@@ -1,4 +1,3 @@
-//import { useNavigation } from '@react-navigation/native';
 import { styles } from './home.styles';
 import BottomNavbar from '../../components/BottomNavbar';
 import iconImage from '../../assets/icon.png';
@@ -125,6 +124,7 @@ const HomeScreen = () => {
       emoji: "🦮",
       title: "Paseadores",
       description: "Caminatas seguras cerca de tu zona",
+      onPress: () => navigation.navigate("Paseadores"),
     },
     {
       id: "3",

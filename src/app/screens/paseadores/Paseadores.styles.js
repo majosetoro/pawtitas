@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { colors } from '../../../shared/styles';
 
-// Estilos para la pantalla de Cuidadores
+// Estilos para la pantalla de Paseadores
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
