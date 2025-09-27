@@ -166,6 +166,27 @@ const PanelAdmin = () => {
         showBackButton={true}
       />
       
+      {/* Barra de búsqueda */}
+      <BarraBuscador
+        value={searchQuery}
+        onChangeText={handleSearch}
+        placeholder="Buscar usuarios"
+        onFilterPress={() => setShowFilters(!showFilters)}
+        filterIcon="menu-outline"
+      />
+
+      {/* Filtros */}
+      <Filtros
+        filters={[
+          { key: 'todos', label: 'Todos' },
+          { key: 'activado', label: 'Activados' },
+          { key: 'pendiente', label: 'Pendientes' },
+          { key: 'desactivado', label: 'Desactivados' }
+        ]}
+        selectedFilter={selectedFilter}
+        onFilterChange={handleFilterChange}
+        visible={showFilters}
+      />
 
       {/* Tarjeta de estadísticas */}
       <View style={styles.statsTabContainer}>
@@ -191,28 +212,6 @@ const PanelAdmin = () => {
           </View>
         </View>
       </View>
-
-      {/* Barra de búsqueda */}
-      <BarraBuscador
-        value={searchQuery}
-        onChangeText={handleSearch}
-        placeholder="Buscar usuarios"
-        onFilterPress={() => setShowFilters(!showFilters)}
-        filterIcon="menu-outline"
-      />
-
-      {/* Filtros */}
-      <Filtros
-        filters={[
-          { key: 'todos', label: 'Todos' },
-          { key: 'activado', label: 'Activados' },
-          { key: 'pendiente', label: 'Pendientes' },
-          { key: 'desactivado', label: 'Desactivados' }
-        ]}
-        selectedFilter={selectedFilter}
-        onFilterChange={handleFilterChange}
-        visible={showFilters}
-      />
 
       {/* Lista de usuarios */}
       <View style={styles.content}>
