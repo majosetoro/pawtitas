@@ -111,17 +111,6 @@ const PrestadorServiciosDetails = ({
           nestedScrollEnabled={true}
           persistentScrollbar={true}
         >
-          {/* Información de contacto */}
-          <SectionContainer title="Información de contacto">
-            <ContactItem 
-              iconName="call-outline" 
-              text={telefono || 'No disponible'} 
-            />
-            <ContactItem 
-              iconName="mail-outline" 
-              text={email || 'No disponible'} 
-            />
-          </SectionContainer>
 
           {/* Precio y horarios */}
           <SectionContainer title="Precio y horarios">

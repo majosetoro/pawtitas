@@ -12,8 +12,6 @@ const PASEADORES_DATA = [
     ubicacion: 'Belgrano, CABA',
     disponibilidad: 'Lunes, Miércoles, Jueves',
     horario: 'A convenir',
-    email: 'carlos.gomez@gmail.com',
-    telefono: '+54 9 11 12345678',
   },
   {
     id: '2',
@@ -24,8 +22,6 @@ const PASEADORES_DATA = [
     ubicacion: 'Palermo, CABA',
     disponibilidad: 'Martes, Jueves, Viernes',
     horario: '2-4 horas',
-    email: 'laura.fernandez@gmail.com',
-    telefono: '+54 9 11 87654321',
   },
   {
     id: '3',
@@ -36,8 +32,6 @@ const PASEADORES_DATA = [
     ubicacion: 'Recoleta, CABA',
     disponibilidad: 'Lunes a Viernes',
     horario: 'A convenir',
-    email: 'martin.rodriguez@gmail.com',
-    telefono: '+54 9 11 11223344',
   }
 ];
 

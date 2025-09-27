@@ -12,8 +12,6 @@ const SALUD_DATA = [
     ubicacion: 'Palermo, CABA',
     disponibilidad: 'Lunes a Viernes',
     horario: '9:00 - 18:00',
-    email: 'contacto@clinicaveterinaria.com',
-    telefono: '+54 9 11 12345678',
   },
   {
     id: '2',
@@ -24,8 +22,6 @@ const SALUD_DATA = [
     ubicacion: 'Belgrano, CABA',
     disponibilidad: 'Martes, Jueves, Sábados',
     horario: '10:00 - 19:00',
-    email: 'carolina.sanchez@gmail.com',
-    telefono: '+54 9 11 87654321',
   },
   {
     id: '3',
@@ -36,8 +32,6 @@ const SALUD_DATA = [
     ubicacion: 'Recoleta, CABA',
     disponibilidad: 'Lunes, Miércoles, Viernes',
     horario: '8:00 - 16:00',
-    email: 'matias.lopez@gmail.com',
-    telefono: '+54 9 11 56781234',
   }
 ];
 
