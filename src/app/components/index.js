@@ -8,6 +8,11 @@ export { default as FloatingAddBtn } from './buttons/FloatingAddBtn';
 export { default as BarraBuscador } from './BarraBuscador';
 export { default as Filtros } from './Filtros';
 
+// Componentes reutilizables para pantallas de prestadores de servicios
+export { default as PrestadorServiciosCard } from './PrestadorServiciosCard';
+export { default as PrestadorServiciosDetails } from './PrestadorServiciosDetails';
+export { default as PrestadorServiciosScreen } from './PrestadorServiciosScreen';
+
 // Re-exportar componentes de inputs y buttons
 export * from './inputs';
 export * from './buttons';
