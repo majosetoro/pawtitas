@@ -29,11 +29,17 @@ export const styles = StyleSheet.create({
   nameContainer: {
     flex: 1,
   },
+  nameAndStatusRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 4,
+  },
   nombre: {
     ...typography.styles.h3,
     fontSize: 18,
     color: colors.text.primary,
-    marginBottom: 4,
   },
   ratingContainer: {
     flexDirection: 'row',

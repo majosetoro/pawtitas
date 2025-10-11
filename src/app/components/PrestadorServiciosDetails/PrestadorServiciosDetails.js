@@ -8,7 +8,9 @@ import {
 import Modal from 'react-native-modal';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../../../shared/styles';
+import { ESTADOS_CONEXION } from '../../constants/estadosConexion';
 import GuardarCancelarBtn from '../buttons/GuardarCancelarBtn';
+import EstadosChip from '../EstadosChip';
 import { styles } from './PrestadorServiciosDetails.styles';
 
 const PrestadorServiciosDetails = ({ 
@@ -17,7 +19,10 @@ const PrestadorServiciosDetails = ({
   onClose,
   onResenas,
   onConectar,
-  providerType = 'cuidador' // Puede ser 'cuidador', 'paseador' o 'veterinario'
+  providerType = 'cuidador', // Puede ser 'cuidador', 'paseador' o 'veterinario'
+  misConexiones = false, 
+  onChat,
+  onPago,
 }) => {
   // Todos los hooks deben declararse antes de cualquier return condicional
   const scrollViewRef = useRef(null);
@@ -42,6 +47,8 @@ const PrestadorServiciosDetails = ({
   // Deben definirse antes del return condicional
   const handleResenas = () => onResenas?.(provider);
   const handleConectar = () => onConectar?.(provider);
+  const handleChat = () => onChat?.(provider);
+  const handlePago = () => onPago?.(provider);
   
   // Verificamos si hay provider después de declarar todos los hooks y funciones
   if (!provider) return null;
@@ -53,8 +60,7 @@ const PrestadorServiciosDetails = ({
     horario,
     disponibilidad,
     descripcion,
-    email,
-    telefono
+    estado,
   } = provider;
 
   // Props del modal extraídas para mejor legibilidad
@@ -84,7 +90,10 @@ const PrestadorServiciosDetails = ({
         {/* Header con info básica */}
         <View style={styles.header}>
           <View style={styles.headerInfo}>
-            <Text style={styles.nombre}>{nombre}</Text>
+            <View style={styles.nameAndStatusRow}>
+              <Text style={styles.nombre}>{nombre}</Text>
+              {misConexiones && <EstadosChip estado={estado} showIcon={true} iconSize={14} />}
+            </View>
             <View style={styles.ratingContainer}>
               {ratingStars}
             </View>
@@ -133,37 +142,69 @@ const PrestadorServiciosDetails = ({
             <Text style={styles.descripcion}>{descripcion}</Text>
           </SectionContainer>
 
-          {/* Pasos a seguir */}
-          <SectionContainer title="Pasos a seguir:">
-            <StepItem 
-              number="1" 
-              text="Enviá tu solicitud de conexión al prestador." 
-            />
-            <StepItem 
-              number="2" 
-              text="Coordiná el horario y los detalles del servicio a través del chat." 
-            />
-            <StepItem 
-              number="3" 
-              text="Realizá el pago de manera segura desde la app." 
-            />
-            <StepItem 
-              number="4" 
-              text="¡Listo! El servicio se realizará según lo acordado." 
-            />
-          </SectionContainer>
+          {/* Pasos a seguir. Solo mostrar si NO es Mis Conexiones */}
+          {!misConexiones && (
+            <SectionContainer title="Pasos a seguir:">
+              <StepItem 
+                number="1" 
+                text="Enviá tu solicitud de conexión al prestador." 
+              />
+              <StepItem 
+                number="2" 
+                text="Coordiná el horario y los detalles del servicio a través del chat." 
+              />
+              <StepItem 
+                number="3" 
+                text="Realizá el pago de manera segura desde la app." 
+              />
+              <StepItem 
+                number="4" 
+                text="¡Listo! El servicio se realizará según lo acordado." 
+              />
+            </SectionContainer>
+          )}
+
+          {/* Advertencia de pago. Solo mostrar si es Mis Conexiones */}
+          {misConexiones && (
+            <View style={styles.warningContainer}>
+              <View style={styles.warningHeader}>
+                <Text style={styles.warningIcon}>💬</Text>
+                <Text style={styles.warningTitle}>A tener en cuenta:</Text>
+              </View>
+              <View style={styles.warningContent}>
+                <Text style={styles.warningText}>
+                  • Tu pago será procesado con Mercado Pago de manera segura.
+                </Text>
+                <Text style={styles.warningText}>
+                  • Al completar el pago, tu solicitud pasará a estado “Pago confirmado” y el servicio quedará validado.
+                </Text>
+                <Text style={styles.warningText}>
+                  • Si tenés dudas o querés coordinar algo, podés comunicarte con el prestador a través del chat.
+                </Text>
+              </View>
+            </View>
+          )}
         </ScrollView>
 
-        {/* Botones de acción fijos */}
+        {/* Botones de acción */}
         <View style={styles.actionsContainer}>
-          <GuardarCancelarBtn
-            label="Conectar"
-            onPress={handleConectar}
-            variant="primary"
-            showCancel={true}
-            cancelLabel="Reseñas"
-            onCancel={handleResenas}
-          />
+          {misConexiones && (estado === ESTADOS_CONEXION.SOLICITUD_RECHAZADA || estado === ESTADOS_CONEXION.PAGO_CONFIRMADO) ? (
+            <GuardarCancelarBtn
+              label="Chat"
+              onPress={handleChat}
+              variant="primary"
+              showCancel={false}
+            />
+          ) : (
+            <GuardarCancelarBtn
+              label={misConexiones ? "Realizar Pago" : "Conectar"}
+              onPress={misConexiones ? handlePago : handleConectar}
+              variant="primary"
+              showCancel={true}
+              cancelLabel={misConexiones ? "Chat" : "Reseñas"}
+              onCancel={misConexiones ? handleChat : handleResenas}
+            />
+          )}
         </View>
       </View>
     </Modal>

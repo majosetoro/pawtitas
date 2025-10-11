@@ -2,10 +2,11 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../../../shared/styles';
+import EstadosChip from '../EstadosChip';
 import { styles } from './PrestadorServiciosCard.styles';
 
 // Componente reutilizable para mostrar una tarjeta de prestador de servicio (cuidador, paseador o veterinario)
-const PrestadorServiciosCard = ({ provider, onPress, providerType }) => {
+const PrestadorServiciosCard = ({ provider, onPress, providerType, misConexiones = false }) => {
   const { 
     id,
     nombre, 
@@ -15,6 +16,7 @@ const PrestadorServiciosCard = ({ provider, onPress, providerType }) => {
     ubicacion,
     disponibilidad,
     horario,
+    estado,
   } = provider;
   
   // Renderizar estrellas de calificación
@@ -47,7 +49,10 @@ const PrestadorServiciosCard = ({ provider, onPress, providerType }) => {
           <View style={styles.userInfo}>
             
             <View style={styles.nameContainer}>
-              <Text style={styles.nombre}>{nombre}</Text>
+              <View style={styles.nameAndStatusRow}>
+                <Text style={styles.nombre}>{nombre}</Text>
+                {misConexiones && <EstadosChip estado={estado} showIcon={true} iconSize={14} />}
+              </View>
               <View style={styles.ratingContainer}>
                 {renderStars(rating)}
               </View>
