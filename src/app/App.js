@@ -17,6 +17,7 @@ import MisMascotasScreen from "./screens/misMascotas/MisMascotas";
 import PanelAdminScreen from "./screens/panelAdmin";
 import ValidarUsuarioScreen from "./screens/panelAdmin/ValidarUsuario/ValidarUsuario";
 import MisConexionesScreen from "./screens/misConexiones/MisConexiones";
+import ChatScreen from "./screens/chat/Chat";
 // React Navigation
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -126,6 +127,7 @@ export default function App() {
         <Stack.Screen name="PanelAdmin" component={PanelAdminScreen} />
         <Stack.Screen name="ValidarUsuario" component={ValidarUsuarioScreen} />
         <Stack.Screen name="MisConexiones" component={MisConexionesScreen} />
+        <Stack.Screen name="Chat" component={ChatScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
