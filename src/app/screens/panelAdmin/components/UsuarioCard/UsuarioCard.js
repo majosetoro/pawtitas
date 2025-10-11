@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../../../../../shared/styles';
+import { ESTADOS_USUARIO, ESTADOS_USUARIO_CONFIG } from '../../../../constants/estadosUsuario';
 import { styles } from './UsuarioCard.styles';
 
 // Componente para mostrar una tarjeta de usuario individual en el panel de administrador
@@ -42,16 +43,21 @@ const UsuarioCard = ({ user, onPress, onStatusChange }) => {
 
   // Obtener el color del estado
   const getStatusColor = (estado) => {
-    switch (estado.toLowerCase()) {
-      case 'activado':
+    switch (estado) {
+      case ESTADOS_USUARIO.ACTIVADO:
         return colors.success;
-      case 'pendiente':
+      case ESTADOS_USUARIO.PENDIENTE:
         return colors.warning;
-      case 'desactivado':
+      case ESTADOS_USUARIO.DESACTIVADO:
         return colors.error;
       default:
         return colors.text.secondary;
     }
+  };
+
+  // Obtener el label del estado
+  const getStatusLabel = (estado) => {
+    return ESTADOS_USUARIO_CONFIG[estado]?.label || estado;
   };
 
   // Formatear fecha de registro
@@ -107,7 +113,7 @@ const UsuarioCard = ({ user, onPress, onStatusChange }) => {
             
             <View style={styles.statusContainer}>
               <Text style={[styles.statusText,{ color: getStatusColor(estado) }]}>
-                {estado}
+                {getStatusLabel(estado)}
               </Text>
             </View>
           </View>

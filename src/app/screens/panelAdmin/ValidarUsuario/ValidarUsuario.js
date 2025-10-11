@@ -9,6 +9,7 @@ import Modal from 'react-native-modal';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from './ValidarUsuario.styles';
 import { colors } from '../../../../shared/styles';
+import { ESTADOS_USUARIO, ESTADOS_USUARIO_CONFIG } from '../../../constants/estadosUsuario';
 import GuardarCancelarBtn from '../../../components/buttons/GuardarCancelarBtn';
 
 const ValidarUsuario = ({ 
@@ -28,18 +29,18 @@ const ValidarUsuario = ({
       text: styles.statusText
     };
     
-    switch (estado.toLowerCase()) {
-      case 'activado':
+    switch (estado) {
+      case ESTADOS_USUARIO.ACTIVADO:
         return {
           badge: styles.activeStatus,
           text: styles.activeStatusText
         };
-      case 'pendiente':
+      case ESTADOS_USUARIO.PENDIENTE:
         return {
           badge: styles.pendingStatus,
           text: styles.pendingStatusText
         };
-      case 'desactivado':
+      case ESTADOS_USUARIO.DESACTIVADO:
         return {
           badge: styles.inactiveStatus,
           text: styles.inactiveStatusText
@@ -50,6 +51,11 @@ const ValidarUsuario = ({
           text: styles.statusText
         };
     }
+  };
+
+  // Obtener el label del estado
+  const getStatusLabel = (estado) => {
+    return ESTADOS_USUARIO_CONFIG[estado]?.label || estado;
   };
 
   // Formatear fecha
@@ -128,7 +134,7 @@ const ValidarUsuario = ({
               <Text style={styles.label}>Estado:</Text>
               <View style={[styles.statusBadge, statusStyle?.badge]}>
                 <Text style={[styles.statusText, statusStyle?.text]}>
-                  {usuario.estado || 'No disponible'}
+                  {getStatusLabel(usuario.estado) || 'No disponible'}
                 </Text>
               </View>
             </View>
@@ -181,14 +187,14 @@ const ValidarUsuario = ({
 
           {/* Botones de acción */}
           <View style={styles.buttonContainer}>            
-            {usuario.estado?.toLowerCase() !== 'desactivado' && (
+            {usuario.estado !== ESTADOS_USUARIO.DESACTIVADO && (
               <GuardarCancelarBtn 
                 label="Desactivar"
                 onPress={onDeactivate}
                 variant="secondary"
               />
             )}
-            {usuario.estado?.toLowerCase() !== 'activado' && (
+            {usuario.estado !== ESTADOS_USUARIO.ACTIVADO && (
               <GuardarCancelarBtn 
                 label="Activar"
                 onPress={onActivate}

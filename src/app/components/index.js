@@ -7,6 +7,7 @@ export { default as PerfilHeader } from './PerfilHeader';
 export { default as FloatingAddBtn } from './buttons/FloatingAddBtn';
 export { default as BarraBuscador } from './BarraBuscador';
 export { default as Filtros } from './Filtros';
+export { default as EstadosChip } from './EstadosChip';
 
 // Componentes reutilizables para pantallas de prestadores de servicios
 export { default as PrestadorServiciosCard } from './PrestadorServiciosCard';

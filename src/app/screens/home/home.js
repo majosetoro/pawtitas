@@ -140,6 +140,7 @@ const HomeScreen = () => {
       emoji: "👥",
       title: "Mis conexiones",
       description: "Tu red de confianza en un solo lugar",
+      onPress: () => navigation.navigate("MisConexiones"),
     },
 
     // Al implementar el sistema de roles, este botón debe estar visible únicamente para el rol admin.

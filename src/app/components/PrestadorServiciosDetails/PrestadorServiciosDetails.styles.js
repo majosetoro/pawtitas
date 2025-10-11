@@ -35,11 +35,17 @@ export const styles = StyleSheet.create({
   headerInfo: {
     flex: 1,
   },
+  nameAndStatusRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 4,
+  },
   nombre: {
     ...typography.styles.h3,
     fontSize: 20,
     color: colors.text.primary,
-    marginBottom: 4,
   },
   ratingContainer: {
     flexDirection: 'row',
@@ -129,6 +135,38 @@ export const styles = StyleSheet.create({
     ...typography.styles.body,
     color: colors.text.secondary,
     flex: 1,
+    lineHeight: 20,
+  },
+  // Warning section
+  warningContainer: {
+    backgroundColor: colors.surfaceVariant,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 24,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.primaryDark,
+  },
+  warningHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  warningIcon: {
+    fontSize: 20,
+    marginRight: 8,
+  },
+  warningTitle: {
+    ...typography.styles.bodyBold,
+    fontSize: 15,
+    color: colors.text.primary,
+  },
+  warningContent: {
+    gap: 8,
+  },
+  warningText: {
+    ...typography.styles.body,
+    fontSize: 14,
+    color: colors.text.secondary,
     lineHeight: 20,
   },
   // Botones fijos
