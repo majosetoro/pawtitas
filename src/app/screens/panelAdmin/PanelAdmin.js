@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { ScreenHeader, BottomNavbar, BarraBuscador, Filtros } from '../../components';
 import { UsuarioCard, EstadisticasCard } from './components';
+import { ESTADOS_USUARIO } from '../../constants/estadosUsuario';
 import { styles } from './PanelAdmin.styles';
 import ValidarUsuario from './ValidarUsuario';
 
@@ -27,7 +28,7 @@ const PanelAdmin = () => {
       nombre: 'Elisa Ying',
       email: 'elisa.ying@email.com',
       perfil: 'Cuidador',
-      estado: 'Activado',
+      estado: ESTADOS_USUARIO.ACTIVADO,
       fechaRegistro: '2025-06-17',
       descripcion: 'Cuidadora profesional con 5 años de experiencia en cuidado de mascotas.'
     },
@@ -36,7 +37,7 @@ const PanelAdmin = () => {
       nombre: 'Pedro Gómez',
       email: 'pedro.gomez@email.com',
       perfil: 'Veterinario',
-      estado: 'Pendiente',
+      estado: ESTADOS_USUARIO.PENDIENTE,
       fechaRegistro: '2025-06-17',
       descripcion: 'Veterinario profesional con 10 años de experiencia en cuidado de mascotas.'
     },
@@ -45,7 +46,7 @@ const PanelAdmin = () => {
       nombre: 'María Rodríguez',
       email: 'maria.rodriguez@email.com',
       perfil: 'Paseador',
-      estado: 'Activado',
+      estado: ESTADOS_USUARIO.ACTIVADO,
       fechaRegistro: '2025-06-15',
       descripcion: 'Paseador profesional con 5 años de experiencia en cuidado de mascotas.'
     }
@@ -53,9 +54,9 @@ const PanelAdmin = () => {
 
   // Calcular estadísticas
   const statistics = useMemo(() => {
-    const activados = users.filter(user => user.estado === 'Activado').length;
-    const pendientes = users.filter(user => user.estado === 'Pendiente').length;
-    const desactivados = users.filter(user => user.estado === 'Desactivado').length;
+    const activados = users.filter(user => user.estado === ESTADOS_USUARIO.ACTIVADO).length;
+    const pendientes = users.filter(user => user.estado === ESTADOS_USUARIO.PENDIENTE).length;
+    const desactivados = users.filter(user => user.estado === ESTADOS_USUARIO.DESACTIVADO).length;
     const total = users.length;
 
     return { activados, pendientes, desactivados, total };
@@ -108,13 +109,13 @@ const PanelAdmin = () => {
     setUsers(prevUsers => 
       prevUsers.map(user => 
         user.id === selectedUser.id 
-          ? { ...user, estado: 'Activado' } 
+          ? { ...user, estado: ESTADOS_USUARIO.ACTIVADO } 
           : user
       )
     );
     
     // Actualizar el usuario seleccionado
-    setSelectedUser(prev => ({ ...prev, estado: 'Activado' }));
+    setSelectedUser(prev => ({ ...prev, estado: ESTADOS_USUARIO.ACTIVADO }));
   };
   
   // Desactivar usuario
@@ -124,13 +125,13 @@ const PanelAdmin = () => {
     setUsers(prevUsers => 
       prevUsers.map(user => 
         user.id === selectedUser.id 
-          ? { ...user, estado: 'Desactivado' } 
+          ? { ...user, estado: ESTADOS_USUARIO.DESACTIVADO } 
           : user
       )
     );
     
     // Actualizar el usuario seleccionado
-    setSelectedUser(prev => ({ ...prev, estado: 'Desactivado' }));
+    setSelectedUser(prev => ({ ...prev, estado: ESTADOS_USUARIO.DESACTIVADO }));
   };
 
   // Manejar búsqueda
