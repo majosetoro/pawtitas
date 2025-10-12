@@ -3,13 +3,21 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, Image, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useFonts } from "expo-font";
 import { colors, typography } from "../shared/styles";
-import SplashScreen from "./splash";
-import BienvenidaScreen from "./bienvenida";
-import RegistroScreen from "./registro";
+import SplashScreen from "./screens/splash/splash";
+import BienvenidaScreen from "./screens/bienvenida/bienvenida";
+import RegistroScreen from "./screens/registro/registro";
 import InicioScreen from "./screens/inicio/inicio";
 import HomeScreen from "./screens/home/home";
+import CuidadoresScreen from "./screens/cuidadores/Cuidadores";
+import PaseadoresScreen from "./screens/paseadores/Paseadores";
+import SaludScreen from "./screens/salud/Salud";
+import PerfilScreen from "./screens/perfil/perfil";
 import EditarPerfil from "./screens/perfil/editarPerfil/editarPerfil";
-
+import MisMascotasScreen from "./screens/misMascotas/MisMascotas";
+import PanelAdminScreen from "./screens/panelAdmin";
+import ValidarUsuarioScreen from "./screens/panelAdmin/ValidarUsuario/ValidarUsuario";
+import MisConexionesScreen from "./screens/misConexiones/MisConexiones";
+import ChatScreen from "./screens/chat/Chat";
 // React Navigation
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -110,7 +118,16 @@ export default function App() {
         <Stack.Screen name="Registro" component={RegistroScreen} />
         <Stack.Screen name="Inicio" component={InicioScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Cuidadores" component={CuidadoresScreen} />
+        <Stack.Screen name="Paseadores" component={PaseadoresScreen} />
+        <Stack.Screen name="Salud" component={SaludScreen} />
+        <Stack.Screen name="Perfil" component={PerfilScreen} />
         <Stack.Screen name="EditarPerfil" component={EditarPerfil} />
+        <Stack.Screen name="MisMascotas" component={MisMascotasScreen} />
+        <Stack.Screen name="PanelAdmin" component={PanelAdminScreen} />
+        <Stack.Screen name="ValidarUsuario" component={ValidarUsuarioScreen} />
+        <Stack.Screen name="MisConexiones" component={MisConexionesScreen} />
+        <Stack.Screen name="Chat" component={ChatScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

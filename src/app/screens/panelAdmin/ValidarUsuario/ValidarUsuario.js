@@ -5,7 +5,11 @@ import {
   TouchableOpacity, 
   ScrollView,
 } from 'react-native';
+<<<<<<< HEAD
 import { Modal } from 'react-native';
+=======
+import Modal from 'react-native-modal';
+>>>>>>> 01e83ea68fe5f0d2bb00f63bb6720126f16ba875
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from './ValidarUsuario.styles';
 import { colors } from '../../../../shared/styles';

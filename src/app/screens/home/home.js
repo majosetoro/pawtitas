@@ -1,4 +1,3 @@
-//import { useNavigation } from '@react-navigation/native';
 import { styles } from './home.styles';
 import BottomNavbar from '../../components/BottomNavbar';
 import iconImage from '../../assets/icon.png';
@@ -118,24 +117,39 @@ const HomeScreen = () => {
       emoji: "🏠",
       title: "Cuidadores",
       description: "Encontrá el cuidador ideal",
+      onPress: () => navigation.navigate("Cuidadores"),
     },
     {
       id: "2",
       emoji: "🦮",
       title: "Paseadores",
       description: "Caminatas seguras cerca de tu zona",
+      onPress: () => navigation.navigate("Paseadores"),
     },
     {
       id: "3",
       emoji: "🚑",
       title: "Salud y Bienestar",
       description: "Médicos veterinarios y clínicas cercanas",
+      onPress: () => navigation.navigate("Salud"),
     },
+
+    // Al implementar el sistema de roles, este botón debe estar visible para el rol clientes y prestadores de servicios.
     {
       id: "4",
       emoji: "👥",
       title: "Mis conexiones",
       description: "Tu red de confianza en un solo lugar",
+      onPress: () => navigation.navigate("MisConexiones"),
+    },
+
+    // Al implementar el sistema de roles, este botón debe estar visible únicamente para el rol admin.
+    {
+      id: "5",
+      emoji: "👨‍💻",
+      title: "Panel de Administrador",
+      description: "Gestión de usuarios",
+      onPress: () => navigation.navigate("PanelAdmin"),
     },
   ];
 

@@ -51,7 +51,7 @@ export default function PetOwnerProfileForm({ formData, handleInputChange, error
         label="Ubicación"
         value={formData.ubicacion}
         onChangeText={(value) => handleInputChange("ubicacion", value)}
-        placeholder="Dirección de domicilio"
+        placeholder="Tu dirección o zona"
         error={errors.ubicacion}
       />
     </View>
