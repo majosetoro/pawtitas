@@ -132,7 +132,7 @@ export default function RegistroScreen({ navigation }) {
             onPress={() => pickFile("experienciaFile")}
           >
             <Text style={styles.clipText}>
-              {form.experienciaFile ? `🔗 ${form.experienciaFile.name}` : "Adjuntar experiencia"}
+              {form.experienciaFile ? `📎 ${form.experienciaFile.name}` : "Adjuntar experiencia"}
             </Text>
           </TouchableOpacity>
 
@@ -142,7 +142,7 @@ export default function RegistroScreen({ navigation }) {
             onPress={() => pickFile("certificadosFile")}
           >
             <Text style={styles.clipText}>
-              {form.certificadosFile ? `🔗 ${form.certificadosFile.name}` : "Adjuntar certificados"}
+              {form.certificadosFile ? `📎 ${form.certificadosFile.name}` : "Adjuntar certificados"}
             </Text>
           </TouchableOpacity>
         </>

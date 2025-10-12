@@ -9,11 +9,8 @@ import {
   SafeAreaView,
   StatusBar,
   Image,
-  TouchableOpacity,
-  ActivityIndicator,
+  TouchableOpacity,  
 } from "react-native";
-import app from "../firebase/firebaseConfig";
-import { FirebaseStatus } from "../shared/components";
 import Servicios from "./servicios";
 import Suscripciones from "./suscripciones";
 import Contacto from "./contacto";
