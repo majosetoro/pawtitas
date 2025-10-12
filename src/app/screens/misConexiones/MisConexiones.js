@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { ScreenHeader, BottomNavbar, BarraBuscador, Filtros } from '../../components';
 import PrestadorServiciosCard from '../../components/PrestadorServiciosCard';
 import PrestadorServiciosDetails from '../../components/PrestadorServiciosDetails';
+import { ESTADOS_CONEXION } from '../../constants/estadosConexion';
 import { styles } from './MisConexiones.styles';
 
 // Pantalla de Mis Conexiones
@@ -30,7 +31,7 @@ const MisConexiones = () => {
             disponibilidad: 'Lunes, Miércoles, Jueves',
             horario: 'A convenir',
             tipo: 'cuidador',
-            estado: 'pagoConfirmado'
+            estado: 'confirmado'
         },
         {
             id: '2',
@@ -42,7 +43,7 @@ const MisConexiones = () => {
             disponibilidad: 'Lunes, Miércoles, Jueves',
             horario: 'A convenir',
             tipo: 'paseador',
-            estado: 'pendienteDePago'
+            estado: 'pendiente'
         },
         {
             id: '3',
@@ -54,7 +55,7 @@ const MisConexiones = () => {
             disponibilidad: 'Lunes a Viernes',
             horario: '9:00 - 18:00',
             tipo: 'veterinario',
-            estado: 'pagoConfirmado'
+            estado: 'finalizado'
         },
         {
             id: '4',
@@ -66,7 +67,7 @@ const MisConexiones = () => {
             disponibilidad: 'Martes, Jueves, Viernes',
             horario: '2-4 horas',
             tipo: 'paseador',
-            estado: 'solicitudRechazada'
+            estado: 'rechazado'
         },
     ]);
 
@@ -146,6 +147,20 @@ const MisConexiones = () => {
         // navigation.navigate('Pago', { providerId: provider.id, monto: provider.precio });
     };
 
+    // Manejar finalización de servicio
+    const handleFinalizarServicio = (provider) => {        
+        // Actualizar el estado del servicio a 'finalizado'
+        setProviders(prevProviders => 
+            prevProviders.map(p => 
+                p.id === provider.id 
+                    ? { ...p, estado: ESTADOS_CONEXION.SERVICIO_FINALIZADO }
+                    : p
+            )
+        );
+        
+        handleCloseDetalles();
+    };
+
     // Obtener el tipo de proveedor basado en el tipo
     const getProviderType = (tipo) => {
         switch(tipo) {
@@ -220,6 +235,7 @@ const MisConexiones = () => {
           misConexiones={true}
           onChat={handleChat}
           onPago={handlePago}
+          onFinalizarServicio={handleFinalizarServicio}
         />
 
         {/* Navegación inferior */}
