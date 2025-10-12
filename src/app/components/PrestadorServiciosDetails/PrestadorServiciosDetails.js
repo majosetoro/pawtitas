@@ -5,11 +5,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-<<<<<<< HEAD
 import { Modal } from 'react-native';
-=======
-import Modal from 'react-native-modal';
->>>>>>> 01e83ea68fe5f0d2bb00f63bb6720126f16ba875
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../../../shared/styles';
 import { ESTADOS_CONEXION } from '../../constants/estadosConexion';
@@ -23,18 +19,10 @@ const PrestadorServiciosDetails = ({
   onClose,
   onResenas,
   onConectar,
-<<<<<<< HEAD
   providerType = 'cuidador', // Puede ser 'cuidador', 'paseador' o 'veterinario'
   misConexiones = false, 
   onChat,
   onPago,
-=======
-  providerType = '', // Puede ser 'cuidador', 'paseador' o 'veterinario'
-  misConexiones = false, 
-  onChat,
-  onPago,
-  onFinalizarServicio,
->>>>>>> 01e83ea68fe5f0d2bb00f63bb6720126f16ba875
 }) => {
   // Todos los hooks deben declararse antes de cualquier return condicional
   const scrollViewRef = useRef(null);
@@ -61,10 +49,6 @@ const PrestadorServiciosDetails = ({
   const handleConectar = () => onConectar?.(provider);
   const handleChat = () => onChat?.(provider);
   const handlePago = () => onPago?.(provider);
-<<<<<<< HEAD
-=======
-  const handleFinalizarServicio = () => onFinalizarServicio?.(provider);
->>>>>>> 01e83ea68fe5f0d2bb00f63bb6720126f16ba875
   
   // Verificamos si hay provider después de declarar todos los hooks y funciones
   if (!provider) return null;
@@ -204,27 +188,7 @@ const PrestadorServiciosDetails = ({
 
         {/* Botones de acción */}
         <View style={styles.actionsContainer}>
-<<<<<<< HEAD
           {misConexiones && (estado === ESTADOS_CONEXION.SOLICITUD_RECHAZADA || estado === ESTADOS_CONEXION.PAGO_CONFIRMADO) ? (
-=======
-          {misConexiones && estado === ESTADOS_CONEXION.SERVICIO_FINALIZADO ? (
-            <GuardarCancelarBtn
-              label="Chat"
-              onPress={handleChat}
-              variant="primary"
-              showCancel={false}
-            />
-          ) : misConexiones && estado === ESTADOS_CONEXION.PAGO_CONFIRMADO ? (
-            <GuardarCancelarBtn
-              label="Finalizar Servicio"
-              onPress={handleFinalizarServicio}
-              variant="primary"
-              showCancel={true}
-              cancelLabel="Chat"
-              onCancel={handleChat}
-            />
-          ) : misConexiones && estado === ESTADOS_CONEXION.SOLICITUD_RECHAZADA ? (
->>>>>>> 01e83ea68fe5f0d2bb00f63bb6720126f16ba875
             <GuardarCancelarBtn
               label="Chat"
               onPress={handleChat}
