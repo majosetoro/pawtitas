@@ -39,6 +39,13 @@ const EstadosChip = ({
           icon: ESTADOS_CONEXION_CONFIG[ESTADOS_CONEXION.SOLICITUD_RECHAZADA].icon,
           label: ESTADOS_CONEXION_CONFIG[ESTADOS_CONEXION.SOLICITUD_RECHAZADA].label
         };
+      case ESTADOS_CONEXION.SERVICIO_FINALIZADO:
+        return {
+          backgroundColor: colors.success + '20',
+          color: colors.success,
+          icon: ESTADOS_CONEXION_CONFIG[ESTADOS_CONEXION.SERVICIO_FINALIZADO].icon,
+          label: ESTADOS_CONEXION_CONFIG[ESTADOS_CONEXION.SERVICIO_FINALIZADO].label
+        };
       default:
         return {
           backgroundColor: colors.text.disabled + '20',
