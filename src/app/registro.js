@@ -8,6 +8,7 @@ import {
   ScrollView,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
+import * as DocumentPicker from 'expo-document-picker';
 
 export default function RegistroScreen({ navigation }) {
   const [perfil, setPerfil] = useState(""); // dueño o prestador
@@ -20,9 +21,25 @@ export default function RegistroScreen({ navigation }) {
     telefono: "",
     ubicacion: "",
     documento: "",
-    experiencia: "",
-    certificados: "",
+    experienciaFile: null,
+    certificadosFile: null,
   });
+
+  // Función para seleccionar documento
+  const pickFile = async (field) => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: "*/*",
+        copyToCacheDirectory: true,
+      });
+
+      if (result.type === "success") {
+        setForm({ ...form, [field]: result });
+      }
+    } catch (error) {
+      console.log("Error al seleccionar archivo:", error);
+    }
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -109,25 +126,25 @@ export default function RegistroScreen({ navigation }) {
             />
           </Picker>
 
-          {/* Experiencia como textarea */}
-          <TextInput
-            placeholder="Experiencia"
-            style={[styles.input, styles.textArea]}
-            multiline
-            numberOfLines={4}
-            value={form.experiencia}
-            onChangeText={(v) => setForm({ ...form, experiencia: v })}
-          />
+          {/* Experiencia - Adjuntar archivo */}
+          <TouchableOpacity
+            style={styles.clipButton}
+            onPress={() => pickFile("experienciaFile")}
+          >
+            <Text style={styles.clipText}>
+              {form.experienciaFile ? `🔗 ${form.experienciaFile.name}` : "Adjuntar experiencia"}
+            </Text>
+          </TouchableOpacity>
 
-          {/* Certificados como textarea */}
-          <TextInput
-            placeholder="Certificados"
-            style={[styles.input, styles.textArea]}
-            multiline
-            numberOfLines={4}
-            value={form.certificados}
-            onChangeText={(v) => setForm({ ...form, certificados: v })}
-          />
+          {/* Certificados - Adjuntar archivo */}
+          <TouchableOpacity
+            style={styles.clipButton}
+            onPress={() => pickFile("certificadosFile")}
+          >
+            <Text style={styles.clipText}>
+              {form.certificadosFile ? `🔗 ${form.certificadosFile.name}` : "Adjuntar certificados"}
+            </Text>
+          </TouchableOpacity>
         </>
       )}
 
@@ -150,7 +167,7 @@ export default function RegistroScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: { flexGrow: 1, backgroundColor: "#fff", padding: 20 },
-  title: { fontSize: 24, fontWeight: "bold", marginBottom: 20 ,marginTop:50},
+  title: { fontSize: 24, fontWeight: "bold", marginBottom: 20, marginTop: 50 },
   input: {
     borderWidth: 1,
     borderColor: "#ccc",
@@ -158,16 +175,24 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 12,
   },
-  textArea: {
-    minHeight: 80,
-    textAlignVertical: "top",
-  },
   subtitle: { fontSize: 16, fontWeight: "600", marginTop: 10, marginBottom: 5 },
   picker: {
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 10,
     marginBottom: 12,
+  },
+  clipButton: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 12,
+    backgroundColor: "#f9f9f9",
+  },
+  clipText: {
+    color: "#333",
+    fontSize: 16,
   },
   buttonRow: {
     flexDirection: "row",
