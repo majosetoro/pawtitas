@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import Modal from 'react-native-modal';
+import Modal from 'react-native-modal'; 
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../../../shared/styles';
 import { ESTADOS_CONEXION } from '../../constants/estadosConexion';
@@ -13,46 +13,41 @@ import GuardarCancelarBtn from '../buttons/GuardarCancelarBtn';
 import EstadosChip from '../EstadosChip';
 import { styles } from './PrestadorServiciosDetails.styles';
 
-const PrestadorServiciosDetails = ({ 
-  visible, 
-  provider, 
+const PrestadorServiciosDetails = ({
+  visible,
+  provider,
   onClose,
   onResenas,
   onConectar,
-  providerType = '', // Puede ser 'cuidador', 'paseador' o 'veterinario'
-  misConexiones = false, 
+  providerType = 'cuidador', // cuidador, paseador o veterinario
+  misConexiones = false,
   onChat,
   onPago,
   onFinalizarServicio,
 }) => {
-  // Todos los hooks deben declararse antes de cualquier return condicional
   const scrollViewRef = useRef(null);
-  
-  // Extraer rating para useMemo
   const rating = provider?.rating || 0;
-  
-  // Renderizar estrellas de calificación usando useMemo
+
+  // Estrellas de calificación
   const ratingStars = useMemo(() => {
     const maxStars = 5;
     return Array.from({ length: maxStars }, (_, i) => (
       <Ionicons
         key={i + 1}
-        name={(i + 1) <= rating ? "star" : "star-outline"}
+        name={i + 1 <= rating ? 'star' : 'star-outline'}
         size={16}
-        color={(i + 1) <= rating ? colors.warning : colors.border.medium}
+        color={i + 1 <= rating ? colors.warning : colors.border.medium}
       />
     ));
   }, [rating]);
-  
-  // Handlers usando operador de coalescencia nula
-  // Deben definirse antes del return condicional
+
+  // Handlers
   const handleResenas = () => onResenas?.(provider);
   const handleConectar = () => onConectar?.(provider);
   const handleChat = () => onChat?.(provider);
   const handlePago = () => onPago?.(provider);
   const handleFinalizarServicio = () => onFinalizarServicio?.(provider);
-  
-  // Verificamos si hay provider después de declarar todos los hooks y funciones
+
   if (!provider) return null;
 
   const {
@@ -65,7 +60,6 @@ const PrestadorServiciosDetails = ({
     estado,
   } = provider;
 
-  // Props del modal extraídas para mejor legibilidad
   const modalProps = {
     isVisible: visible,
     onBackdropPress: onClose,
@@ -74,35 +68,37 @@ const PrestadorServiciosDetails = ({
     swipeDirection: ['down'],
     style: styles.modalContainer,
     propagateSwipe: true,
-    scrollTo: (reactNode) => scrollViewRef.current?.scrollTo(reactNode),
-    backdropTransitionOutTiming: 0,
     useNativeDriverForBackdrop: true,
-    avoidKeyboard: true
+    avoidKeyboard: true,
   };
 
-  // Texto que cambia según el tipo de proveedor
-  const providerTypeText = providerType === 'cuidador' ? 'cuidador' : providerType === 'paseador' ? 'paseador' : 'veterinario';
+  const providerTypeText =
+    providerType === 'cuidador'
+      ? 'cuidador'
+      : providerType === 'paseador'
+      ? 'paseador'
+      : 'veterinario';
 
   return (
     <Modal {...modalProps}>
       <View style={styles.contentContainer}>
-        {/* Handle para arrastrar componente */}
+        {/* Handle para arrastrar */}
         <View style={styles.handle} />
-        
-        {/* Header con info básica */}
+
+        {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerInfo}>
             <View style={styles.nameAndStatusRow}>
               <Text style={styles.nombre}>{nombre}</Text>
-              {misConexiones && <EstadosChip estado={estado} showIcon={true} iconSize={14} />}
+              {misConexiones && (
+                <EstadosChip estado={estado} showIcon={true} iconSize={14} />
+              )}
             </View>
-            <View style={styles.ratingContainer}>
-              {ratingStars}
-            </View>
+            <View style={styles.ratingContainer}>{ratingStars}</View>
             <Text style={styles.ubicacion}>{ubicacion}</Text>
           </View>
-          
-          <TouchableOpacity 
+
+          <TouchableOpacity
             style={styles.closeButton}
             onPress={onClose}
             activeOpacity={0.7}
@@ -111,62 +107,36 @@ const PrestadorServiciosDetails = ({
           </TouchableOpacity>
         </View>
 
-        {/* Contenido Scrolleable */}
-        <ScrollView 
+        {/* Contenido Scroll */}
+        <ScrollView
           ref={scrollViewRef}
           style={styles.scrollContainer}
           contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={true}
-          bounces={true}
+          showsVerticalScrollIndicator
+          bounces
           keyboardShouldPersistTaps="handled"
-          nestedScrollEnabled={true}
-          persistentScrollbar={true}
+          nestedScrollEnabled
+          persistentScrollbar
         >
-
-          {/* Precio y horarios */}
           <SectionContainer title="Precio y horarios">
-            <ContactItem 
-              iconName="cash-outline" 
-              text={precio} 
-            />
-            <ContactItem 
-              iconName="time-outline" 
-              text={horario} 
-            />
-            <ContactItem 
-              iconName="calendar-outline" 
-              text={disponibilidad} 
-            />
+            <ContactItem iconName="cash-outline" text={precio} />
+            <ContactItem iconName="time-outline" text={horario} />
+            <ContactItem iconName="calendar-outline" text={disponibilidad} />
           </SectionContainer>
 
-          {/* Descripción */}
           <SectionContainer title={`Sobre el ${providerTypeText}`}>
             <Text style={styles.descripcion}>{descripcion}</Text>
           </SectionContainer>
 
-          {/* Pasos a seguir. Solo mostrar si NO es Mis Conexiones */}
           {!misConexiones && (
             <SectionContainer title="Pasos a seguir:">
-              <StepItem 
-                number="1" 
-                text="Enviá tu solicitud de conexión al prestador." 
-              />
-              <StepItem 
-                number="2" 
-                text="Coordiná el horario y los detalles del servicio a través del chat." 
-              />
-              <StepItem 
-                number="3" 
-                text="Realizá el pago de manera segura desde la app." 
-              />
-              <StepItem 
-                number="4" 
-                text="¡Listo! El servicio se realizará según lo acordado." 
-              />
+              <StepItem number="1" text="Enviá tu solicitud de conexión al prestador." />
+              <StepItem number="2" text="Coordiná horario y detalles por el chat." />
+              <StepItem number="3" text="Realizá el pago de manera segura." />
+              <StepItem number="4" text="¡Listo! Servicio confirmado." />
             </SectionContainer>
           )}
 
-          {/* Advertencia de pago. Solo mostrar si es Mis Conexiones */}
           {misConexiones && (
             <View style={styles.warningContainer}>
               <View style={styles.warningHeader}>
@@ -175,13 +145,13 @@ const PrestadorServiciosDetails = ({
               </View>
               <View style={styles.warningContent}>
                 <Text style={styles.warningText}>
-                  • Tu pago será procesado con Mercado Pago de manera segura.
+                  • Tu pago será procesado con Mercado Pago.
                 </Text>
                 <Text style={styles.warningText}>
-                  • Al completar el pago, tu solicitud pasará a estado “Pago confirmado” y el servicio quedará validado.
+                  • Al completar el pago, tu solicitud pasará a “Pago confirmado”.
                 </Text>
                 <Text style={styles.warningText}>
-                  • Si tenés dudas o querés coordinar algo, podés comunicarte con el prestador a través del chat.
+                  • Podés coordinar detalles a través del chat.
                 </Text>
               </View>
             </View>
@@ -215,11 +185,11 @@ const PrestadorServiciosDetails = ({
             />
           ) : (
             <GuardarCancelarBtn
-              label={misConexiones ? "Realizar Pago" : "Conectar"}
+              label={misConexiones ? 'Realizar Pago' : 'Conectar'}
               onPress={misConexiones ? handlePago : handleConectar}
               variant="primary"
               showCancel={true}
-              cancelLabel={misConexiones ? "Chat" : "Reseñas"}
+              cancelLabel={misConexiones ? 'Chat' : 'Reseñas'}
               onCancel={misConexiones ? handleChat : handleResenas}
             />
           )}
