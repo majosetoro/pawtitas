@@ -5,7 +5,11 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import Modal from 'react-native-modal'; // ✅ CORRECTO
+<<<<<<< HEAD
+import { Modal } from 'react-native';
+=======
+import Modal from 'react-native-modal';
+>>>>>>> 01e83ea68fe5f0d2bb00f63bb6720126f16ba875
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../../../shared/styles';
 import { ESTADOS_CONEXION } from '../../constants/estadosConexion';
@@ -13,41 +17,56 @@ import GuardarCancelarBtn from '../buttons/GuardarCancelarBtn';
 import EstadosChip from '../EstadosChip';
 import { styles } from './PrestadorServiciosDetails.styles';
 
-const PrestadorServiciosDetails = ({
-  visible,
-  provider,
+const PrestadorServiciosDetails = ({ 
+  visible, 
+  provider, 
   onClose,
   onResenas,
   onConectar,
-  providerType = 'cuidador', // cuidador, paseador o veterinario
-  misConexiones = false,
+<<<<<<< HEAD
+  providerType = 'cuidador', // Puede ser 'cuidador', 'paseador' o 'veterinario'
+  misConexiones = false, 
+  onChat,
+  onPago,
+=======
+  providerType = '', // Puede ser 'cuidador', 'paseador' o 'veterinario'
+  misConexiones = false, 
   onChat,
   onPago,
   onFinalizarServicio,
+>>>>>>> 01e83ea68fe5f0d2bb00f63bb6720126f16ba875
 }) => {
+  // Todos los hooks deben declararse antes de cualquier return condicional
   const scrollViewRef = useRef(null);
+  
+  // Extraer rating para useMemo
   const rating = provider?.rating || 0;
-
-  // Estrellas de calificación
+  
+  // Renderizar estrellas de calificación usando useMemo
   const ratingStars = useMemo(() => {
     const maxStars = 5;
     return Array.from({ length: maxStars }, (_, i) => (
       <Ionicons
         key={i + 1}
-        name={i + 1 <= rating ? 'star' : 'star-outline'}
+        name={(i + 1) <= rating ? "star" : "star-outline"}
         size={16}
-        color={i + 1 <= rating ? colors.warning : colors.border.medium}
+        color={(i + 1) <= rating ? colors.warning : colors.border.medium}
       />
     ));
   }, [rating]);
-
-  // Handlers
+  
+  // Handlers usando operador de coalescencia nula
+  // Deben definirse antes del return condicional
   const handleResenas = () => onResenas?.(provider);
   const handleConectar = () => onConectar?.(provider);
   const handleChat = () => onChat?.(provider);
   const handlePago = () => onPago?.(provider);
+<<<<<<< HEAD
+=======
   const handleFinalizarServicio = () => onFinalizarServicio?.(provider);
-
+>>>>>>> 01e83ea68fe5f0d2bb00f63bb6720126f16ba875
+  
+  // Verificamos si hay provider después de declarar todos los hooks y funciones
   if (!provider) return null;
 
   const {
@@ -60,6 +79,7 @@ const PrestadorServiciosDetails = ({
     estado,
   } = provider;
 
+  // Props del modal extraídas para mejor legibilidad
   const modalProps = {
     isVisible: visible,
     onBackdropPress: onClose,
@@ -68,37 +88,35 @@ const PrestadorServiciosDetails = ({
     swipeDirection: ['down'],
     style: styles.modalContainer,
     propagateSwipe: true,
+    scrollTo: (reactNode) => scrollViewRef.current?.scrollTo(reactNode),
+    backdropTransitionOutTiming: 0,
     useNativeDriverForBackdrop: true,
-    avoidKeyboard: true,
+    avoidKeyboard: true
   };
 
-  const providerTypeText =
-    providerType === 'cuidador'
-      ? 'cuidador'
-      : providerType === 'paseador'
-      ? 'paseador'
-      : 'veterinario';
+  // Texto que cambia según el tipo de proveedor
+  const providerTypeText = providerType === 'cuidador' ? 'cuidador' : providerType === 'paseador' ? 'paseador' : 'veterinario';
 
   return (
     <Modal {...modalProps}>
       <View style={styles.contentContainer}>
-        {/* Handle para arrastrar */}
+        {/* Handle para arrastrar componente */}
         <View style={styles.handle} />
-
-        {/* Header */}
+        
+        {/* Header con info básica */}
         <View style={styles.header}>
           <View style={styles.headerInfo}>
             <View style={styles.nameAndStatusRow}>
               <Text style={styles.nombre}>{nombre}</Text>
-              {misConexiones && (
-                <EstadosChip estado={estado} showIcon={true} iconSize={14} />
-              )}
+              {misConexiones && <EstadosChip estado={estado} showIcon={true} iconSize={14} />}
             </View>
-            <View style={styles.ratingContainer}>{ratingStars}</View>
+            <View style={styles.ratingContainer}>
+              {ratingStars}
+            </View>
             <Text style={styles.ubicacion}>{ubicacion}</Text>
           </View>
-
-          <TouchableOpacity
+          
+          <TouchableOpacity 
             style={styles.closeButton}
             onPress={onClose}
             activeOpacity={0.7}
@@ -107,36 +125,62 @@ const PrestadorServiciosDetails = ({
           </TouchableOpacity>
         </View>
 
-        {/* Contenido Scroll */}
-        <ScrollView
+        {/* Contenido Scrolleable */}
+        <ScrollView 
           ref={scrollViewRef}
           style={styles.scrollContainer}
           contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator
-          bounces
+          showsVerticalScrollIndicator={true}
+          bounces={true}
           keyboardShouldPersistTaps="handled"
-          nestedScrollEnabled
-          persistentScrollbar
+          nestedScrollEnabled={true}
+          persistentScrollbar={true}
         >
+
+          {/* Precio y horarios */}
           <SectionContainer title="Precio y horarios">
-            <ContactItem iconName="cash-outline" text={precio} />
-            <ContactItem iconName="time-outline" text={horario} />
-            <ContactItem iconName="calendar-outline" text={disponibilidad} />
+            <ContactItem 
+              iconName="cash-outline" 
+              text={precio} 
+            />
+            <ContactItem 
+              iconName="time-outline" 
+              text={horario} 
+            />
+            <ContactItem 
+              iconName="calendar-outline" 
+              text={disponibilidad} 
+            />
           </SectionContainer>
 
+          {/* Descripción */}
           <SectionContainer title={`Sobre el ${providerTypeText}`}>
             <Text style={styles.descripcion}>{descripcion}</Text>
           </SectionContainer>
 
+          {/* Pasos a seguir. Solo mostrar si NO es Mis Conexiones */}
           {!misConexiones && (
             <SectionContainer title="Pasos a seguir:">
-              <StepItem number="1" text="Enviá tu solicitud de conexión al prestador." />
-              <StepItem number="2" text="Coordiná horario y detalles por el chat." />
-              <StepItem number="3" text="Realizá el pago de manera segura." />
-              <StepItem number="4" text="¡Listo! Servicio confirmado." />
+              <StepItem 
+                number="1" 
+                text="Enviá tu solicitud de conexión al prestador." 
+              />
+              <StepItem 
+                number="2" 
+                text="Coordiná el horario y los detalles del servicio a través del chat." 
+              />
+              <StepItem 
+                number="3" 
+                text="Realizá el pago de manera segura desde la app." 
+              />
+              <StepItem 
+                number="4" 
+                text="¡Listo! El servicio se realizará según lo acordado." 
+              />
             </SectionContainer>
           )}
 
+          {/* Advertencia de pago. Solo mostrar si es Mis Conexiones */}
           {misConexiones && (
             <View style={styles.warningContainer}>
               <View style={styles.warningHeader}>
@@ -145,13 +189,13 @@ const PrestadorServiciosDetails = ({
               </View>
               <View style={styles.warningContent}>
                 <Text style={styles.warningText}>
-                  • Tu pago será procesado con Mercado Pago.
+                  • Tu pago será procesado con Mercado Pago de manera segura.
                 </Text>
                 <Text style={styles.warningText}>
-                  • Al completar el pago, tu solicitud pasará a “Pago confirmado”.
+                  • Al completar el pago, tu solicitud pasará a estado “Pago confirmado” y el servicio quedará validado.
                 </Text>
                 <Text style={styles.warningText}>
-                  • Podés coordinar detalles a través del chat.
+                  • Si tenés dudas o querés coordinar algo, podés comunicarte con el prestador a través del chat.
                 </Text>
               </View>
             </View>
@@ -160,6 +204,9 @@ const PrestadorServiciosDetails = ({
 
         {/* Botones de acción */}
         <View style={styles.actionsContainer}>
+<<<<<<< HEAD
+          {misConexiones && (estado === ESTADOS_CONEXION.SOLICITUD_RECHAZADA || estado === ESTADOS_CONEXION.PAGO_CONFIRMADO) ? (
+=======
           {misConexiones && estado === ESTADOS_CONEXION.SERVICIO_FINALIZADO ? (
             <GuardarCancelarBtn
               label="Chat"
@@ -177,6 +224,7 @@ const PrestadorServiciosDetails = ({
               onCancel={handleChat}
             />
           ) : misConexiones && estado === ESTADOS_CONEXION.SOLICITUD_RECHAZADA ? (
+>>>>>>> 01e83ea68fe5f0d2bb00f63bb6720126f16ba875
             <GuardarCancelarBtn
               label="Chat"
               onPress={handleChat}
@@ -185,11 +233,11 @@ const PrestadorServiciosDetails = ({
             />
           ) : (
             <GuardarCancelarBtn
-              label={misConexiones ? 'Realizar Pago' : 'Conectar'}
+              label={misConexiones ? "Realizar Pago" : "Conectar"}
               onPress={misConexiones ? handlePago : handleConectar}
               variant="primary"
               showCancel={true}
-              cancelLabel={misConexiones ? 'Chat' : 'Reseñas'}
+              cancelLabel={misConexiones ? "Chat" : "Reseñas"}
               onCancel={misConexiones ? handleChat : handleResenas}
             />
           )}
