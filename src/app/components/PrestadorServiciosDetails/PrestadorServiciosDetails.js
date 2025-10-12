@@ -19,10 +19,11 @@ const PrestadorServiciosDetails = ({
   onClose,
   onResenas,
   onConectar,
-  providerType = 'cuidador', // Puede ser 'cuidador', 'paseador' o 'veterinario'
+  providerType = '', // Puede ser 'cuidador', 'paseador' o 'veterinario'
   misConexiones = false, 
   onChat,
   onPago,
+  onFinalizarServicio,
 }) => {
   // Todos los hooks deben declararse antes de cualquier return condicional
   const scrollViewRef = useRef(null);
@@ -49,6 +50,7 @@ const PrestadorServiciosDetails = ({
   const handleConectar = () => onConectar?.(provider);
   const handleChat = () => onChat?.(provider);
   const handlePago = () => onPago?.(provider);
+  const handleFinalizarServicio = () => onFinalizarServicio?.(provider);
   
   // Verificamos si hay provider después de declarar todos los hooks y funciones
   if (!provider) return null;
@@ -188,7 +190,23 @@ const PrestadorServiciosDetails = ({
 
         {/* Botones de acción */}
         <View style={styles.actionsContainer}>
-          {misConexiones && (estado === ESTADOS_CONEXION.SOLICITUD_RECHAZADA || estado === ESTADOS_CONEXION.PAGO_CONFIRMADO) ? (
+          {misConexiones && estado === ESTADOS_CONEXION.SERVICIO_FINALIZADO ? (
+            <GuardarCancelarBtn
+              label="Chat"
+              onPress={handleChat}
+              variant="primary"
+              showCancel={false}
+            />
+          ) : misConexiones && estado === ESTADOS_CONEXION.PAGO_CONFIRMADO ? (
+            <GuardarCancelarBtn
+              label="Finalizar Servicio"
+              onPress={handleFinalizarServicio}
+              variant="primary"
+              showCancel={true}
+              cancelLabel="Chat"
+              onCancel={handleChat}
+            />
+          ) : misConexiones && estado === ESTADOS_CONEXION.SOLICITUD_RECHAZADA ? (
             <GuardarCancelarBtn
               label="Chat"
               onPress={handleChat}
