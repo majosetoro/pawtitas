@@ -9,10 +9,11 @@ export { default as BarraBuscador } from './BarraBuscador';
 export { default as Filtros } from './Filtros';
 export { default as EstadosChip } from './EstadosChip';
 
-// Componentes reutilizables para pantallas de prestadores de servicios
+// Componentes reutilizables
 export { default as PrestadorServiciosCard } from './PrestadorServiciosCard';
 export { default as PrestadorServiciosDetails } from './PrestadorServiciosDetails';
 export { default as PrestadorServiciosScreen } from './PrestadorServiciosScreen';
+export { default as ResenaCard } from './ResenaCard';
 
 // Re-exportar componentes de inputs y buttons
 export * from './inputs';
