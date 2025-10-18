@@ -72,7 +72,6 @@ const MisMascotas = () => {
   
   // Guardar los datos de la mascota (creación o edición)
   const handleSaveMascota = (formData) => {
-    // Convertir la edad a número si viene como string
     const edad = formData.edad ? parseInt(formData.edad, 10) : 0;
     
     // Datos procesados para guardar
@@ -81,7 +80,8 @@ const MisMascotas = () => {
       edad,
       edadUnidad: formData.edadUnidad || 'años',
       // Generar condicionEspecial basado en el estado de los checkboxes
-      condicionEspecial: generateCondicionEspecial(formData)
+      condicionEspecial: generateCondicionEspecial(formData),
+      avatarUri: formData.avatarUri || null
     };
     
     if (editingMascota) {
@@ -104,7 +104,7 @@ const MisMascotas = () => {
     } else {
       // Modo creación: añadir nueva mascota
       const newMascota = {
-        id: String(Date.now()), // Generamos un ID temporal
+        id: String(Date.now()),
         ...processedData
       };
       setMascotas([...mascotas, newMascota]);
@@ -180,7 +180,7 @@ const MisMascotas = () => {
     />
   );
 
-  // Renderizar el separador entre mascotas
+  // Separador entre mascotas
   const renderSeparator = () => <View style={styles.separator} />;
 
   return (

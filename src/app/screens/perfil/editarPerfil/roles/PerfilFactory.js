@@ -23,6 +23,7 @@ export default class PerfilFactory {
   // Obtener la configuración inicial del formulario según el rol
   static getInitialFormState(role) {
     const baseFormState = {
+      avatarUri: null,
       nombreApellido: "",
       descripcion: "",
       email: "",

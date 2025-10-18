@@ -14,6 +14,7 @@ export { default as PrestadorServiciosCard } from './PrestadorServiciosCard';
 export { default as PrestadorServiciosDetails } from './PrestadorServiciosDetails';
 export { default as PrestadorServiciosScreen } from './PrestadorServiciosScreen';
 export { default as ResenaCard } from './ResenaCard';
+export { default as AvatarPicker } from './AvatarPicker';
 
 // Re-exportar componentes de inputs y buttons
 export * from './inputs';

@@ -15,6 +15,7 @@ const PerfilScreen = () => {
   // Implementar la llamada a la API. Estos datos son de ejemplo.
   const [userProfile] = useState({
     id: '1',
+    avatarUri: null,
     name: 'María López',
     email: 'maria.lopez@gmail.com',
     phone: '+54 9 11 12345678',

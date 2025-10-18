@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../../../../shared/styles';
 import { styles } from './PerfilInfoCard.styles';
@@ -26,22 +26,36 @@ export const PerfilInfoCard = ({ user, onEdit }) => {
 
   return (
     <View style={styles.card}>
-      {/* Header con nombre, rating y botón editar */}
-      <View style={styles.header}>
-        <View style={styles.nameContainer}>
-          <Text style={styles.userName}>{user.name}</Text>
-          <View style={styles.ratingContainer}>
-            {renderStars(user.rating)}
-          </View>
+      {/* Header con avatar, nombre, rating y botón editar */}
+      <View style={styles.headerWithAvatar}>
+        <View style={styles.avatarContainer}>
+          {user.avatarUri ? (
+            <Image
+              source={{ uri: user.avatarUri }}
+              style={styles.avatarImage}
+              resizeMode="cover"
+            />
+          ) : (
+            <Ionicons name="person" size={24} color={colors.primary} />
+          )}
         </View>
-        <TouchableOpacity 
-          style={styles.editButton}
-          onPress={onEdit}
-          activeOpacity={0.7}
-        >
-          <Ionicons name="pencil-outline" size={16} color={colors.text.secondary} />
-          <Text style={styles.editText}>Editar</Text>
-        </TouchableOpacity>
+        
+        <View style={styles.header}>
+          <View style={styles.nameContainer}>
+            <Text style={styles.userName}>{user.name}</Text>
+            <View style={styles.ratingContainer}>
+              {renderStars(user.rating)}
+            </View>
+          </View>
+          <TouchableOpacity 
+            style={styles.editButton}
+            onPress={onEdit}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="pencil-outline" size={16} color={colors.text.secondary} />
+            <Text style={styles.editText}>Editar</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Descripción del usuario */}

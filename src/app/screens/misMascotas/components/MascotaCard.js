@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TouchableWithoutFeedback } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, typography } from '../../../../shared/styles';
 
@@ -7,16 +7,17 @@ import { colors, typography } from '../../../../shared/styles';
 const MascotaCard = ({ mascota, onPress, onDelete }) => {
   const [showMenu, setShowMenu] = useState(false);
   
-  const { 
+  const {
+    avatarUri,
     nombre, 
     especie, 
     raza, 
     edad, 
     edadUnidad = 'años',
     infoAdicional, 
-    condicionEspecial 
+    condicionEspecial
   } = mascota;
-  
+
   // Formateamos el tipo combinando especie y raza
   const tipo = `${especie}${raza ? ' ' + raza : ''}`;
   
@@ -60,6 +61,18 @@ const MascotaCard = ({ mascota, onPress, onDelete }) => {
       )}
       
       <View style={styles.content}>
+        <View style={styles.avatarContainer}>
+          {avatarUri ? (
+            <Image
+              source={{ uri: avatarUri }}
+              avatarUri={avatarUri}
+              style={styles.avatarImage}
+              resizeMode="cover"
+            />
+          ) : (
+            <Ionicons name="paw" size={20} color={colors.primary} />
+          )}
+        </View>
         <View style={styles.infoContainer}>
           <View style={styles.headerRow}>
             <Text style={styles.nombre}>{nombre}</Text>
@@ -138,6 +151,20 @@ const styles = StyleSheet.create({
   content: {
     padding: 16,
     flexDirection: 'row',
+  },
+  avatarContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.primary + '20',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+    overflow: 'hidden',
+  },
+  avatarImage: {
+    width: 40,
+    height: 40,
   },
   infoContainer: {
     flex: 1,
