@@ -58,8 +58,7 @@ export const styles = StyleSheet.create({
   },
   fecha: {
     ...typography.styles.caption,
-    color: colors.text.tertiary,
+    color: colors.text.secondary,
     fontSize: 12,
-    marginBottom: 8,
   },
 });
