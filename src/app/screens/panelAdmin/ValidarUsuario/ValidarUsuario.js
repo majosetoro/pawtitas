@@ -5,7 +5,7 @@ import {
   TouchableOpacity, 
   ScrollView,
 } from 'react-native';
-import { Modal } from 'react-native';
+import Modal from 'react-native-modal';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from './ValidarUsuario.styles';
 import { colors } from '../../../../shared/styles';
