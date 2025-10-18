@@ -23,6 +23,8 @@ const PrestadorServiciosDetails = ({
   misConexiones = false, 
   onChat,
   onPago,
+  onFinalizarServicio,
+  onAgregarResena,
 }) => {
   // Todos los hooks deben declararse antes de cualquier return condicional
   const scrollViewRef = useRef(null);
@@ -49,6 +51,8 @@ const PrestadorServiciosDetails = ({
   const handleConectar = () => onConectar?.(provider);
   const handleChat = () => onChat?.(provider);
   const handlePago = () => onPago?.(provider);
+  const handleFinalizarServicio = () => onFinalizarServicio?.(provider);
+  const handleAgregarResena = () => onAgregarResena?.(provider);
   
   // Verificamos si hay provider después de declarar todos los hooks y funciones
   if (!provider) return null;
@@ -188,14 +192,26 @@ const PrestadorServiciosDetails = ({
 
         {/* Botones de acción */}
         <View style={styles.actionsContainer}>
-          {misConexiones && (estado === ESTADOS_CONEXION.SOLICITUD_RECHAZADA || estado === ESTADOS_CONEXION.PAGO_CONFIRMADO) ? (
+        {/* Estado confirmado */}
+          {misConexiones && estado === ESTADOS_CONEXION.PAGO_CONFIRMADO ? (
             <GuardarCancelarBtn
-              label="Chat"
-              onPress={handleChat}
+              label="Finalizar servicio"
+              onPress={handleFinalizarServicio}
+              variant="primary"
+              showCancel={true}
+              cancelLabel="Chat"
+              onCancel={handleChat}
+            />
+          // Estado rechazado o finalizado
+          ) : misConexiones && (estado === ESTADOS_CONEXION.SOLICITUD_RECHAZADA || estado === ESTADOS_CONEXION.SERVICIO_FINALIZADO) ? (
+            <GuardarCancelarBtn
+              label="Agregar reseña"
+              onPress={handleAgregarResena}
               variant="primary"
               showCancel={false}
             />
           ) : (
+            // Estado pendiente
             <GuardarCancelarBtn
               label={misConexiones ? "Realizar Pago" : "Conectar"}
               onPress={misConexiones ? handlePago : handleConectar}

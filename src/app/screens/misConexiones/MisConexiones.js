@@ -138,13 +138,21 @@ const MisConexiones = () => {
     // Manejar chat con prestador
     const handleChat = (provider) => {
         handleCloseDetalles();
-        // navigation.navigate('Chat', { providerId: provider.id });
+        navigation.navigate('Chat', { providerId: provider.id });
     };
 
     // Manejar pago
     const handlePago = (provider) => {
+        // Actualizar el estado a "confirmado" después del pago
+        setProviders(prevProviders => 
+            prevProviders.map(p => 
+                p.id === provider.id 
+                    ? { ...p, estado: ESTADOS_CONEXION.PAGO_CONFIRMADO }
+                    : p
+            )
+        );
+        
         handleCloseDetalles();
-        // navigation.navigate('Pago', { providerId: provider.id, monto: provider.precio });
     };
 
     // Manejar finalización de servicio
