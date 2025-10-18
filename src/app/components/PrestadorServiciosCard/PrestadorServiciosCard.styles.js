@@ -26,6 +26,15 @@ export const styles = StyleSheet.create({
     alignItems: 'flex-start',
     flex: 1,
   },
+  avatarContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.primary + '20',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
   nameContainer: {
     flex: 1,
   },

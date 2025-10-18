@@ -32,6 +32,15 @@ export const styles = StyleSheet.create({
     borderBottomColor: colors.border.light,
     backgroundColor: colors.surface,
   },
+  avatarContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: colors.primary + '20',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 16,
+  },
   headerInfo: {
     flex: 1,
   },

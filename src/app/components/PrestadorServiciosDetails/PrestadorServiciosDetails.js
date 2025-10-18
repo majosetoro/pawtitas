@@ -93,6 +93,10 @@ const PrestadorServiciosDetails = ({
         
         {/* Header con info básica */}
         <View style={styles.header}>
+          <View style={styles.avatarContainer}>
+            <Ionicons name="person" size={28} color={colors.primary} />
+          </View>
+          
           <View style={styles.headerInfo}>
             <View style={styles.nameAndStatusRow}>
               <Text style={styles.nombre}>{nombre}</Text>
