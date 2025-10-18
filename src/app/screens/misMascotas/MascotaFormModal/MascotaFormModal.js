@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { CheckboxField } from './CheckboxField';
-import { FloatingMessage, ConfirmacionDialogo } from '../../../components';
+import { FloatingMessage, ConfirmacionDialogo, AvatarPicker } from '../../../components';
 import { styles } from './MascotaFormModal.styles';
 import { colors } from '../../../../shared/styles';
 
@@ -75,6 +75,7 @@ const MEDICAL_CHECKBOXES = [
 
 // Estado inicial del formulario
 const getInitialFormData = (mascotaData = null) => ({
+  avatarUri: mascotaData?.avatarUri || null,
   nombre: mascotaData?.nombre || '',
   edad: mascotaData?.edad ? String(mascotaData.edad) : '',
   edadUnidad: mascotaData?.edadUnidad || FORM_CONFIG.DEFAULT_AGE_UNIT,
@@ -179,6 +180,7 @@ const MascotaFormModal = ({
   // Verificar si el formulario tiene datos
   const hasFormData = useMemo(() => {
     return (
+      formData.avatarUri !== null ||
       formData.nombre.trim() !== '' ||
       formData.edad.trim() !== '' ||
       formData.especie.trim() !== '' ||
@@ -236,7 +238,6 @@ const MascotaFormModal = ({
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.centeredView}
       >
-        {/* Mensaje flotante */}
         <FloatingMessage
           message={message.text}
           type={message.type}
@@ -254,6 +255,13 @@ const MascotaFormModal = ({
               <Ionicons name="close" size={16} color={colors.text.secondary} />
             </TouchableOpacity>
           </View>
+
+          <AvatarPicker
+            iconName="paw"
+            size={64}
+            imageUri={formData.avatarUri}
+            onImageSelected={(image) => handleInputChange('avatarUri', image.uri)}
+          />
 
           <ScrollView 
             style={styles.formContainer}
