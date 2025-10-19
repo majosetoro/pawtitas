@@ -184,10 +184,13 @@ const PrestadorServiciosDetails = ({
                   • Tu pago será procesado con Mercado Pago de manera segura.
                 </Text>
                 <Text style={styles.warningText}>
-                  • Al completar el pago, tu solicitud pasará a estado “Pago confirmado” y el servicio quedará validado.
+                  • Al completar el pago, tu solicitud pasará a estado “Confirmado” y el servicio quedará validado.
                 </Text>
                 <Text style={styles.warningText}>
-                  • Si tenés dudas o querés coordinar algo, podés comunicarte con el prestador a través del chat.
+                  • El pago se libera al prestador únicamente cuando ambas partes (vos y el prestador) marquen el servicio como "Finalizado".
+                </Text>
+                <Text style={styles.warningText}>
+                  • Si tenés dudas o querés coordinar algo, podés comunicarte con el prestador a través del chat cuando el estado esté "Pendiente" o "Confirmado".
                 </Text>
               </View>
             </View>
