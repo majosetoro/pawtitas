@@ -33,7 +33,7 @@ export default function GuardarCancelarBtn({
           style={[buttonStyle, styles.cancelButton]} 
           onPress={onCancel} 
           activeOpacity={0.7}
-          disabled={disabled || loading}
+          disabled={loading}
         >
           <Text style={[textStyle, styles.cancelText]}>{cancelLabel}</Text>
         </TouchableOpacity>
