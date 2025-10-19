@@ -1,2 +1,1 @@
-// Aquí se exportarán los controladores de la aplicación
-// El controlador se encarga de manejar la lógica de la app
+export { ResenaController, FORM_CONFIG, VALIDATION_RULES } from './ResenaController';
