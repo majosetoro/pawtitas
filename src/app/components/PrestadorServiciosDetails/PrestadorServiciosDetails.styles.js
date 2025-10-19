@@ -12,7 +12,7 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    height: screenHeight * 0.85,
+    flex: 1,
     maxHeight: screenHeight * 0.85,
   },  
   handle: {

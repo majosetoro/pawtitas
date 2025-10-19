@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -8,10 +8,10 @@ import {
 import Modal from 'react-native-modal';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../../../shared/styles';
-import { ESTADOS_CONEXION } from '../../constants/estadosConexion';
 import GuardarCancelarBtn from '../buttons/GuardarCancelarBtn';
 import EstadosChip from '../EstadosChip';
 import MenuActions from '../MenuActions';
+import { usePrestadorServiciosDetails } from '../../hooks/usePrestadorServiciosDetails';
 import { styles } from './PrestadorServiciosDetails.styles';
 
 const PrestadorServiciosDetails = ({ 
@@ -28,35 +28,37 @@ const PrestadorServiciosDetails = ({
   onAgregarResena,
   onRechazar,
 }) => {
-  // Los hooks deben declararse antes de cualquier return
-  const scrollViewRef = useRef(null);
-  
-  // Extraer rating 
-  const rating = provider?.rating || 0;
-  
-  // Renderizar estrellas de calificación
-  const ratingStars = useMemo(() => {
-    const maxStars = 5;
-    return Array.from({ length: maxStars }, (_, i) => (
-      <Ionicons
-        key={i + 1}
-        name={(i + 1) <= rating ? "star" : "star-outline"}
-        size={16}
-        color={(i + 1) <= rating ? colors.warning : colors.border.medium}
-      />
-    ));
-  }, [rating]);
-  
-  const handleResenas = () => onResenas?.(provider);
-  const handleConectar = () => onConectar?.(provider);
-  const handleChat = () => onChat?.(provider);
-  const handlePago = () => onPago?.(provider);
-  const handleFinalizarServicio = () => onFinalizarServicio?.(provider);
-  const handleAgregarResena = () => onAgregarResena?.(provider);
-  const handleRechazar = () => onRechazar?.(provider);
+  // Hook para obtener toda la lógica
+  const {
+    scrollViewRef,
+    providerInfo,
+    isValidProvider,
+    buttonConfig,
+    ratingStars,
+    modalProps,
+    providerTypeText,
+    sectionConfig,
+    steps,
+    createActionHandlers,
+    getMenuItems
+  } = usePrestadorServiciosDetails(provider, misConexiones, onClose);
 
-  // Verificar si existe provider luego de declarar los hooks y funciones
-  if (!provider) return null;
+  // Acciones
+  const actionHandlers = createActionHandlers({
+    onResenas,
+    onConectar,
+    onChat,
+    onPago,
+    onFinalizarServicio,
+    onAgregarResena,
+    onRechazar
+  });
+
+  // Configuración del menú
+  const menuItems = getMenuItems(actionHandlers);
+
+  // Validar proveedor
+  if (!isValidProvider) return null;
 
   const {
     nombre,
@@ -66,39 +68,10 @@ const PrestadorServiciosDetails = ({
     disponibilidad,
     descripcion,
     estado,
-  } = provider;
-
-  // Menú
-  const menuItems = misConexiones && estado === ESTADOS_CONEXION.PENDIENTE_DE_PAGO ? [
-    {
-      text: 'Rechazar solicitud',
-      icon: 'close-circle-outline',
-      iconColor: colors.error,
-      textStyle: { color: colors.error },
-      onPress: handleRechazar,
-    },
-  ] : [];
-
-  // Props del modal
-  const modalProps = {
-    isVisible: visible,
-    onBackdropPress: onClose,
-    onBackButtonPress: onClose,
-    onSwipeComplete: onClose,
-    swipeDirection: ['down'],
-    style: styles.modalContainer,
-    propagateSwipe: true,
-    scrollTo: (reactNode) => scrollViewRef.current?.scrollTo(reactNode),
-    backdropTransitionOutTiming: 0,
-    useNativeDriverForBackdrop: true,
-    avoidKeyboard: true
-  };
-
-  // Texto que cambia según el tipo de prestador
-  const providerTypeText = providerType === 'cuidador' ? 'cuidador' : providerType === 'paseador' ? 'paseador' : 'veterinario';
+  } = providerInfo;
 
   return (
-    <Modal {...modalProps}>
+    <Modal {...modalProps} style={styles.modalContainer}>
       <View style={styles.contentContainer}>
         {/* Handle para arrastrar componente */}
         <View style={styles.handle} />
@@ -115,7 +88,14 @@ const PrestadorServiciosDetails = ({
               {misConexiones && <EstadosChip estado={estado} showIcon={true} iconSize={14} />}
             </View>
             <View style={styles.ratingContainer}>
-              {ratingStars}
+              {ratingStars.map((star, index) => (
+                <Ionicons
+                  key={star.key}
+                  name={star.filled ? "star" : "star-outline"}
+                  size={16}
+                  color={star.filled ? colors.warning : colors.border.medium}
+                />
+              ))}
             </View>
             <Text style={styles.ubicacion}>{ubicacion}</Text>
           </View>
@@ -166,47 +146,31 @@ const PrestadorServiciosDetails = ({
           </SectionContainer>
 
           {/* Pasos a seguir. Solo mostrar si NO es Mis Conexiones */}
-          {!misConexiones && (
+          {sectionConfig.showSteps && (
             <SectionContainer title="Pasos a seguir:">
-              <StepItem 
-                number="1" 
-                text="Enviá tu solicitud de conexión al prestador." 
-              />
-              <StepItem 
-                number="2" 
-                text="Coordiná el horario y los detalles del servicio a través del chat." 
-              />
-              <StepItem 
-                number="3" 
-                text="Realizá el pago de manera segura desde la app." 
-              />
-              <StepItem 
-                number="4" 
-                text="¡Listo! El servicio se realizará según lo acordado." 
-              />
+              {steps.map((step, index) => (
+                <StepItem 
+                  key={index}
+                  number={step.number} 
+                  text={step.text} 
+                />
+              ))}
             </SectionContainer>
           )}
 
-          {/* Advertencia de pago. Solo mostrar si es Mis Conexiones */}
-          {misConexiones && (
+          {/* Advertencia. Solo mostrar si es Mis Conexiones */}
+          {sectionConfig.showWarning && (
             <View style={styles.warningContainer}>
               <View style={styles.warningHeader}>
-                <Text style={styles.warningIcon}>💬</Text>
-                <Text style={styles.warningTitle}>A tener en cuenta:</Text>
+                <Text style={styles.warningIcon}>{sectionConfig.warningIcon}</Text>
+                <Text style={styles.warningTitle}>{sectionConfig.warningTitle}</Text>
               </View>
               <View style={styles.warningContent}>
-                <Text style={styles.warningText}>
-                  • Tu pago será procesado con Mercado Pago de manera segura.
-                </Text>
-                <Text style={styles.warningText}>
-                  • Al completar el pago, tu solicitud pasará a estado “Confirmado” y el servicio quedará validado.
-                </Text>
-                <Text style={styles.warningText}>
-                  • El pago se libera al prestador únicamente cuando ambas partes (vos y el prestador) marquen el servicio como "Finalizado".
-                </Text>
-                <Text style={styles.warningText}>
-                  • Si tenés dudas o querés coordinar algo, podés comunicarte con el prestador a través del chat cuando el estado esté "Pendiente" o "Confirmado".
-                </Text>
+                {sectionConfig.warningItems.map((item, index) => (
+                  <Text key={index} style={styles.warningText}>
+                    • {item}
+                  </Text>
+                ))}
               </View>
             </View>
           )}
@@ -214,42 +178,21 @@ const PrestadorServiciosDetails = ({
 
         {/* Botones de acción */}
         <View style={styles.actionsContainer}>
-        {/* Estado confirmado */}
-          {misConexiones && estado === ESTADOS_CONEXION.PAGO_CONFIRMADO ? (
-            <GuardarCancelarBtn
-              label="Finalizar servicio"
-              onPress={handleFinalizarServicio}
-              variant="primary"
-              showCancel={true}
-              cancelLabel="Chat"
-              onCancel={handleChat}
-            />
-          // Estado rechazado o finalizado
-          ) : misConexiones && (estado === ESTADOS_CONEXION.SOLICITUD_RECHAZADA || estado === ESTADOS_CONEXION.SERVICIO_FINALIZADO) ? (
-            <GuardarCancelarBtn
-              label="Agregar reseña"
-              onPress={handleAgregarResena}
-              variant="primary"
-              showCancel={false}
-            />
-          ) : (
-            // Estado pendiente
-            <GuardarCancelarBtn
-              label={misConexiones ? "Realizar Pago" : "Conectar"}
-              onPress={misConexiones ? handlePago : handleConectar}
-              variant="primary"
-              showCancel={true}
-              cancelLabel={misConexiones ? "Chat" : "Reseñas"}
-              onCancel={misConexiones ? handleChat : handleResenas}
-            />
-          )}
+          <GuardarCancelarBtn
+            label={buttonConfig.primary.label}
+            onPress={actionHandlers[buttonConfig.primary.action]}
+            variant={buttonConfig.primary.variant}
+            showCancel={buttonConfig.secondary?.showCancel || false}
+            cancelLabel={buttonConfig.secondary?.label}
+            onCancel={buttonConfig.secondary ? actionHandlers[buttonConfig.secondary.action] : undefined}
+          />
         </View>
       </View>
     </Modal>
   );
 };
 
-// Componentes auxiliares
+// Componentes reutilizables
 const SectionContainer = ({ title, children }) => (
   <View style={styles.section}>
     <Text style={styles.sectionTitle}>{title}</Text>
