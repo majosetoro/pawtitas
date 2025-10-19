@@ -1,9 +1,9 @@
 // Configuración del formulario
 export const FORM_CONFIG = {
   FLOATING_MESSAGE_DURATION: 4000,
-  MAX_COMMENT_LENGTH: 500,
-  TEXTAREA_LINES: 5,
-  TEXTAREA_HEIGHT: 120
+  MAX_COMMENT_LENGTH: 255,
+  TEXTAREA_LINES: 4,
+  TEXTAREA_HEIGHT: 80
 };
 
 // Reglas de validación
