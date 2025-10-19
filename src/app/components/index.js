@@ -8,6 +8,7 @@ export { default as FloatingAddBtn } from './buttons/FloatingAddBtn';
 export { default as BarraBuscador } from './BarraBuscador';
 export { default as Filtros } from './Filtros';
 export { default as EstadosChip } from './EstadosChip';
+export { default as MenuActions } from './MenuActions';
 
 // Componentes reutilizables
 export { default as PrestadorServiciosCard } from './PrestadorServiciosCard';
