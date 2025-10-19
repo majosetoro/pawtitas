@@ -2,9 +2,13 @@ import React, { useState, useMemo } from 'react';
 import { ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { ScreenHeader, BottomNavbar, BarraBuscador, Filtros } from '../../components';
-import PrestadorServiciosCard from '../../components/PrestadorServiciosCard';
-import PrestadorServiciosDetails from '../../components/PrestadorServiciosDetails';
+import ScreenHeader from '../../components/ScreenHeader';
+import BottomNavbar from '../../components/BottomNavbar/BottomNavbar';
+import BarraBuscador from '../../components/BarraBuscador/BarraBuscador';
+import Filtros from '../../components/Filtros/Filtros';
+import ResenaFormModal from '../../components/ResenaFormModal/ResenaFormModal';
+import PrestadorServiciosCard from '../../components/PrestadorServiciosCard/PrestadorServiciosCard';
+import PrestadorServiciosDetails from '../../components/PrestadorServiciosDetails/PrestadorServiciosDetails';
 import { ESTADOS_CONEXION } from '../../constants/estadosConexion';
 import { styles } from './MisConexiones.styles';
 
@@ -18,6 +22,7 @@ const MisConexiones = () => {
     const [showFilters, setShowFilters] = useState(false);
     const [selectedProvider, setSelectedProvider] = useState(null);
     const [showDetalles, setShowDetalles] = useState(false);
+    const [showResenaModal, setShowResenaModal] = useState(false);
     
     // Implementar la llamada a la API. Datos de ejemplo.
     const [providers, setProviders] = useState([
@@ -169,7 +174,20 @@ const MisConexiones = () => {
         handleCloseDetalles();
     };
 
-    // Obtener el tipo de proveedor basado en el tipo
+    // Agregar reseña
+    const handleAgregarResena = (provider) => {
+        setSelectedProvider(provider);
+        setShowResenaModal(true);
+        handleCloseDetalles();
+    };
+
+    // Cerrar modal de reseña
+    const handleCloseResenaModal = () => {
+        setShowResenaModal(false);
+        setSelectedProvider(null);
+    };
+    
+    // Obtener el tipo de proveedor
     const getProviderType = (tipo) => {
         switch(tipo) {
             case 'cuidador':
@@ -244,6 +262,14 @@ const MisConexiones = () => {
           onChat={handleChat}
           onPago={handlePago}
           onFinalizarServicio={handleFinalizarServicio}
+          onAgregarResena={handleAgregarResena}
+        />
+
+        <ResenaFormModal
+          visible={showResenaModal}
+          usuario={selectedProvider}
+          tipoUsuario="prestador"
+          onClose={handleCloseResenaModal}
         />
 
         {/* Navegación inferior */}
