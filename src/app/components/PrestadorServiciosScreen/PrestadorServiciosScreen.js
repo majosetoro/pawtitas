@@ -3,10 +3,10 @@ import {
   ScrollView, 
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ScreenHeader } from '../../components';
-import BarraBuscador from '../../components/BarraBuscador/BarraBuscador';
-import Filtros from '../../components/Filtros/Filtros';
-import BottomNavbar from '../../components/BottomNavbar/BottomNavbar';
+import ScreenHeader from '../ScreenHeader';
+import BarraBuscador from '../BarraBuscador/BarraBuscador';
+import Filtros from '../Filtros/Filtros';
+import BottomNavbar from '../BottomNavbar/BottomNavbar';
 import PrestadorServiciosCard from '../PrestadorServiciosCard';
 import PrestadorServiciosDetails from '../PrestadorServiciosDetails';
 import { styles } from './PrestadorServiciosScreen.styles';
