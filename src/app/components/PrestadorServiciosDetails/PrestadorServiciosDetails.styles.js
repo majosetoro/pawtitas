@@ -199,4 +199,9 @@ export const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
 });
