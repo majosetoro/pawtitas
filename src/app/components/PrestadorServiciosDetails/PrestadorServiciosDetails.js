@@ -11,6 +11,7 @@ import { colors } from '../../../shared/styles';
 import { ESTADOS_CONEXION } from '../../constants/estadosConexion';
 import GuardarCancelarBtn from '../buttons/GuardarCancelarBtn';
 import EstadosChip from '../EstadosChip';
+import MenuActions from '../MenuActions';
 import { styles } from './PrestadorServiciosDetails.styles';
 
 const PrestadorServiciosDetails = ({ 
@@ -25,14 +26,15 @@ const PrestadorServiciosDetails = ({
   onPago,
   onFinalizarServicio,
   onAgregarResena,
+  onRechazar,
 }) => {
-  // Todos los hooks deben declararse antes de cualquier return condicional
+  // Los hooks deben declararse antes de cualquier return
   const scrollViewRef = useRef(null);
   
-  // Extraer rating para useMemo
+  // Extraer rating 
   const rating = provider?.rating || 0;
   
-  // Renderizar estrellas de calificación usando useMemo
+  // Renderizar estrellas de calificación
   const ratingStars = useMemo(() => {
     const maxStars = 5;
     return Array.from({ length: maxStars }, (_, i) => (
@@ -45,16 +47,15 @@ const PrestadorServiciosDetails = ({
     ));
   }, [rating]);
   
-  // Handlers usando operador de coalescencia nula
-  // Deben definirse antes del return condicional
   const handleResenas = () => onResenas?.(provider);
   const handleConectar = () => onConectar?.(provider);
   const handleChat = () => onChat?.(provider);
   const handlePago = () => onPago?.(provider);
   const handleFinalizarServicio = () => onFinalizarServicio?.(provider);
   const handleAgregarResena = () => onAgregarResena?.(provider);
-  
-  // Verificamos si hay provider después de declarar todos los hooks y funciones
+  const handleRechazar = () => onRechazar?.(provider);
+
+  // Verificar si existe provider luego de declarar los hooks y funciones
   if (!provider) return null;
 
   const {
@@ -67,7 +68,18 @@ const PrestadorServiciosDetails = ({
     estado,
   } = provider;
 
-  // Props del modal extraídas para mejor legibilidad
+  // Menú
+  const menuItems = misConexiones && estado === ESTADOS_CONEXION.PENDIENTE_DE_PAGO ? [
+    {
+      text: 'Rechazar solicitud',
+      icon: 'close-circle-outline',
+      iconColor: colors.error,
+      textStyle: { color: colors.error },
+      onPress: handleRechazar,
+    },
+  ] : [];
+
+  // Props del modal
   const modalProps = {
     isVisible: visible,
     onBackdropPress: onClose,
@@ -82,7 +94,7 @@ const PrestadorServiciosDetails = ({
     avoidKeyboard: true
   };
 
-  // Texto que cambia según el tipo de proveedor
+  // Texto que cambia según el tipo de prestador
   const providerTypeText = providerType === 'cuidador' ? 'cuidador' : providerType === 'paseador' ? 'paseador' : 'veterinario';
 
   return (
@@ -108,13 +120,16 @@ const PrestadorServiciosDetails = ({
             <Text style={styles.ubicacion}>{ubicacion}</Text>
           </View>
           
-          <TouchableOpacity 
-            style={styles.closeButton}
-            onPress={onClose}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="close" size={24} color={colors.text.secondary} />
-          </TouchableOpacity>
+          <View style={styles.headerActions}>
+            <MenuActions items={menuItems} />
+            <TouchableOpacity 
+              style={styles.closeButton}
+              onPress={onClose}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="close" size={24} color={colors.text.secondary} />
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Contenido Scrolleable */}
