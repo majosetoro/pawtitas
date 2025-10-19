@@ -9,6 +9,8 @@ import Filtros from '../../components/Filtros/Filtros';
 import ResenaFormModal from '../../components/ResenaFormModal/ResenaFormModal';
 import PrestadorServiciosCard from '../../components/PrestadorServiciosCard/PrestadorServiciosCard';
 import PrestadorServiciosDetails from '../../components/PrestadorServiciosDetails/PrestadorServiciosDetails';
+import ConfirmacionDialogo from '../../components/ConfirmacionDialogo';
+import FloatingMessage from '../../components/FloatingMessage';
 import { ESTADOS_CONEXION } from '../../constants/estadosConexion';
 import { styles } from './MisConexiones.styles';
 
@@ -23,6 +25,11 @@ const MisConexiones = () => {
     const [selectedProvider, setSelectedProvider] = useState(null);
     const [showDetalles, setShowDetalles] = useState(false);
     const [showResenaModal, setShowResenaModal] = useState(false);
+    const [showRechazarModal, setShowRechazarModal] = useState(false);
+    
+    // Estados para mensaje flotante
+    const [showFloatingMessage, setShowFloatingMessage] = useState(false);
+    const [floatingMessage, setFloatingMessage] = useState({ type: '', text: '' });
     
     // Implementar la llamada a la API. Datos de ejemplo.
     const [providers, setProviders] = useState([
@@ -181,6 +188,49 @@ const MisConexiones = () => {
         handleCloseDetalles();
     };
 
+    // Manejar rechazo de solicitud
+    const handleRechazar = (provider) => {
+        setSelectedProvider(provider);
+        setShowRechazarModal(true);
+        handleCloseDetalles();
+    };
+
+    // Confirmar rechazo
+    const handleConfirmarRechazo = () => {
+        if (!selectedProvider) return;
+        
+        // Actualizar el estado a "rechazado"
+        setProviders(prevProviders => 
+            prevProviders.map(p => 
+                p.id === selectedProvider.id 
+                    ? { ...p, estado: ESTADOS_CONEXION.SOLICITUD_RECHAZADA }
+                    : p
+            )
+        );
+        
+        // Mostrar mensaje flotante de rechazo
+        setFloatingMessage({ 
+            type: 'success', 
+            text: 'La solicitud ha sido rechazada correctamente' 
+        });
+        setShowFloatingMessage(true);
+        
+        setShowRechazarModal(false);
+        setSelectedProvider(null);
+    };
+
+    // Cancelar rechazo
+    const handleCancelarRechazo = () => {
+        setShowRechazarModal(false);
+        setSelectedProvider(null);
+    };
+
+    // Ocultamiento del mensaje flotante
+    const handleHideFloatingMessage = () => {
+        setShowFloatingMessage(false);
+        setFloatingMessage({ type: '', text: '' });
+    };
+
     // Cerrar modal de reseña
     const handleCloseResenaModal = () => {
         setShowResenaModal(false);
@@ -263,6 +313,7 @@ const MisConexiones = () => {
           onPago={handlePago}
           onFinalizarServicio={handleFinalizarServicio}
           onAgregarResena={handleAgregarResena}
+          onRechazar={handleRechazar}
         />
 
         <ResenaFormModal
@@ -270,6 +321,27 @@ const MisConexiones = () => {
           usuario={selectedProvider}
           tipoUsuario="prestador"
           onClose={handleCloseResenaModal}
+        />
+
+        {/* Modal de confirmación para rechazar */}
+        <ConfirmacionDialogo
+          visible={showRechazarModal}
+          title="Rechazar solicitud"
+          message="¿Estás seguro de que quieres rechazar esta solicitud? Esta acción no se puede deshacer."
+          onConfirm={handleConfirmarRechazo}
+          onCancel={handleCancelarRechazo}
+          confirmText="Rechazar"
+          cancelText="Cancelar"
+          type="danger"
+        />
+
+        {/* Mensaje flotante */}
+        <FloatingMessage
+          visible={showFloatingMessage}
+          message={floatingMessage.text}
+          type={floatingMessage.type}
+          onHide={handleHideFloatingMessage}
+          duration={4000}
         />
 
         {/* Navegación inferior */}
