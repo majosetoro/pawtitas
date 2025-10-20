@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Linking, Image } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
+import iconImage from "../../assets/icon.png";
 
 export default function Footer() {
   return (
@@ -8,7 +9,7 @@ export default function Footer() {
       {/* Logo + nombre */}
       <View style={styles.brand}>
         <Image
-          source="../../assets/icon.png"
+          source={iconImage}
           style={styles.logo}
           resizeMode="contain"
         />
