@@ -35,11 +35,6 @@ import { useFonts } from "expo-font";
 
 export default function LandingApp() {
   const scrollRef = useRef(null);
-  const serviciosRef = useRef(null);
-  const suscripcionesRef = useRef(null);
-  const nosotrosRef = useRef(null);
-  const contactoRef = useRef(null);
-
   const sectionPositions = useRef({});
 
 const onSectionLayout = (key, event) => {
@@ -91,16 +86,16 @@ const scrollToSection = (key) => {
               >
                 <Text style={styles.navItem}>Inicio</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => scrollToSection(serviciosRef)}>
+              <TouchableOpacity onPress={() => scrollToSection("servicios")}>
                 <Text style={styles.navItem}>Servicios</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => scrollToSection(suscripcionesRef)}>
+              <TouchableOpacity onPress={() => scrollToSection("suscripciones")}>
                 <Text style={styles.navItem}>Suscripciones</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => scrollToSection(nosotrosRef)}>
+              <TouchableOpacity onPress={() => scrollToSection("nosotros")}>
                 <Text style={styles.navItem}>Nosotros</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => scrollToSection(contactoRef)}>
+              <TouchableOpacity onPress={() => scrollToSection("contacto")}>
                 <Text style={styles.navItem}>Contacto</Text>
               </TouchableOpacity>
             </View>
