@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   name: {
-    ...typography.styles.subtitle,
+    ...typography.styles.caption,
     fontWeight: "bold",
     color: colors.text.primary,
     textAlign: "center",
