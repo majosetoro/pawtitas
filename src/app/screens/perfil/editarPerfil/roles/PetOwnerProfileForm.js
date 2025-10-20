@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text } from "react-native";
-import { PerfilInputField } from "../../../../components";
+import { PerfilInputField, AvatarPicker } from "../../../../components";
 import { styles } from "../editarPerfil.styles";
 
 // Componente de formulario específico para el rol de dueño de mascota
@@ -8,6 +8,13 @@ export default function PetOwnerProfileForm({ formData, handleInputChange, error
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>Información Personal</Text>
+      
+      <AvatarPicker
+        iconName="person"
+        size={64}
+        imageUri={formData.avatarUri}
+        onImageSelected={(image) => handleInputChange('avatarUri', image.uri)}
+      />
       
       <PerfilInputField
         label="Nombre y Apellido"

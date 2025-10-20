@@ -12,7 +12,7 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    height: screenHeight * 0.85,
+    flex: 1,
     maxHeight: screenHeight * 0.85,
   },  
   handle: {
@@ -31,6 +31,15 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.border.light,
     backgroundColor: colors.surface,
+  },
+  avatarContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: colors.primary + '20',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 16,
   },
   headerInfo: {
     flex: 1,
@@ -189,5 +198,10 @@ export const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 5,
+  },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
 });

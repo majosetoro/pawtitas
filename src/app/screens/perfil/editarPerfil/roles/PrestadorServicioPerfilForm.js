@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, Switch } from "react-native";
-import { PerfilInputField } from "../../../../components";
+import { PerfilInputField, AvatarPicker } from "../../../../components";
 import { styles } from "../editarPerfil.styles";
 import { colors } from "../../../../../shared/styles";
 
@@ -28,6 +28,13 @@ export default function PrestadorServicioPerfilForm({ formData, handleInputChang
     <>
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Información Personal</Text>
+        
+        <AvatarPicker
+          iconName="person"
+          size={64}
+          imageUri={formData.avatarUri}
+          onImageSelected={(image) => handleInputChange('avatarUri', image.uri)}
+        />
         
         <PerfilInputField
           label="Nombre y Apellido"

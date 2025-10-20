@@ -8,11 +8,15 @@ export { default as FloatingAddBtn } from './buttons/FloatingAddBtn';
 export { default as BarraBuscador } from './BarraBuscador';
 export { default as Filtros } from './Filtros';
 export { default as EstadosChip } from './EstadosChip';
+export { default as MenuActions } from './MenuActions';
 
-// Componentes reutilizables para pantallas de prestadores de servicios
+// Componentes reutilizables
 export { default as PrestadorServiciosCard } from './PrestadorServiciosCard';
 export { default as PrestadorServiciosDetails } from './PrestadorServiciosDetails';
 export { default as PrestadorServiciosScreen } from './PrestadorServiciosScreen';
+export { default as ResenaCard } from './ResenaCard';
+export { default as ResenaFormModal } from './ResenaFormModal';
+export { default as AvatarPicker } from './AvatarPicker';
 
 // Re-exportar componentes de inputs y buttons
 export * from './inputs';

@@ -180,6 +180,7 @@ const HomeScreen = () => {
           >
             <Ionicons name="star-outline" size={15} color="#f9d2ec" />
             <Text style={styles.backText}>Mis reseñas</Text>
+            
           </TouchableOpacity>
         </View>
       </ScrollView>

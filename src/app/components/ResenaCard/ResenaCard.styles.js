@@ -10,7 +10,9 @@ export const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
-    marginBottom: 16,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: colors.border.light,
   },
   content: {
     padding: 16,
@@ -30,7 +32,7 @@ export const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: colors.primary + '20',
+    backgroundColor: colors.primary + '20', // 20% opacity
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
@@ -38,55 +40,25 @@ export const styles = StyleSheet.create({
   nameContainer: {
     flex: 1,
   },
-  nameAndStatusRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-    gap: 8,
-    marginBottom: 4,
-  },
-  nombre: {
+  nombreUsuario: {
     ...typography.styles.h3,
-    fontSize: 18,
+    fontSize: 16,
     color: colors.text.primary,
+    marginBottom: 4,
   },
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  descripcion: {
-    ...typography.styles.caption,
+  textoResena: {
+    ...typography.styles.body,
     color: colors.text.secondary,
     lineHeight: 20,
     marginBottom: 12,
   },
-  infoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  precio: {
-    ...typography.styles.bodyBold,
-    fontSize: 16,
-    color: colors.button.primary,
-  },
-  detailsContainer: {
-    gap: 8,
-  },
-  detailItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  detailText: {
+  fecha: {
     ...typography.styles.caption,
     color: colors.text.secondary,
-    marginLeft: 8,
-    flex: 1,
-  },
-  arrowButton: {
-    padding: 4,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
+    fontSize: 12,
   },
 });

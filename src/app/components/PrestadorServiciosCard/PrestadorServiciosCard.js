@@ -47,6 +47,9 @@ const PrestadorServiciosCard = ({ provider, onPress, providerType, misConexiones
       <View style={styles.content}>
         <View style={styles.headerRow}>
           <View style={styles.userInfo}>
+            <View style={styles.avatarContainer}>
+              <Ionicons name="person" size={20} color={colors.primary} />
+            </View>
             
             <View style={styles.nameContainer}>
               <View style={styles.nameAndStatusRow}>

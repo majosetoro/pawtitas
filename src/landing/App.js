@@ -6,12 +6,11 @@ import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
-  StatusBar,
   Image,
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
+import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import Servicios from "./servicios";
 import Suscripciones from "./suscripciones";
 import Contacto from "./contacto";
@@ -36,11 +35,6 @@ import { useFonts } from "expo-font";
 
 export default function LandingApp() {
   const scrollRef = useRef(null);
-  const serviciosRef = useRef(null);
-  const suscripcionesRef = useRef(null);
-  const nosotrosRef = useRef(null);
-  const contactoRef = useRef(null);
-
   const sectionPositions = useRef({});
 
 const onSectionLayout = (key, event) => {
@@ -71,87 +65,91 @@ const scrollToSection = (key) => {
 
   if (!fontsLoaded && !fontError) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={colors.primary} />
-        <Text style={styles.loadingText}>Loading...</Text>
-      </View>
+      <SafeAreaProvider>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.primary} />
+          <Text style={styles.loadingText}>Loading...</Text>
+        </View>
+      </SafeAreaProvider>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView ref={scrollRef} contentContainerStyle={{ flexGrow: 1 }}>
-        {/* Header */}
-        <View style={styles.header}>
-          <View style={styles.navMenu}>
-            <TouchableOpacity
-              onPress={() => scrollRef.current.scrollTo({ y: 0, animated: true })}
-            >
-              <Text style={styles.navItem}>Inicio</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => scrollToSection(serviciosRef)}>
-              <Text style={styles.navItem}>Servicios</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => scrollToSection(suscripcionesRef)}>
-              <Text style={styles.navItem}>Suscripciones</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => scrollToSection(nosotrosRef)}>
-              <Text style={styles.navItem}>Nosotros</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => scrollToSection(contactoRef)}>
-              <Text style={styles.navItem}>Contacto</Text>
-            </TouchableOpacity>
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.container}>
+        <ScrollView ref={scrollRef} contentContainerStyle={{ flexGrow: 1 }}>
+          {/* Header */}
+          <View style={styles.header}>
+            <View style={styles.navMenu}>
+              <TouchableOpacity
+                onPress={() => scrollRef.current.scrollTo({ y: 0, animated: true })}
+              >
+                <Text style={styles.navItem}>Inicio</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => scrollToSection("servicios")}>
+                <Text style={styles.navItem}>Servicios</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => scrollToSection("suscripciones")}>
+                <Text style={styles.navItem}>Suscripciones</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => scrollToSection("nosotros")}>
+                <Text style={styles.navItem}>Nosotros</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => scrollToSection("contacto")}>
+                <Text style={styles.navItem}>Contacto</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
 
-        {/* Logo */}
-        <Text style={styles.logo}>PAWTITAS</Text>
+          {/* Logo */}
+          <Text style={styles.logo}>PAWTITAS</Text>
 
-        {/* Imagen central */}
-        <Image source={Logo} style={styles.heroImage} resizeMode="contain" />
+          {/* Imagen central */}
+          <Image source={Logo} style={styles.heroImage} resizeMode="contain" />
 
-        {/* Hero Section */}
-        <View style={styles.hero}>
-          <Text style={styles.heroTitle}>
-            Cuidados para tu <Text style={styles.highlight}>mascota</Text>
-          </Text>
-          <Text style={styles.heroSubtitle}>
-            Bienvenidos a la App que te ayuda con el cuidado de tu mejor amigo.
-          </Text>
-          <Text style={styles.heroSubtitle}>Disponible en</Text>
+          {/* Hero Section */}
+          <View style={styles.hero}>
+            <Text style={styles.heroTitle}>
+              Cuidados para tu <Text style={styles.highlight}>mascota</Text>
+            </Text>
+            <Text style={styles.heroSubtitle}>
+              Bienvenidos a la App que te ayuda con el cuidado de tu mejor amigo.
+            </Text>
+            <Text style={styles.heroSubtitle}>Disponible en</Text>
 
-          {/* Botones */}
-          <View style={styles.buttonRow}>
-            <TouchableOpacity style={[styles.button, styles.playStore]}>
-              <Text style={styles.buttonText}>Play Store</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.button, styles.appStore]}>
-              <Text style={styles.buttonText}>App Store</Text>
-            </TouchableOpacity>
+            {/* Botones */}
+            <View style={styles.buttonRow}>
+              <TouchableOpacity style={[styles.button, styles.playStore]}>
+                <Text style={styles.buttonText}>Play Store</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.button, styles.appStore]}>
+                <Text style={styles.buttonText}>App Store</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
 
-        {/* Secciones con refs */}
-    <View onLayout={(e) => onSectionLayout("servicios", e)}>
-      <Servicios />
-    </View>
-    <View onLayout={(e) => onSectionLayout("suscripciones", e)}>
-      <Suscripciones />
-    </View>
-    <View onLayout={(e) => onSectionLayout("nosotros", e)}>
-      <Nosotros />
-    </View>
-    <View onLayout={(e) => onSectionLayout("contacto", e)}>
-      <Contacto />
-    </View>
-
+          {/* Secciones con refs */}
+      <View onLayout={(e) => onSectionLayout("servicios", e)}>
+        <Servicios />
+      </View>
+      <View onLayout={(e) => onSectionLayout("suscripciones", e)}>
+        <Suscripciones />
+      </View>
+      <View onLayout={(e) => onSectionLayout("nosotros", e)}>
+        <Nosotros />
+      </View>
+      <View onLayout={(e) => onSectionLayout("contacto", e)}>
+        <Contacto />
+      </View>
 
 
-        {/* Footer */}
-        <Footer />
 
-      </ScrollView>
-    </SafeAreaView>
+          {/* Footer */}
+          <Footer />
+
+        </ScrollView>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 

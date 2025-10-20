@@ -1,54 +1,64 @@
-import React, { useRef, useMemo } from 'react';
+import React from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import Modal from 'react-native-modal'; 
+import Modal from 'react-native-modal';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../../../shared/styles';
-import { ESTADOS_CONEXION } from '../../constants/estadosConexion';
 import GuardarCancelarBtn from '../buttons/GuardarCancelarBtn';
 import EstadosChip from '../EstadosChip';
+import MenuActions from '../MenuActions';
+import { usePrestadorServiciosDetails } from '../../hooks/usePrestadorServiciosDetails';
 import { styles } from './PrestadorServiciosDetails.styles';
 
-const PrestadorServiciosDetails = ({
-  visible,
-  provider,
+const PrestadorServiciosDetails = ({ 
+  visible, 
+  provider, 
   onClose,
   onResenas,
   onConectar,
-  providerType = 'cuidador', // cuidador, paseador o veterinario
-  misConexiones = false,
+  providerType = 'cuidador', // Puede ser 'cuidador', 'paseador' o 'veterinario'
+  misConexiones = false, 
   onChat,
   onPago,
   onFinalizarServicio,
+  onAgregarResena,
+  onRechazar,
 }) => {
-  const scrollViewRef = useRef(null);
-  const rating = provider?.rating || 0;
+  // Hook para obtener toda la lógica
+  const {
+    scrollViewRef,
+    providerInfo,
+    isValidProvider,
+    buttonConfig,
+    ratingStars,
+    modalProps,
+    providerTypeText,
+    sectionConfig,
+    steps,
+    createActionHandlers,
+    getMenuItems
+  } = usePrestadorServiciosDetails(provider, misConexiones, onClose);
 
-  // Estrellas de calificación
-  const ratingStars = useMemo(() => {
-    const maxStars = 5;
-    return Array.from({ length: maxStars }, (_, i) => (
-      <Ionicons
-        key={i + 1}
-        name={i + 1 <= rating ? 'star' : 'star-outline'}
-        size={16}
-        color={i + 1 <= rating ? colors.warning : colors.border.medium}
-      />
-    ));
-  }, [rating]);
+  // Acciones
+  const actionHandlers = createActionHandlers({
+    onResenas,
+    onConectar,
+    onChat,
+    onPago,
+    onFinalizarServicio,
+    onAgregarResena,
+    onRechazar
+  });
 
-  // Handlers
-  const handleResenas = () => onResenas?.(provider);
-  const handleConectar = () => onConectar?.(provider);
-  const handleChat = () => onChat?.(provider);
-  const handlePago = () => onPago?.(provider);
-  const handleFinalizarServicio = () => onFinalizarServicio?.(provider);
+  // Configuración del menú
+  const menuItems = getMenuItems(actionHandlers);
 
-  if (!provider) return null;
+  // Validar proveedor
+  if (!isValidProvider) return null;
 
   const {
     nombre,
@@ -58,101 +68,109 @@ const PrestadorServiciosDetails = ({
     disponibilidad,
     descripcion,
     estado,
-  } = provider;
-
-  const modalProps = {
-    isVisible: visible,
-    onBackdropPress: onClose,
-    onBackButtonPress: onClose,
-    onSwipeComplete: onClose,
-    swipeDirection: ['down'],
-    style: styles.modalContainer,
-    propagateSwipe: true,
-    useNativeDriverForBackdrop: true,
-    avoidKeyboard: true,
-  };
-
-  const providerTypeText =
-    providerType === 'cuidador'
-      ? 'cuidador'
-      : providerType === 'paseador'
-      ? 'paseador'
-      : 'veterinario';
+  } = providerInfo;
 
   return (
-    <Modal {...modalProps}>
+    <Modal {...modalProps} style={styles.modalContainer}>
       <View style={styles.contentContainer}>
-        {/* Handle para arrastrar */}
+        {/* Handle para arrastrar componente */}
         <View style={styles.handle} />
-
-        {/* Header */}
+        
+        {/* Header con info básica */}
         <View style={styles.header}>
+          <View style={styles.avatarContainer}>
+            <Ionicons name="person" size={28} color={colors.primary} />
+          </View>
+          
           <View style={styles.headerInfo}>
             <View style={styles.nameAndStatusRow}>
               <Text style={styles.nombre}>{nombre}</Text>
-              {misConexiones && (
-                <EstadosChip estado={estado} showIcon={true} iconSize={14} />
-              )}
+              {misConexiones && <EstadosChip estado={estado} showIcon={true} iconSize={14} />}
             </View>
-            <View style={styles.ratingContainer}>{ratingStars}</View>
+            <View style={styles.ratingContainer}>
+              {ratingStars.map((star, index) => (
+                <Ionicons
+                  key={star.key}
+                  name={star.filled ? "star" : "star-outline"}
+                  size={16}
+                  color={star.filled ? colors.warning : colors.border.medium}
+                />
+              ))}
+            </View>
             <Text style={styles.ubicacion}>{ubicacion}</Text>
           </View>
-
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={onClose}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="close" size={24} color={colors.text.secondary} />
-          </TouchableOpacity>
+          
+          <View style={styles.headerActions}>
+            <MenuActions items={menuItems} />
+            <TouchableOpacity 
+              style={styles.closeButton}
+              onPress={onClose}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="close" size={24} color={colors.text.secondary} />
+            </TouchableOpacity>
+          </View>
         </View>
 
-        {/* Contenido Scroll */}
-        <ScrollView
+        {/* Contenido Scrolleable */}
+        <ScrollView 
           ref={scrollViewRef}
           style={styles.scrollContainer}
           contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator
-          bounces
+          showsVerticalScrollIndicator={true}
+          bounces={true}
           keyboardShouldPersistTaps="handled"
-          nestedScrollEnabled
-          persistentScrollbar
+          nestedScrollEnabled={true}
+          persistentScrollbar={true}
         >
+
+          {/* Precio y horarios */}
           <SectionContainer title="Precio y horarios">
-            <ContactItem iconName="cash-outline" text={precio} />
-            <ContactItem iconName="time-outline" text={horario} />
-            <ContactItem iconName="calendar-outline" text={disponibilidad} />
+            <ContactItem 
+              iconName="cash-outline" 
+              text={precio} 
+            />
+            <ContactItem 
+              iconName="time-outline" 
+              text={horario} 
+            />
+            <ContactItem 
+              iconName="calendar-outline" 
+              text={disponibilidad} 
+            />
           </SectionContainer>
 
+          {/* Descripción */}
           <SectionContainer title={`Sobre el ${providerTypeText}`}>
             <Text style={styles.descripcion}>{descripcion}</Text>
           </SectionContainer>
 
-          {!misConexiones && (
+          {/* Pasos a seguir. Solo mostrar si NO es Mis Conexiones */}
+          {sectionConfig.showSteps && (
             <SectionContainer title="Pasos a seguir:">
-              <StepItem number="1" text="Enviá tu solicitud de conexión al prestador." />
-              <StepItem number="2" text="Coordiná horario y detalles por el chat." />
-              <StepItem number="3" text="Realizá el pago de manera segura." />
-              <StepItem number="4" text="¡Listo! Servicio confirmado." />
+              {steps.map((step, index) => (
+                <StepItem 
+                  key={index}
+                  number={step.number} 
+                  text={step.text} 
+                />
+              ))}
             </SectionContainer>
           )}
 
-          {misConexiones && (
+          {/* Advertencia. Solo mostrar si es Mis Conexiones */}
+          {sectionConfig.showWarning && (
             <View style={styles.warningContainer}>
               <View style={styles.warningHeader}>
-                <Text style={styles.warningIcon}>💬</Text>
-                <Text style={styles.warningTitle}>A tener en cuenta:</Text>
+                <Text style={styles.warningIcon}>{sectionConfig.warningIcon}</Text>
+                <Text style={styles.warningTitle}>{sectionConfig.warningTitle}</Text>
               </View>
               <View style={styles.warningContent}>
-                <Text style={styles.warningText}>
-                  • Tu pago será procesado con Mercado Pago.
-                </Text>
-                <Text style={styles.warningText}>
-                  • Al completar el pago, tu solicitud pasará a “Pago confirmado”.
-                </Text>
-                <Text style={styles.warningText}>
-                  • Podés coordinar detalles a través del chat.
-                </Text>
+                {sectionConfig.warningItems.map((item, index) => (
+                  <Text key={index} style={styles.warningText}>
+                    • {item}
+                  </Text>
+                ))}
               </View>
             </View>
           )}
@@ -160,46 +178,21 @@ const PrestadorServiciosDetails = ({
 
         {/* Botones de acción */}
         <View style={styles.actionsContainer}>
-          {misConexiones && estado === ESTADOS_CONEXION.SERVICIO_FINALIZADO ? (
-            <GuardarCancelarBtn
-              label="Chat"
-              onPress={handleChat}
-              variant="primary"
-              showCancel={false}
-            />
-          ) : misConexiones && estado === ESTADOS_CONEXION.PAGO_CONFIRMADO ? (
-            <GuardarCancelarBtn
-              label="Finalizar Servicio"
-              onPress={handleFinalizarServicio}
-              variant="primary"
-              showCancel={true}
-              cancelLabel="Chat"
-              onCancel={handleChat}
-            />
-          ) : misConexiones && estado === ESTADOS_CONEXION.SOLICITUD_RECHAZADA ? (
-            <GuardarCancelarBtn
-              label="Chat"
-              onPress={handleChat}
-              variant="primary"
-              showCancel={false}
-            />
-          ) : (
-            <GuardarCancelarBtn
-              label={misConexiones ? 'Realizar Pago' : 'Conectar'}
-              onPress={misConexiones ? handlePago : handleConectar}
-              variant="primary"
-              showCancel={true}
-              cancelLabel={misConexiones ? 'Chat' : 'Reseñas'}
-              onCancel={misConexiones ? handleChat : handleResenas}
-            />
-          )}
+          <GuardarCancelarBtn
+            label={buttonConfig.primary.label}
+            onPress={actionHandlers[buttonConfig.primary.action]}
+            variant={buttonConfig.primary.variant}
+            showCancel={buttonConfig.secondary?.showCancel || false}
+            cancelLabel={buttonConfig.secondary?.label}
+            onCancel={buttonConfig.secondary ? actionHandlers[buttonConfig.secondary.action] : undefined}
+          />
         </View>
       </View>
     </Modal>
   );
 };
 
-// Componentes auxiliares
+// Componentes reutilizables
 const SectionContainer = ({ title, children }) => (
   <View style={styles.section}>
     <Text style={styles.sectionTitle}>{title}</Text>
