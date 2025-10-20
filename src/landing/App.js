@@ -7,9 +7,9 @@ import {
   Text,
   StyleSheet,
   SafeAreaView,
-  StatusBar,
   Image,
-  TouchableOpacity,  
+  TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import Servicios from "./servicios";
 import Suscripciones from "./suscripciones";
