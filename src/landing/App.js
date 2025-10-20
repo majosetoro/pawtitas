@@ -6,11 +6,11 @@ import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
   Image,
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Servicios from "./servicios";
 import Suscripciones from "./suscripciones";
 import Contacto from "./contacto";
