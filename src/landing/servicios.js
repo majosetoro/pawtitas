@@ -15,7 +15,7 @@ export default function Servicios() {
       <Text style={styles.subtitle}>
         Contamos con todas las opciones para el cuidado de tu mascota, ¿Te vas de viaje y necesitas cuidador?
         ¿Buscás paseador? ¿Necesitás veterinaria cercana o a domicilio? ¿Tenés una emergencia?
-        Todo y más lo podés encontraca acá.
+        Todo y más lo podés encontrar acá.
       </Text>
 
       <View style={styles.cardContainer}>
