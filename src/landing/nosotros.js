@@ -1,23 +1,25 @@
 import React from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import { colors, typography } from "../shared/styles";
+import avatarMariaToro from "../../assets/avatar/avatar-maria-toro.jpg";
+import avatarMariaElisa from "../../assets/avatar/avatar-maria.elisa.jpg";
 
 export default function Nosotros() {
-  const equipo = [ //cambiar img por imagenes nuestras
+  const equipo = [
     {
       nombre: "Andrea Paez",
       descripcion: "Fundadora",
-      avatar: "https://em-content.zobj.net/thumbs/240/apple/354/man-raising-hand_1f64b-200d-2642-fe0f.png",
+      avatar: { uri: "https://em-content.zobj.net/thumbs/240/apple/354/man-raising-hand_1f64b-200d-2642-fe0f.png" },
     },
     {
       nombre: "María José Toro",
       descripcion: "Fundadora",
-      avatar:"../../assets/avatar-maria-toro.jpg",
+      avatar: avatarMariaToro,
     },
     {
       nombre: "María Elisa Zubiri",
       descripcion: "Fundadora",
-      avatar: "../../assets/avatar-maria-elisa.jpg",
+      avatar: avatarMariaElisa,
     },
   ];
 
@@ -35,7 +37,7 @@ export default function Nosotros() {
         {equipo.map((persona, idx) => (
           <View key={idx} style={styles.card}>
             <Image 
-              source={typeof persona.avatar === 'string' ? { uri: persona.avatar } : persona.avatar} 
+              source={persona.avatar} 
               style={styles.avatar} 
             />
             <Text style={styles.name}>{persona.nombre}</Text>
