@@ -41,6 +41,7 @@ export const colors = {
     logo: '#ffabcaff',       // Color del logo
     accent: '#f9bbd2ff',     // Color de acento
     highlight: '#f5a3c1ff',  // Color de resaltado
+    footer: '#E58CAF',       // Color del footer
   },
   
   // Colores de botones
