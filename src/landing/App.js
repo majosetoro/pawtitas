@@ -80,24 +80,26 @@ const scrollToSection = (key) => {
         <ScrollView ref={scrollRef} contentContainerStyle={{ flexGrow: 1 }}>
           {/* Header */}
           <View style={styles.header}>
-            <View style={styles.navMenu}>
-              <TouchableOpacity
-                onPress={() => scrollRef.current.scrollTo({ y: 0, animated: true })}
-              >
-                <Text style={styles.navItem}>Inicio</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => scrollToSection("servicios")}>
-                <Text style={styles.navItem}>Servicios</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => scrollToSection("suscripciones")}>
-                <Text style={styles.navItem}>Suscripciones</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => scrollToSection("nosotros")}>
-                <Text style={styles.navItem}>Nosotros</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => scrollToSection("contacto")}>
-                <Text style={styles.navItem}>Contacto</Text>
-              </TouchableOpacity>
+            <View style={styles.navContainer}>
+              <View style={styles.navMenu}>
+                <TouchableOpacity
+                  onPress={() => scrollRef.current.scrollTo({ y: 0, animated: true })}
+                >
+                  <Text style={styles.navItem}>Inicio</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => scrollToSection("servicios")}>
+                  <Text style={styles.navItem}>Servicios</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => scrollToSection("suscripciones")}>
+                  <Text style={styles.navItem}>Suscripciones</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => scrollToSection("nosotros")}>
+                  <Text style={styles.navItem}>Nosotros</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => scrollToSection("contacto")}>
+                  <Text style={styles.navItem}>Contacto</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
 
@@ -142,10 +144,11 @@ const scrollToSection = (key) => {
         <Contacto />
       </View>
 
-
-
           {/* Footer */}
-          <Footer />
+          <Footer 
+            scrollToSection={scrollToSection}
+            scrollToTop={() => scrollRef.current.scrollTo({ y: 0, animated: true })}
+          />
 
         </ScrollView>
       </SafeAreaView>
@@ -171,10 +174,19 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: 20,
-    paddingVertical: 15,
+    paddingVertical: 20,
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     alignItems: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(0, 0, 0, 0.1)",
+    flexWrap: "wrap",
+  },
+  navContainer: {
+    maxWidth: 1200,
+    width: "100%",
+    alignSelf: "center",
+    paddingHorizontal: 20,
   },
   logo: {
     ...typography.styles.h1,
@@ -185,12 +197,19 @@ const styles = StyleSheet.create({
   },
   navMenu: {
     flexDirection: "row",
-    gap: 20,
+    gap: 24,
+    alignItems: "center",
+    flexWrap: "wrap",
+    justifyContent: "center",
   },
   navItem: {
-    ...typography.styles.caption,
+    fontSize: 12,
     color: colors.text.secondary,
-    marginHorizontal: 2,
+    fontWeight: "600",
+    textTransform: "uppercase",
+    letterSpacing: 0.8,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
   },
   hero: {
     alignItems: "center",
