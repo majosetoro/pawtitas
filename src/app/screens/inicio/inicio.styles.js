@@ -69,4 +69,16 @@ export const styles = StyleSheet.create({
     color: "#966443",
     textDecorationLine: "underline",
   },
+  errorText: {
+    fontSize: 12,
+    color: "#E74C3C",
+    marginTop: -16,
+    marginBottom: 20,
+    marginLeft: 4,
+    minHeight: 16,
+  },
+  inputContainer: {
+    width: "100%",
+    marginBottom: 4,
+  },
 });
