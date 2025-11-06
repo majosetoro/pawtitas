@@ -7,6 +7,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   TouchableOpacity,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { styles } from "./inicio.styles";
@@ -62,69 +64,79 @@ export default function InicioScreen({ navigation }) {
     }
   };
 
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  };
+
   return (
     <KeyboardAvoidingView
       style={styles.keyboardAvoidingView}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
+      enabled
     >
-      <ScrollView
-        contentContainerStyle={styles.container}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Logo */}
-        <View style={styles.logoContainer}>
-          <Image
-            source={iconImage}
-            style={styles.logoImage}
-            resizeMode="contain"
-          />
-        </View>
-
-        {/* Formulario */}
-        <View style={styles.formContainer}>
-          <Text style={styles.formTitle}>¡Bienvenido de vuelta!</Text>
-          <Text style={styles.welcomeMessage}>
-            Conéctate con quienes aman y cuidan mascotas todos los días
-          </Text>
-
-          <LoginInputField
-            label="Email"
-            placeholder="tu@email.com"
-            value={form.correo}
-            onChangeText={(value) => handleInputChange("correo", value)}
-            keyboardType="email-address"
-            textContentType="emailAddress"
-          />
-
-          <LoginInputField
-            label="Contraseña"
-            placeholder="••••••••"
-            value={form.password}
-            onChangeText={(value) => handleInputChange("password", value)}
-            secureTextEntry={!showPassword}
-            rightComponent={
-              <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                <Ionicons
-                  name={showPassword ? "eye-off" : "eye"}
-                  size={18}
-                  color={colors.text.secondary}
-                />
-              </TouchableOpacity>
-            }
-          />
-
-          <LoginBtn label="INICIAR SESIÓN" onPress={handleLogin} />
-
-          <View className={styles.registerContainer}>
-            <Text style={styles.registerText}>¿No tenés cuenta? </Text>
-            <TouchableOpacity onPress={() => navigation.navigate("Registro")}>
-              <Text style={styles.registerLink}>Regístrate aquí</Text>
-            </TouchableOpacity>
+      <TouchableWithoutFeedback onPress={dismissKeyboard}>
+        <ScrollView
+          contentContainerStyle={styles.container}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+          bounces={false}
+          enableOnAndroid={true}
+          nestedScrollEnabled={true}
+        >
+          {/* Logo */}
+          <View style={styles.logoContainer}>
+            <Image
+              source={iconImage}
+              style={styles.logoImage}
+              resizeMode="contain"
+            />
           </View>
-        </View>
-      </ScrollView>
+
+          {/* Formulario */}
+          <View style={styles.formContainer}>
+            <Text style={styles.formTitle}>¡Bienvenido de vuelta!</Text>
+            <Text style={styles.welcomeMessage}>
+              Conéctate con quienes aman y cuidan mascotas todos los días
+            </Text>
+
+            <LoginInputField
+              label="Email"
+              placeholder="tu@email.com"
+              value={form.correo}
+              onChangeText={(value) => handleInputChange("correo", value)}
+              keyboardType="email-address"
+              textContentType="emailAddress"
+            />
+
+            <LoginInputField
+              label="Contraseña"
+              placeholder="••••••••"
+              value={form.password}
+              onChangeText={(value) => handleInputChange("password", value)}
+              secureTextEntry={!showPassword}
+              rightComponent={
+                <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                  <Ionicons
+                    name={showPassword ? "eye-off" : "eye"}
+                    size={18}
+                    color={colors.text.secondary}
+                  />
+                </TouchableOpacity>
+              }
+            />
+
+            <LoginBtn label="INICIAR SESIÓN" onPress={handleLogin} />
+
+            <View style={styles.registerContainer}>
+              <Text style={styles.registerText}>¿No tenés cuenta? </Text>
+              <TouchableOpacity onPress={() => navigation.navigate("Registro")}>
+                <Text style={styles.registerLink}>Regístrate aquí</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </ScrollView>
+      </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
 }

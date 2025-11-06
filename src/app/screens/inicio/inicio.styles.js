@@ -9,9 +9,9 @@ export const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 20,
+    paddingBottom: 40,
     justifyContent: "center",
     alignItems: "center",
-    minHeight: "100%",
   },
   logoContainer: {
     alignItems: "center",
