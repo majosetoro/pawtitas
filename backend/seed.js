@@ -10,7 +10,7 @@ async function main() {
     create: {
       email: 'admin@pawtitas.com',
       password: '123456', // (en prod, debería ir hasheado)
-      name: 'Admin',
+      //name: 'Admin',
     },
   });
 
