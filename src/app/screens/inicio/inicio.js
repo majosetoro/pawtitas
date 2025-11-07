@@ -7,6 +7,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   TouchableOpacity,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { styles } from "./inicio.styles";
@@ -21,12 +23,68 @@ const API_BASE =
 export default function InicioScreen({ navigation }) {
   const [form, setForm] = useState({ correo: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState({ correo: "", password: "" });
+  const [touched, setTouched] = useState({ correo: false, password: false });
+
+  const validateEmail = (email) => {
+    if (!email.trim()) {
+      return "El email es requerido";
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return "Ingresa un email válido";
+    }
+    return "";
+  };
+
+  const validatePassword = (password) => {
+    if (!password) {
+      return "La contraseña es requerida";
+    }
+    if (password.length < 6) {
+      return "La contraseña debe tener al menos 6 caracteres";
+    }
+    return "";
+  };
 
   const handleInputChange = (field, value) => {
     setForm((prev) => ({ ...prev, [field]: value }));
+    
+    // Validar en tiempo real si el campo ya fue tocado
+    if (touched[field]) {
+      const error = field === "correo" 
+        ? validateEmail(value) 
+        : validatePassword(value);
+      setErrors((prev) => ({ ...prev, [field]: error }));
+    }
+  };
+
+  const handleBlur = (field) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    
+    // Validar al perder el foco
+    const error = field === "correo" 
+      ? validateEmail(form[field]) 
+      : validatePassword(form[field]);
+    setErrors((prev) => ({ ...prev, [field]: error }));
   };
 
   const handleLogin = async () => {
+    setTouched({ correo: true, password: true });
+
+    const emailError = validateEmail(form.correo);
+    const passwordError = validatePassword(form.password);
+
+    setErrors({
+      correo: emailError,
+      password: passwordError,
+    });
+
+    // Si hay errores, no continuar
+    if (emailError || passwordError) {
+      return;
+    }
+
     try {
       if (!API_BASE) {
         alert("No se configuró la URL del backend (EXPO_PUBLIC_API_BASE_URL).");
@@ -62,69 +120,98 @@ export default function InicioScreen({ navigation }) {
     }
   };
 
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  };
+
   return (
     <KeyboardAvoidingView
       style={styles.keyboardAvoidingView}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
+      enabled
     >
-      <ScrollView
-        contentContainerStyle={styles.container}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Logo */}
-        <View style={styles.logoContainer}>
-          <Image
-            source={iconImage}
-            style={styles.logoImage}
-            resizeMode="contain"
-          />
-        </View>
-
-        {/* Formulario */}
-        <View style={styles.formContainer}>
-          <Text style={styles.formTitle}>¡Bienvenido de vuelta!</Text>
-          <Text style={styles.welcomeMessage}>
-            Conéctate con quienes aman y cuidan mascotas todos los días
-          </Text>
-
-          <LoginInputField
-            label="Email"
-            placeholder="tu@email.com"
-            value={form.correo}
-            onChangeText={(value) => handleInputChange("correo", value)}
-            keyboardType="email-address"
-            textContentType="emailAddress"
-          />
-
-          <LoginInputField
-            label="Contraseña"
-            placeholder="••••••••"
-            value={form.password}
-            onChangeText={(value) => handleInputChange("password", value)}
-            secureTextEntry={!showPassword}
-            rightComponent={
-              <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                <Ionicons
-                  name={showPassword ? "eye-off" : "eye"}
-                  size={18}
-                  color={colors.text.secondary}
-                />
-              </TouchableOpacity>
-            }
-          />
-
-          <LoginBtn label="INICIAR SESIÓN" onPress={handleLogin} />
-
-          <View className={styles.registerContainer}>
-            <Text style={styles.registerText}>¿No tenés cuenta? </Text>
-            <TouchableOpacity onPress={() => navigation.navigate("Registro")}>
-              <Text style={styles.registerLink}>Regístrate aquí</Text>
-            </TouchableOpacity>
+      <TouchableWithoutFeedback onPress={dismissKeyboard}>
+        <ScrollView
+          contentContainerStyle={styles.container}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+          bounces={false}
+          enableOnAndroid={true}
+          nestedScrollEnabled={true}
+        >
+          {/* Logo */}
+          <View style={styles.logoContainer}>
+            <Image
+              source={iconImage}
+              style={styles.logoImage}
+              resizeMode="contain"
+            />
           </View>
-        </View>
-      </ScrollView>
+
+          {/* Formulario */}
+          <View style={styles.formContainer}>
+            <Text style={styles.formTitle}>¡Bienvenido de vuelta!</Text>
+            <Text style={styles.welcomeMessage}>
+              Conéctate con quienes aman y cuidan mascotas todos los días
+            </Text>
+
+            <View style={styles.inputContainer}>
+              <LoginInputField
+                label="Email"
+                placeholder="tu@email.com"
+                value={form.correo}
+                onChangeText={(value) => handleInputChange("correo", value)}
+                onBlur={() => handleBlur("correo")}
+                keyboardType="email-address"
+                textContentType="emailAddress"
+              />
+              {touched.correo && errors.correo ? (
+                <Text style={styles.errorText}>{errors.correo}</Text>
+              ) : (
+                <View style={{ height: 20 }} />
+              )}
+            </View>
+
+            <View style={styles.inputContainer}>
+              <LoginInputField
+                label="Contraseña"
+                placeholder="••••••••"
+                value={form.password}
+                onChangeText={(value) => handleInputChange("password", value)}
+                onBlur={() => handleBlur("password")}
+                secureTextEntry={!showPassword}
+                rightComponent={
+                  <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                    <Ionicons
+                      name={showPassword ? "eye-off" : "eye"}
+                      size={18}
+                      color={colors.text.secondary}
+                    />
+                  </TouchableOpacity>
+                }
+              />
+              {touched.password && errors.password ? (
+                <Text style={styles.errorText}>{errors.password}</Text>
+              ) : (
+                <View style={{ height: 20 }} />
+              )}
+            </View>
+
+            <LoginBtn 
+              label="INICIAR SESIÓN" 
+              onPress={handleLogin}
+            />
+
+            <View style={styles.registerContainer}>
+              <Text style={styles.registerText}>¿No tenés cuenta? </Text>
+              <TouchableOpacity onPress={() => navigation.navigate("Registro")}>
+                <Text style={styles.registerLink}>Regístrate aquí</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </ScrollView>
+      </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
 }

@@ -9,9 +9,9 @@ export const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 20,
+    paddingBottom: 40,
     justifyContent: "center",
     alignItems: "center",
-    minHeight: "100%",
   },
   logoContainer: {
     alignItems: "center",
@@ -68,5 +68,17 @@ export const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#966443",
     textDecorationLine: "underline",
+  },
+  errorText: {
+    fontSize: 12,
+    color: "#E74C3C",
+    marginTop: -16,
+    marginBottom: 20,
+    marginLeft: 4,
+    minHeight: 16,
+  },
+  inputContainer: {
+    width: "100%",
+    marginBottom: 4,
   },
 });
