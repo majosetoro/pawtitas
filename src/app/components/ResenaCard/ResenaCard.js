@@ -11,8 +11,17 @@ const ResenaCard = ({ resena }) => {
     usuario,
     rating,
     texto,
-    fecha
+    fecha,
+    tipo
   } = resena;
+  
+  // Obtener el texto del tipo de prestador
+  const getProviderTypeText = (type) => {
+    if (!type) return '';
+    return type.charAt(0).toUpperCase() + type.slice(1);
+  };
+
+  const providerTypeText = getProviderTypeText(tipo);
   
   // Renderizar estrellas de calificación
   const renderStars = (rating) => {
@@ -74,11 +83,18 @@ const ResenaCard = ({ resena }) => {
           {texto}
         </Text>
         
-        {fecha && (
-          <Text style={styles.fecha}>
-            {formatDate(fecha)}
-          </Text>
-        )}
+        <View style={styles.footerRow}>
+          {fecha && (
+            <Text style={styles.fecha}>
+              {formatDate(fecha)}
+            </Text>
+          )}
+          {providerTypeText && (
+            <View style={styles.providerTypeContainer}>
+              <Text style={styles.providerTypeText}>{providerTypeText}</Text>
+            </View>
+          )}
+        </View>
       </View>
     </View>
   );

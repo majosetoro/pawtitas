@@ -25,7 +25,8 @@ const Resenas = () => {
             },
             rating: 4.5,
             texto: 'Excelente servicio de cuidado. María fue muy profesional con mi perro Max, lo cuidó como si fuera suyo. Muy recomendada.',
-            fecha: '2024-01-15'
+            fecha: '2024-01-15',
+            tipo: 'cuidador'
         },
         {
             id: '2',
@@ -35,7 +36,8 @@ const Resenas = () => {
             },
             rating: 3.5,
             texto: 'Buen servicio de paseo. Carlos fue puntual y responsable, aunque podría mejorar en la comunicación durante el paseo.',
-            fecha: '2024-01-10'
+            fecha: '2024-01-10',
+            tipo: 'paseador'
         },
         {
             id: '3',
@@ -45,7 +47,8 @@ const Resenas = () => {
             },
             rating: 5.0,
             texto: 'Increíble atención veterinaria. El doctor fue muy profesional, explicó todo detalladamente y mi gato se recuperó perfectamente.',
-            fecha: '2024-01-08'
+            fecha: '2024-01-08',
+            tipo: 'veterinario'
         },
         {
             id: '4',
@@ -55,7 +58,8 @@ const Resenas = () => {
             },
             rating: 4.0,
             texto: 'Muy buena cuidadora. Laura fue muy cariñosa con mis mascotas y me envió fotos durante todo el día. Servicio confiable.',
-            fecha: '2024-01-05'
+            fecha: '2024-01-05',
+            tipo: 'cuidador'
         },
         {
             id: '5',
@@ -65,7 +69,8 @@ const Resenas = () => {
             },
             rating: 4.5,
             texto: 'Excelente paseador. Roberto fue muy atento con mi perro, me mantuvo informado durante todo el paseo. Definitivamente lo volveré a contratar.',
-            fecha: '2024-01-03'
+            fecha: '2024-01-03',
+            tipo: 'paseador'
         },
     ]);
 
