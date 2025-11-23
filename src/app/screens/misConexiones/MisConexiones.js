@@ -10,6 +10,7 @@ import ResenaFormModal from '../../components/ResenaFormModal/ResenaFormModal';
 import PrestadorServiciosCard from '../../components/PrestadorServiciosCard/PrestadorServiciosCard';
 import PrestadorServiciosDetails from '../../components/PrestadorServiciosDetails/PrestadorServiciosDetails';
 import ConfirmacionDialogo from '../../components/ConfirmacionDialogo';
+import CalendarioPagoModal from '../../components/CalendarioPagoModal';
 import FloatingMessage from '../../components/FloatingMessage';
 import { useMisConexiones } from '../../hooks/useMisConexiones';
 import { styles } from './MisConexiones.styles';
@@ -25,6 +26,8 @@ const MisConexiones = () => {
     handleProviderPress,
     handleCloseDetalles,
     handlePago,
+    handleConfirmarPago,
+    handleCancelarCalendario,
     handleFinalizarServicio,
     handleRechazar,
     handleConfirmarRechazo,
@@ -115,6 +118,14 @@ const MisConexiones = () => {
         usuario={state.selectedProvider}
         tipoUsuario="prestador"
         onClose={handleCloseResenaModal}
+      />
+
+      {/* Modal de Calendario para Pago */}
+      <CalendarioPagoModal
+        visible={state.showCalendarioModal}
+        providerName={state.selectedProvider?.nombre}
+        onClose={handleCancelarCalendario}
+        onConfirm={handleConfirmarPago}
       />
 
       {/* Confirmación para rechazar */}
