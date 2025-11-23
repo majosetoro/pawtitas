@@ -4,7 +4,11 @@ import { ESTADOS_CONEXION } from '../constants/estadosConexion';
 
 export const useMisConexiones = () => {
   // Estados
-  const [state, setState] = useState(() => MisConexionesController.getInitialState());
+  const [state, setState] = useState(() => ({
+    ...MisConexionesController.getInitialState(),
+    showCalendarioModal: false,
+    selectedDates: []
+  }));
   const [providers, setProviders] = useState(() => MisConexionesController.getMockProviders());
 
   // Filtrar proveedores
@@ -46,15 +50,48 @@ export const useMisConexiones = () => {
   }, []);
 
   const handlePago = useCallback((provider) => {
+    // Abrir el modal de calendario para seleccionar fechas
+    setState(prev => ({ 
+      ...prev, 
+      selectedProvider: provider,
+      showCalendarioModal: true 
+    }));
+    handleCloseDetalles();
+  }, [handleCloseDetalles]);
+
+  const handleConfirmarPago = useCallback((selectedDates) => {
+    if (!state.selectedProvider) return;
+    
+    // Actualizar el estado del proveedor a pago confirmado
     setProviders(prev => 
       MisConexionesController.updateProviderState(
         prev, 
-        provider.id, 
+        state.selectedProvider.id, 
         ESTADOS_CONEXION.PAGO_CONFIRMADO
       )
     );
-    handleCloseDetalles();
-  }, [handleCloseDetalles]);
+    
+    // Cerrar el modal y mostrar mensaje de éxito
+    setState(prev => ({
+      ...prev,
+      showCalendarioModal: false,
+      selectedDates: selectedDates,
+      selectedProvider: null,
+      showFloatingMessage: true,
+      floatingMessage: {
+        type: 'success',
+        text: `Pago confirmado para ${selectedDates.length} ${selectedDates.length === 1 ? 'día' : 'días'}`
+      }
+    }));
+  }, [state.selectedProvider]);
+
+  const handleCancelarCalendario = useCallback(() => {
+    setState(prev => ({ 
+      ...prev, 
+      showCalendarioModal: false,
+      selectedProvider: null 
+    }));
+  }, []);
 
   const handleFinalizarServicio = useCallback((provider) => {
     setProviders(prev => 
@@ -161,6 +198,8 @@ export const useMisConexiones = () => {
     handleProviderPress,
     handleCloseDetalles,
     handlePago,
+    handleConfirmarPago,
+    handleCancelarCalendario,
     handleFinalizarServicio,
     handleRechazar,
     handleConfirmarRechazo,

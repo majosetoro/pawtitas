@@ -16,6 +16,7 @@ export { default as PrestadorServiciosDetails } from './PrestadorServiciosDetail
 export { default as PrestadorServiciosScreen } from './PrestadorServiciosScreen';
 export { default as ResenaCard } from './ResenaCard';
 export { default as ResenaFormModal } from './ResenaFormModal';
+export { default as CalendarioPagoModal } from './CalendarioPagoModal';
 export { default as AvatarPicker } from './AvatarPicker';
 
 // Re-exportar componentes de inputs y buttons
