@@ -155,8 +155,13 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      <HomeHeader />
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        style={styles.content} 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <HomeHeader />
+        
         {/* Bloque de categorías */}
         <View style={styles.categoriesContainer}>
           {serviceCategories.map((category) => (

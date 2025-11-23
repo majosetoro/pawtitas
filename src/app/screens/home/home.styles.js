@@ -14,8 +14,6 @@ export const styles = StyleSheet.create({
     width: '100%',
     paddingBottom: 10,
     backgroundColor: colors.background,
-    position: 'relative',
-    zIndex: 10,
   },
   statusBarSpace: {
     height: 10, // Espacio para la barra de estado
@@ -57,12 +55,16 @@ export const styles = StyleSheet.create({
     maxWidth: 1080,
     backgroundColor: colors.background,
   },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 20,
+  },
   categoriesContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
     paddingHorizontal: 20,
-    paddingTop: 20,
+    paddingTop: 15,
     paddingBottom: 20,
     alignItems: 'center',
   },
