@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { ResenaController } from '../controller/ResenaController';
+import { ResenaController } from '../controller/ResenasController/ResenaController';
 
 // Mnejar el formulario de reseñas
 export const useResenaForm = (visible, onSave, onClose, usuario, tipoUsuario) => {

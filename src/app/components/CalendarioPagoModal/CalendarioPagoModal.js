@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import GuardarCancelarBtn from '../buttons/GuardarCancelarBtn';
 import { styles } from './CalendarioPagoModal.styles';
 import { colors } from '../../../shared/styles';
-import { CalendarioPagoController } from '../../controller/CalendarioPagoController';
+import { CalendarioPagoController } from '../../controller';
 
 // Calendario para selección de fechas de pago
 const CalendarioPagoModal = ({ 

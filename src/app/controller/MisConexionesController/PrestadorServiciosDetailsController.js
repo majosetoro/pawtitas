@@ -1,5 +1,5 @@
-import { colors } from '../../shared/styles';
-import { ESTADOS_CONEXION } from '../constants/estadosConexion';
+import { colors } from '../../../shared/styles';
+import { ESTADOS_CONEXION } from '../../constants/estadosConexion';
 
 export class PrestadorServiciosDetailsController {
   // Configuración de menú

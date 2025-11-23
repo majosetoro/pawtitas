@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from 'react';
-import { MisConexionesController } from '../controller/MisConexionesController';
+import { MisConexionesController } from '../controller';
 import { ESTADOS_CONEXION } from '../constants/estadosConexion';
 
 export const useMisConexiones = () => {

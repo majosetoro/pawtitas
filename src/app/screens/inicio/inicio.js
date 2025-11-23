@@ -18,7 +18,7 @@ import { colors } from "../../../shared/styles";
 import iconImage from "../../assets/icon.png";
 
 const API_BASE =
-  process.env.EXPO_PUBLIC_API_BASE_URL || "http://192.168.1.94:3001";
+  process.env.EXPO_PUBLIC_API_BASE_URL || "http://192.168.1.47:3001";
 
 export default function InicioScreen({ navigation }) {
   const [form, setForm] = useState({ correo: "", password: "" });
