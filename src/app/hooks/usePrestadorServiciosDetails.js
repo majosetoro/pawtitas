@@ -1,5 +1,5 @@
 import { useRef, useMemo } from 'react';
-import { PrestadorServiciosDetailsController } from '../controller/PrestadorServiciosDetailsController';
+import { PrestadorServiciosDetailsController } from '../controller';
 
 export const usePrestadorServiciosDetails = (provider, misConexiones, onClose) => {
   const scrollViewRef = useRef(null);

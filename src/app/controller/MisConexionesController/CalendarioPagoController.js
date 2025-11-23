@@ -1,4 +1,4 @@
-import { colors } from '../../shared/styles';
+import { colors } from '../../../shared/styles';
 
 export const CALENDARIO_CONFIG = {
   YEARS_IN_FUTURE: 100,

@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TextInput } from 'react-native';
 import { colors } from '../../../shared/styles';
 import { styles } from './ResenaFormModal.styles';
-import { FORM_CONFIG } from '../../controller/ResenaController';
+import { FORM_CONFIG } from '../../controller/ResenasController/ResenaController';
 
 // Sección de comentario del formulario de reseña
 export const SeccionComentario = ({ 
