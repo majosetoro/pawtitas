@@ -9,7 +9,7 @@ import {
   TouchableOpacity
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import FloatingMessage from '../FloatingMessage';
+import FloatingMessage from '../MensajeFlotante';
 import { useResenaForm } from '../../hooks';
 import { ResenaController, FORM_CONFIG } from '../../controller';
 import { SeccionInfoUsuario } from './SeccionInfoUsuario';

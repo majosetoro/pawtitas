@@ -11,7 +11,7 @@ import PrestadorServiciosCard from '../../components/PrestadorServiciosCard/Pres
 import PrestadorServiciosDetails from '../../components/PrestadorServiciosDetails/PrestadorServiciosDetails';
 import ConfirmacionDialogo from '../../components/ConfirmacionDialogo';
 import CalendarioPagoModal from '../../components/CalendarioPagoModal';
-import FloatingMessage from '../../components/FloatingMessage';
+import { FloatingMessage } from '../../components';
 import { useMisConexiones } from '../../hooks/useMisConexiones';
 import { styles } from './MisConexiones.styles';
 

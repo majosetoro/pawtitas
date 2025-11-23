@@ -6,7 +6,7 @@ import {
   Animated,
   TouchableOpacity 
 } from "react-native";
-import { colors, typography } from "../../shared/styles";
+import { colors, typography } from "../../../shared/styles";
 
 /**
  * Componente para mostrar mensajes flotantes de estado
@@ -16,10 +16,15 @@ export default function FloatingMessage({
   type = "info", 
   visible = false, 
   duration = 4000,
-  onHide 
+  onHide,
+  position = "top"
 }) {
-  const translateY = useRef(new Animated.Value(-100)).current;
+  const translateY = useRef(new Animated.Value(position === "bottom" ? 100 : -100)).current;
   const opacity = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    translateY.setValue(position === "bottom" ? 100 : -100);
+  }, [position]);
 
   useEffect(() => {
     if (visible && message) {
@@ -49,9 +54,10 @@ export default function FloatingMessage({
   }, [visible, message]);
 
   const hideMessage = () => {
+    const hideValue = position === "bottom" ? 100 : -100;
     Animated.parallel([
       Animated.timing(translateY, {
-        toValue: -100,
+        toValue: hideValue,
         duration: 250,
         useNativeDriver: true,
       }),
@@ -98,7 +104,7 @@ export default function FloatingMessage({
   return (
     <Animated.View
       style={[
-        styles.container,
+        getContainerStyle(position),
         getMessageStyle(),
         {
           transform: [{ translateY }],
@@ -122,22 +128,25 @@ export default function FloatingMessage({
   );
 }
 
+const getContainerStyle = (position) => ({
+  position: "absolute",
+  ...(position === "bottom" ? { bottom: 20 } : { top: 60 }),
+  left: 20,
+  right: 20,
+  zIndex: 1000,
+  borderRadius: 12,
+  shadowColor: "#000",
+  shadowOffset: {
+    width: 0,
+    height: 4,
+  },
+  shadowOpacity: 0.15,
+  shadowRadius: 8,
+  elevation: 8,
+});
+
 const styles = StyleSheet.create({
   container: {
-    position: "absolute",
-    top: 60,
-    left: 20,
-    right: 20,
-    zIndex: 1000,
-    borderRadius: 12,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 8,
   },
   content: {
     flexDirection: "row",

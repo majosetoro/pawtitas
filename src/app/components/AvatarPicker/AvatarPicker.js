@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { styles } from './AvatarPicker.styles';
 import { colors } from '../../../shared/styles';
-import FloatingMessage from '../FloatingMessage';
+import FloatingMessage from '../MensajeFlotante';
 
 // Componente para seleccionar avatar
 const AvatarPicker = ({ 
