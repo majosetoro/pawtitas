@@ -56,9 +56,25 @@ export const styles = StyleSheet.create({
     lineHeight: 20,
     marginBottom: 12,
   },
+  footerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   fecha: {
     ...typography.styles.caption,
     color: colors.text.secondary,
     fontSize: 12,
+  },
+  providerTypeContainer: {
+    backgroundColor: colors.surfaceVariant,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+  },
+  providerTypeText: {
+    ...typography.styles.caption,
+    fontWeight: '600',
+    color: colors.text.secondary,
   },
 });

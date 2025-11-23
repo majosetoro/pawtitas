@@ -53,6 +53,18 @@ export const styles = StyleSheet.create({
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginTop: 4,
+  },
+  providerTypeContainer: {
+    backgroundColor: colors.surfaceVariant,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+  },
+  providerTypeText: {
+    ...typography.styles.caption,
+    fontWeight: '600',
+    color: colors.text.secondary,
   },
   descripcion: {
     ...typography.styles.caption,
@@ -72,6 +84,13 @@ export const styles = StyleSheet.create({
   },
   detailsContainer: {
     gap: 8,
+    marginBottom: 8,
+  },
+  footerRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginTop: 8,
   },
   detailItem: {
     flexDirection: 'row',

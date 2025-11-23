@@ -17,7 +17,20 @@ const PrestadorServiciosCard = ({ provider, onPress, providerType, misConexiones
     disponibilidad,
     horario,
     estado,
+    tipo,
   } = provider;
+  
+  const getProviderTypeText = (type) => {
+    if (!type && providerType) {
+      return providerType.charAt(0).toUpperCase() + providerType.slice(1);
+    }
+    if (type) {
+      return type.charAt(0).toUpperCase() + type.slice(1);
+    }
+    return '';
+  };
+
+  const providerTypeText = getProviderTypeText(tipo);
   
   // Renderizar estrellas de calificación
   const renderStars = (rating) => {
@@ -95,6 +108,14 @@ const PrestadorServiciosCard = ({ provider, onPress, providerType, misConexiones
             <Text style={styles.detailText}>{horario}</Text>
           </View>
         </View>
+        
+        {misConexiones && providerTypeText && (
+          <View style={styles.footerRow}>
+            <View style={styles.providerTypeContainer}>
+              <Text style={styles.providerTypeText}>{providerTypeText}</Text>
+            </View>
+          </View>
+        )}
       </View>
     </TouchableOpacity>
   );
