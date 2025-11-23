@@ -43,6 +43,13 @@ export const styles = StyleSheet.create({
       color: "#333",
       fontSize: 16,
     },
+    reminderText: {
+      color: "#666",
+      fontSize: 12,
+      fontStyle: "italic",
+      marginBottom: 8,
+      marginTop: -4,
+    },
     buttonRow: {
       flexDirection: "row",
       justifyContent: "space-between",
@@ -59,5 +66,13 @@ export const styles = StyleSheet.create({
     confirm: { backgroundColor: "#6b4226" },
     cancelText: { color: "#333", fontWeight: "600" },
     confirmText: { color: "#fff", fontWeight: "600" },
+    infoText: {
+      color: "#666",
+      fontSize: 12,
+      textAlign: "center",
+      marginTop: 20,
+      marginBottom: 20,
+      fontStyle: "italic",
+    },
   });
   

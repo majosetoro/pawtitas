@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import * as DocumentPicker from 'expo-document-picker';
+import { FloatingMessage } from "../../components";
 import { styles } from "./registro.styles";
 
 export default function RegistroScreen({ navigation }) {
@@ -22,10 +23,13 @@ export default function RegistroScreen({ navigation }) {
     telefono: "",
     ubicacion: "",
     documento: "",
-    experienciaFile: null,
+    documentosFile: null,
     certificadosFile: null,
   });
   const [errors, setErrors] = useState({});
+  const [successMessage, setSuccessMessage] = useState("");
+  const [isScrollAtBottom, setIsScrollAtBottom] = useState(false);
+  const scrollViewRef = useRef(null);
 
   // Función para seleccionar documento
   const pickFile = async (field) => {
@@ -91,15 +95,6 @@ export default function RegistroScreen({ navigation }) {
       newErrors.especialidad = "Debe seleccionar una especialidad";
     }
 
-    if (perfil === "prestador") {
-      if (!form.experienciaFile) {
-        newErrors.experienciaFile = "Debe adjuntar su experiencia";
-      }
-      if (!form.certificadosFile) {
-        newErrors.certificadosFile = "Debe adjuntar sus certificados";
-      }
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -107,11 +102,33 @@ export default function RegistroScreen({ navigation }) {
   const handleSubmit = () => {
     if (validateForm()) {
       // Agregar para enviar datos a la bd
+      if (perfil === "prestador") {
+        setSuccessMessage("¡Listo! Tu registro fue exitoso. Revisaremos tus datos y te notificaremos por correo cuando tu cuenta esté habilitada.");
+      } else if (perfil === "dueno") {
+        setSuccessMessage("¡Bienvenido/a! Tu registro fue exitoso, ya podés usar la app.");
+      }
     }
   };
 
+  const handleHideMessage = () => {
+    setSuccessMessage("");
+  };
+
+  const handleScroll = (event) => {
+    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+    const paddingToBottom = 20;
+    const isAtBottom = layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
+    setIsScrollAtBottom(isAtBottom);
+  };
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <View style={{ flex: 1 }}>
+      <ScrollView 
+        ref={scrollViewRef}
+        contentContainerStyle={styles.container}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+      >
       <Text style={styles.title}>Registrarse</Text>
 
       {/* Campos básicos */}
@@ -210,18 +227,20 @@ export default function RegistroScreen({ navigation }) {
           </Picker>
           {errors.especialidad && <Text style={styles.errorText}>{errors.especialidad}</Text>}
 
-          {/* Experiencia - Adjuntar archivo */}
+          {/* Documentación - Adjuntar archivo */}
+          <Text style={styles.reminderText}>Adjuntar documento de identidad y antecedentes penales no menor a 3 meses.</Text>
           <TouchableOpacity
-            style={[styles.clipButton, errors.experienciaFile && styles.clipButtonError]}
-            onPress={() => pickFile("experienciaFile")}
+            style={[styles.clipButton, errors.documentosFile && styles.clipButtonError]}
+            onPress={() => pickFile("documentosFile")}
           >
             <Text style={styles.clipText}>
-              {form.experienciaFile ? `📎 ${form.experienciaFile.name}` : "Adjuntar experiencia"}
+              {form.documentosFile ? `📎 ${form.documentosFile.name}` : "Adjuntar documentos"}
             </Text>
           </TouchableOpacity>
-          {errors.experienciaFile && <Text style={styles.errorText}>{errors.experienciaFile}</Text>}
+          {errors.documentosFile && <Text style={styles.errorText}>{errors.documentosFile}</Text>}
 
           {/* Certificados - Adjuntar archivo */}
+          <Text style={styles.reminderText}>Adjuntar certificados de logros obtenidos y/o constancia de estudios.</Text>
           <TouchableOpacity
             style={[styles.clipButton, errors.certificadosFile && styles.clipButtonError]}
             onPress={() => pickFile("certificadosFile")}
@@ -250,6 +269,18 @@ export default function RegistroScreen({ navigation }) {
           <Text style={styles.confirmText}>Confirmar</Text>
         </TouchableOpacity>
       </View>
-    </ScrollView>
+
+      <Text style={styles.infoText}>Más adelante podrás editar tu perfil y agregar más información.</Text>
+      </ScrollView>
+
+      <FloatingMessage
+        visible={!!successMessage}
+        message={successMessage}
+        type="success"
+        onHide={handleHideMessage}
+        duration={5000}
+        position="top"
+      />
+    </View>
   );
 }
