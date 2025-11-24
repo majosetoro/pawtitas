@@ -7,21 +7,32 @@ import { colors } from "../../../../../shared/styles";
 // Componente de formulario específico para el rol de prestador de servicios
 
 export default function PrestadorServicioPerfilForm({ formData, handleInputChange, errors }) {
-  // Estado local para disponibilidad semanal
+  // Disponibilidad semanal
   const handleAvailabilityChange = (day, value) => {
     const updatedAvailability = { ...formData.availability, [day]: value };
     handleInputChange("availability", updatedAvailability);
   };
 
-  // Estado local para servicios ofrecidos
+  // Servicios ofrecidos
   const handleServiceChange = (service, value) => {
     const updatedServices = { ...formData.services, [service]: value };
     handleInputChange("services", updatedServices);
   };
 
-  // Estado local para servicio activo
+  // Servicio activo
   const handleServiceActiveChange = (value) => {
     handleInputChange("serviceActive", value);
+  };
+
+  // Tipos de mascota
+  const handlePetTypeChange = (petType, value) => {
+    const updatedPetTypes = { ...formData.petTypes, [petType]: value };
+    handleInputChange("petTypes", updatedPetTypes);
+    
+    // Si se desactiva "otro", limpiar el campo de texto
+    if (petType === "otro" && !value) {
+      handleInputChange("petTypesCustom", "");
+    }
   };
 
   return (
@@ -135,6 +146,66 @@ export default function PrestadorServicioPerfilForm({ formData, handleInputChang
             <Text style={styles.checkboxLabel}>Clínica Veterinaria</Text>
           </View>
         </View>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Tipos de mascota</Text>
+        {errors.petTypes && (
+          <Text style={styles.errorText}>{errors.petTypes}</Text>
+        )}
+        
+        <View style={styles.checkboxGroup}>
+          <View style={styles.checkboxItem}>
+            <Switch 
+              value={formData.petTypes?.perro || false}
+              onValueChange={(value) => handlePetTypeChange("perro", value)}
+              trackColor={{ false: colors.border.medium, true: "#B77B5D" }}
+              thumbColor={colors.surface}
+            />
+            <Text style={styles.checkboxLabel}>Perro</Text>
+          </View>
+          
+          <View style={styles.checkboxItem}>
+            <Switch 
+              value={formData.petTypes?.gato || false}
+              onValueChange={(value) => handlePetTypeChange("gato", value)}
+              trackColor={{ false: colors.border.medium, true: "#B77B5D" }}
+              thumbColor={colors.surface}
+            />
+            <Text style={styles.checkboxLabel}>Gato</Text>
+          </View>
+          
+          <View style={styles.checkboxItem}>
+            <Switch 
+              value={formData.petTypes?.roedor || false}
+              onValueChange={(value) => handlePetTypeChange("roedor", value)}
+              trackColor={{ false: colors.border.medium, true: "#B77B5D" }}
+              thumbColor={colors.surface}
+            />
+            <Text style={styles.checkboxLabel}>Roedor</Text>
+          </View>
+          
+          <View style={styles.checkboxItem}>
+            <Switch 
+              value={formData.petTypes?.otro || false}
+              onValueChange={(value) => handlePetTypeChange("otro", value)}
+              trackColor={{ false: colors.border.medium, true: "#B77B5D" }}
+              thumbColor={colors.surface}
+            />
+            <Text style={styles.checkboxLabel}>Otro</Text>
+          </View>
+        </View>
+
+        {formData.petTypes?.otro && (
+          <PerfilInputField
+            label="Especificar otros tipos de mascota"
+            value={formData.petTypesCustom || ""}
+            onChangeText={(value) => handleInputChange("petTypesCustom", value)}
+            placeholder="Reptiles, peces, etc."
+            multiline={false}
+            error={errors.petTypesCustom}
+          />
+        )}
       </View>
 
       <View style={styles.section}>
