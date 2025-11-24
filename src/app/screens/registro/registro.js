@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import * as DocumentPicker from 'expo-document-picker';
-import { FloatingMessage } from "../../components";
+import { MensajeFlotante } from "../../components";
 import { styles } from "./registro.styles";
 
 export default function RegistroScreen({ navigation }) {
@@ -273,7 +273,7 @@ export default function RegistroScreen({ navigation }) {
       <Text style={styles.infoText}>Más adelante podrás editar tu perfil y agregar más información.</Text>
       </ScrollView>
 
-      <FloatingMessage
+      <MensajeFlotante
         visible={!!successMessage}
         message={successMessage}
         type="success"

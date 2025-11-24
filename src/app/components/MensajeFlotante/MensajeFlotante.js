@@ -11,7 +11,7 @@ import { colors, typography } from "../../../shared/styles";
 /**
  * Componente para mostrar mensajes flotantes de estado
  */
-export default function FloatingMessage({ 
+export default function MensajeFlotante({ 
   message, 
   type = "info", 
   visible = false, 

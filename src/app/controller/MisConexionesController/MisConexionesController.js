@@ -21,8 +21,8 @@ export class MisConexionesController {
       showDetalles: false,
       showResenaModal: false,
       showRechazarModal: false,
-      showFloatingMessage: false,
-      floatingMessage: { type: '', text: '' }
+      showMensajeFlotante: false,
+      mensajeFlotante: { type: '', text: '' }
     };
   }
 
@@ -157,7 +157,7 @@ export class MisConexionesController {
   }
 
   // Obtener configuración de mensaje flotante
-  static getFloatingMessageConfig() {
+  static getMensajeFlotanteConfig() {
     return {
       duration: CONEXIONES_CONFIG.FLOATING_MESSAGE_DURATION
     };

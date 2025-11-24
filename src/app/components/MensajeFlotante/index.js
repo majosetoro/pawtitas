@@ -1,2 +1,2 @@
-export { default } from './FloatingMessage';
+export { default } from './MensajeFlotante';
 

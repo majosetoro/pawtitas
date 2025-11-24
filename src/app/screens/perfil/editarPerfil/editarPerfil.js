@@ -8,7 +8,7 @@ import {
   Platform 
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ScreenHeader, GuardarCancelarBtn, FloatingMessage, BottomNavbar } from "../../../components";
+import { ScreenHeader, GuardarCancelarBtn, MensajeFlotante, BottomNavbar } from "../../../components";
 import { styles } from "./editarPerfil.styles";
 import PerfilFactory from "./roles/PerfilFactory";
 import ROLES from "./roles/types";
@@ -26,7 +26,7 @@ export default function EditarPerfil({ navigation, route }) {
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState({ type: "", text: "" });
-  const [showFloatingMessage, setShowFloatingMessage] = useState(false);
+  const [showMensajeFlotante, setShowMensajeFlotante] = useState(false);
 
   // Cargar datos del perfil al montar el componente
   useEffect(() => {
@@ -44,7 +44,7 @@ export default function EditarPerfil({ navigation, route }) {
       setFormData(PerfilFactory.getInitialFormState(userRole));
     } catch (error) {
       setMessage({ type: "error", text: "Error al cargar los datos del perfil" });
-      setShowFloatingMessage(true);
+      setShowMensajeFlotante(true);
     } finally {
       setLoading(false);
     }
@@ -71,23 +71,23 @@ export default function EditarPerfil({ navigation, route }) {
   const handleSave = async () => {
     if (!validateForm()) {
       setMessage({ type: "error", text: "Por favor, corrige los errores en el formulario" });
-      setShowFloatingMessage(true);
+      setShowMensajeFlotante(true);
       return;
     }
 
     setSaving(true);
     setMessage({ type: "", text: "" });
-    setShowFloatingMessage(false);
+    setShowMensajeFlotante(false);
 
     try {
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       setMessage({ type: "success", text: "Perfil actualizado exitosamente" });
-      setShowFloatingMessage(true);
+      setShowMensajeFlotante(true);
       
     } catch (error) {
       setMessage({ type: "error", text: "Error al guardar el perfil. Inténtalo de nuevo." });
-      setShowFloatingMessage(true);
+      setShowMensajeFlotante(true);
     } finally {
       setSaving(false);
     }
@@ -99,8 +99,8 @@ export default function EditarPerfil({ navigation, route }) {
   };
 
   // Manejar el ocultamiento del mensaje flotante
-  const handleHideFloatingMessage = () => {
-    setShowFloatingMessage(false);
+  const handleHideMensajeFlotante = () => {
+    setShowMensajeFlotante(false);
     setMessage({ type: "", text: "" });
   };
 
@@ -119,11 +119,11 @@ export default function EditarPerfil({ navigation, route }) {
   return (
     <SafeAreaView style={styles.container}>
       {/* Mensaje flotante */}
-      <FloatingMessage
+      <MensajeFlotante
         message={message.text}
         type={message.type}
-        visible={showFloatingMessage}
-        onHide={handleHideFloatingMessage}
+        visible={showMensajeFlotante}
+        onHide={handleHideMensajeFlotante}
         duration={4000}
       />
 

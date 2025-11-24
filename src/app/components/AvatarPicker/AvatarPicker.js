@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { styles } from './AvatarPicker.styles';
 import { colors } from '../../../shared/styles';
-import FloatingMessage from '../MensajeFlotante';
+import MensajeFlotante from '../MensajeFlotante';
 
 // Componente para seleccionar avatar
 const AvatarPicker = ({ 
@@ -14,23 +14,23 @@ const AvatarPicker = ({
   onImageSelected 
 }) => {
   const [loading, setLoading] = useState(false);
-  const [floatingMessage, setFloatingMessage] = useState({
+  const [mensajeFlotante, setMensajeFlotante] = useState({
     visible: false,
     message: '',
     type: 'error'
   });
 
   // Mensajes flotantes
-  const showFloatingMessage = (message, type = 'error') => {
-    setFloatingMessage({
+  const showMensajeFlotante = (message, type = 'error') => {
+    setMensajeFlotante({
       visible: true,
       message,
       type
     });
   };
 
-  const hideFloatingMessage = () => {
-    setFloatingMessage(prev => ({
+  const hideMensajeFlotante = () => {
+    setMensajeFlotante(prev => ({
       ...prev,
       visible: false
     }));
@@ -43,7 +43,7 @@ const AvatarPicker = ({
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       
       if (status !== 'granted') {
-        showFloatingMessage(
+        showMensajeFlotante(
           'Necesitamos permiso para acceder a tus fotos. Por favor, habilítalo en la configuración de tu dispositivo.',
           'error'
         );
@@ -66,7 +66,7 @@ const AvatarPicker = ({
       }
     } catch (error) {
       console.error('Error al seleccionar imagen:', error);
-      showFloatingMessage(
+      showMensajeFlotante(
         'Hubo un problema al seleccionar la imagen. Por favor, intenta de nuevo.',
         'error'
       );
@@ -82,7 +82,7 @@ const AvatarPicker = ({
       const { status } = await ImagePicker.requestCameraPermissionsAsync();
       
       if (status !== 'granted') {
-        showFloatingMessage(
+        showMensajeFlotante(
           'Necesitamos permiso para acceder a tu cámara. Por favor, habilítalo en la configuración de tu dispositivo.',
           'error'
         );
@@ -104,7 +104,7 @@ const AvatarPicker = ({
       }
     } catch (error) {
       console.error('Error al tomar foto:', error);
-      showFloatingMessage(
+      showMensajeFlotante(
         'Hubo un problema al tomar la foto. Por favor, intenta de nuevo.',
         'error'
       );
@@ -186,11 +186,11 @@ const AvatarPicker = ({
         {imageUri ? 'Cambiar imagen' : 'Agregar imagen de perfil'}
       </Text>
       
-      <FloatingMessage
-        visible={floatingMessage.visible}
-        message={floatingMessage.message}
-        type={floatingMessage.type}
-        onHide={hideFloatingMessage}
+      <MensajeFlotante
+        visible={mensajeFlotante.visible}
+        message={mensajeFlotante.message}
+        type={mensajeFlotante.type}
+        onHide={hideMensajeFlotante}
       />
     </View>
   );

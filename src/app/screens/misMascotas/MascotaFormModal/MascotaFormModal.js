@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { CheckboxField } from './CheckboxField';
-import { FloatingMessage, ConfirmacionDialogo, AvatarPicker } from '../../../components';
+import { MensajeFlotante, ConfirmacionDialogo, AvatarPicker } from '../../../components';
 import { styles } from './MascotaFormModal.styles';
 import { colors } from '../../../../shared/styles';
 
@@ -101,7 +101,7 @@ const MascotaFormModal = ({
   // Estado para validación y mensajes
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState({ type: "", text: "" });
-  const [showFloatingMessage, setShowFloatingMessage] = useState(false);
+  const [showMensajeFlotante, setShowMensajeFlotante] = useState(false);
   const [showExitConfirmation, setShowExitConfirmation] = useState(false);
 
   // Actualizar los datos del formulario cuando mascotaData cambia
@@ -111,7 +111,7 @@ const MascotaFormModal = ({
     // Limpiar errores y mensajes al cambiar los datos
     setErrors({});
     setMessage({ type: "", text: "" });
-    setShowFloatingMessage(false);
+    setShowMensajeFlotante(false);
   }, [mascotaData]);
 
   // Manejar cambios en los inputs
@@ -162,7 +162,7 @@ const MascotaFormModal = ({
   const handleSubmit = useCallback(() => {
     if (!validateForm()) {
       setMessage({ type: "error", text: "Por favor, corrige los errores en el formulario" });
-      setShowFloatingMessage(true);
+      setShowMensajeFlotante(true);
       return;
     }
 
@@ -172,8 +172,8 @@ const MascotaFormModal = ({
   }, [validateForm, formData, onSave, onClose]);
 
   // Manejar el ocultamiento del mensaje flotante
-  const handleHideFloatingMessage = useCallback(() => {
-    setShowFloatingMessage(false);
+  const handleHideMensajeFlotante = useCallback(() => {
+    setShowMensajeFlotante(false);
     setMessage({ type: "", text: "" });
   }, []);
 
@@ -238,11 +238,11 @@ const MascotaFormModal = ({
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.centeredView}
       >
-        <FloatingMessage
+        <MensajeFlotante
           message={message.text}
           type={message.type}
-          visible={showFloatingMessage}
-          onHide={handleHideFloatingMessage}
+          visible={showMensajeFlotante}
+          onHide={handleHideMensajeFlotante}
           duration={FORM_CONFIG.FLOATING_MESSAGE_DURATION}
         />
         
