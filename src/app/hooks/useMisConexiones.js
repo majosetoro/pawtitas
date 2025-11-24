@@ -77,8 +77,8 @@ export const useMisConexiones = () => {
       showCalendarioModal: false,
       selectedDates: selectedDates,
       selectedProvider: null,
-      showFloatingMessage: true,
-      floatingMessage: {
+      showMensajeFlotante: true,
+      mensajeFlotante: {
         type: 'success',
         text: `Pago confirmado para ${selectedDates.length} ${selectedDates.length === 1 ? 'día' : 'días'}`
       }
@@ -129,8 +129,8 @@ export const useMisConexiones = () => {
       ...prev,
       showRechazarModal: false,
       selectedProvider: null,
-      showFloatingMessage: true,
-      floatingMessage: message
+      showMensajeFlotante: true,
+      mensajeFlotante: message
     }));
   }, [state.selectedProvider]);
 
@@ -159,11 +159,11 @@ export const useMisConexiones = () => {
     }));
   }, []);
 
-  const handleHideFloatingMessage = useCallback(() => {
+  const handleHideMensajeFlotante = useCallback(() => {
     setState(prev => ({ 
       ...prev, 
-      showFloatingMessage: false, 
-      floatingMessage: { type: '', text: '' } 
+      showMensajeFlotante: false, 
+      mensajeFlotante: { type: '', text: '' } 
     }));
   }, []);
 
@@ -206,7 +206,7 @@ export const useMisConexiones = () => {
     handleCancelarRechazo,
     handleAgregarResena,
     handleCloseResenaModal,
-    handleHideFloatingMessage,
+    handleHideMensajeFlotante,
     toggleFilters,
     handleResenas,
     handleConectar,
@@ -217,6 +217,6 @@ export const useMisConexiones = () => {
     filterOptions: MisConexionesController.getFilterOptions(),
     
     // Configuración de mensaje flotante
-    floatingMessageConfig: MisConexionesController.getFloatingMessageConfig()
+    mensajeFlotanteConfig: MisConexionesController.getMensajeFlotanteConfig()
   };
 };

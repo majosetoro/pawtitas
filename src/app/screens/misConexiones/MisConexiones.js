@@ -11,7 +11,7 @@ import PrestadorServiciosCard from '../../components/PrestadorServiciosCard/Pres
 import PrestadorServiciosDetails from '../../components/PrestadorServiciosDetails/PrestadorServiciosDetails';
 import ConfirmacionDialogo from '../../components/ConfirmacionDialogo';
 import CalendarioPagoModal from '../../components/CalendarioPagoModal';
-import FloatingMessage from '../../components/FloatingMessage';
+import { MensajeFlotante } from '../../components';
 import { useMisConexiones } from '../../hooks/useMisConexiones';
 import { styles } from './MisConexiones.styles';
 
@@ -34,14 +34,14 @@ const MisConexiones = () => {
     handleCancelarRechazo,
     handleAgregarResena,
     handleCloseResenaModal,
-    handleHideFloatingMessage,
+    handleHideMensajeFlotante,
     toggleFilters,
     handleResenas,
     handleConectar,
     handleChat,
     getProviderType,
     filterOptions,
-    floatingMessageConfig
+    mensajeFlotanteConfig
   } = useMisConexiones();
 
   // Navegación
@@ -141,12 +141,12 @@ const MisConexiones = () => {
       />
 
       {/* Mensaje flotante */}
-      <FloatingMessage
-        visible={state.showFloatingMessage}
-        message={state.floatingMessage.text}
-        type={state.floatingMessage.type}
-        onHide={handleHideFloatingMessage}
-        duration={floatingMessageConfig.duration}
+      <MensajeFlotante
+        visible={state.showMensajeFlotante}
+        message={state.mensajeFlotante.text}
+        type={state.mensajeFlotante.type}
+        onHide={handleHideMensajeFlotante}
+        duration={mensajeFlotanteConfig.duration}
       />
 
       {/* Navegación inferior */}

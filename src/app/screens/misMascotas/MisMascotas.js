@@ -3,7 +3,7 @@ import { View, FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from './misMascotas.styles';
-import { ScreenHeader, BottomNavbar, FloatingAddBtn, FloatingMessage, ConfirmacionDialogo as ConfirmacionDialogo } from '../../components';
+import { ScreenHeader, BottomNavbar, FloatingAddBtn, MensajeFlotante, ConfirmacionDialogo as ConfirmacionDialogo } from '../../components';
 import { MascotaCard, EmptyMascotasList, MascotaFormModal } from './components';
 
 // Pantalla de Mis Mascotas. Muestra la lista de mascotas registradas del cliente
@@ -18,7 +18,7 @@ const MisMascotas = () => {
   
   // Estado para mensajes flotantes
   const [message, setMessage] = useState({ type: "", text: "" });
-  const [showFloatingMessage, setShowFloatingMessage] = useState(false);
+  const [showMensajeFlotante, setShowMensajeFlotante] = useState(false);
   
   // Estado para el diálogo de confirmación de eliminación
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
@@ -117,7 +117,7 @@ const MisMascotas = () => {
     }
     
     // Mostrar el mensaje flotante
-    setShowFloatingMessage(true);
+    setShowMensajeFlotante(true);
     
     // Cerrar el modal
     handleCloseModal();
@@ -134,8 +134,8 @@ const MisMascotas = () => {
   };
 
   // Manejar el ocultamiento del mensaje flotante
-  const handleHideFloatingMessage = () => {
-    setShowFloatingMessage(false);
+  const handleHideMensajeFlotante = () => {
+    setShowMensajeFlotante(false);
     setMessage({ type: "", text: "" });
   };
 
@@ -157,7 +157,7 @@ const MisMascotas = () => {
         type: "success", 
         text: `¡${mascotaToDelete.nombre} ha sido eliminado correctamente!` 
       });
-      setShowFloatingMessage(true);
+      setShowMensajeFlotante(true);
     }
     
     // Cerrar el diálogo de confirmación
@@ -186,11 +186,11 @@ const MisMascotas = () => {
   return (
     <SafeAreaView style={styles.container}>
       {/* Mensaje flotante */}
-      <FloatingMessage
+      <MensajeFlotante
         message={message.text}
         type={message.type}
-        visible={showFloatingMessage}
-        onHide={handleHideFloatingMessage}
+        visible={showMensajeFlotante}
+        onHide={handleHideMensajeFlotante}
         duration={4000}
       />
       
