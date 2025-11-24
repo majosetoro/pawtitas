@@ -49,6 +49,15 @@ export default class PerfilFactory {
             veterinarioDomicilio: false,
             clinicaVeterinaria: false,
           },
+          petTypes: {
+            perro: false,
+            gato: false,
+            conejo: false,
+            ave: false,
+            roedor: false,
+            otro: false,
+          },
+          petTypesCustom: "",
           availability: {
             lunes: false,
             martes: false,
