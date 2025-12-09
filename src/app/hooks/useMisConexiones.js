@@ -1,8 +1,11 @@
 import { useState, useMemo, useCallback } from 'react';
 import { MisConexionesController } from '../controller';
 import { ESTADOS_CONEXION } from '../constants/estadosConexion';
+import { useLocation } from '../contexts';
 
 export const useMisConexiones = () => {
+  const { userLocation, getDistanceFromUser } = useLocation();
+  
   // Estados
   const [state, setState] = useState(() => ({
     ...MisConexionesController.getInitialState(),
@@ -11,14 +14,23 @@ export const useMisConexiones = () => {
   }));
   const [providers, setProviders] = useState(() => MisConexionesController.getMockProviders());
 
-  // Filtrar proveedores
+  // Filtrar proveedores y agregar distancias
   const filteredProviders = useMemo(() => {
-    return MisConexionesController.filterProviders(
+    const filtered = MisConexionesController.filterProviders(
       providers, 
       state.searchQuery, 
       state.selectedFilter
     );
-  }, [providers, state.searchQuery, state.selectedFilter]);
+
+    // Agregar distancia a cada proveedor si tiene coordenadas y hay ubicación del usuario
+    return filtered.map(provider => {
+      if (provider.latitude && provider.longitude && userLocation) {
+        const distance = getDistanceFromUser(provider.latitude, provider.longitude);
+        return { ...provider, distance };
+      }
+      return { ...provider, distance: null };
+    });
+  }, [providers, state.searchQuery, state.selectedFilter, userLocation, getDistanceFromUser]);
 
   // Búsqueda y filtros
   const handleSearch = useCallback((query) => {

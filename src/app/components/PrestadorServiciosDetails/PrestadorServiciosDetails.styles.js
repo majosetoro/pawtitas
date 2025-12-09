@@ -61,9 +61,32 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 4,
   },
+  ubicacionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
   ubicacion: {
     ...typography.styles.caption,
     color: colors.text.secondary,
+  },
+  distanceBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fceeeeff',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 12,
+    gap: 4,
+    borderWidth: 1,
+    borderColor: '#f5a3c1ff',
+  },
+  distanceText: {
+    ...typography.styles.caption,
+    fontSize: 12,
+    color: '#f5a3c1ff',
+    fontWeight: '600',
   },
   closeButton: {
     padding: 8,

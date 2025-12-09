@@ -39,7 +39,10 @@ export class MisConexionesController {
         disponibilidad: 'Lunes, Miércoles, Jueves',
         horario: 'A convenir',
         tipo: 'cuidador',
-        estado: 'confirmado'
+        estado: 'confirmado',
+        // Coordenadas de Belgrano, CABA
+        latitude: -34.5628,
+        longitude: -58.4556,
       },
       {
         id: '2',
@@ -51,7 +54,10 @@ export class MisConexionesController {
         disponibilidad: 'Lunes, Miércoles, Jueves',
         horario: 'A convenir',
         tipo: 'paseador',
-        estado: 'pendiente'
+        estado: 'pendiente',
+        // Coordenadas de Belgrano, CABA
+        latitude: -34.5628,
+        longitude: -58.4556,
       },
       {
         id: '3',
@@ -63,7 +69,10 @@ export class MisConexionesController {
         disponibilidad: 'Lunes a Viernes',
         horario: '9:00 - 18:00',
         tipo: 'veterinario',
-        estado: 'finalizado'
+        estado: 'finalizado',
+        // Coordenadas de Palermo, CABA
+        latitude: -34.5889,
+        longitude: -58.4199,
       },
       {
         id: '4',
@@ -75,7 +84,10 @@ export class MisConexionesController {
         disponibilidad: 'Martes, Jueves, Viernes',
         horario: '2-4 horas',
         tipo: 'paseador',
-        estado: 'rechazado'
+        estado: 'rechazado',
+        // Coordenadas de Palermo, CABA
+        latitude: -34.5889,
+        longitude: -58.4199,
       },
     ];
   }

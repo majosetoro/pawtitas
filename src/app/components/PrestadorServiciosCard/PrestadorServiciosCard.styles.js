@@ -95,12 +95,28 @@ export const styles = StyleSheet.create({
   detailItem: {
     flexDirection: 'row',
     alignItems: 'center',
+    flexWrap: 'wrap',
   },
   detailText: {
     ...typography.styles.caption,
     color: colors.text.secondary,
     marginLeft: 8,
     flex: 1,
+  },
+  distanceBadge: {
+    backgroundColor: '#fceeeeff',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 12,
+    marginLeft: 8,
+    borderWidth: 1,
+    borderColor: '#f5a3c1ff',
+  },
+  distanceText: {
+    ...typography.styles.caption,
+    fontSize: 12,
+    color: '#f5a3c1ff',
+    fontWeight: '600',
   },
   arrowButton: {
     padding: 4,

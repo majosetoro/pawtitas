@@ -3,10 +3,13 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../../../shared/styles';
 import EstadosChip from '../EstadosChip';
+import { useLocation } from '../../contexts';
 import { styles } from './PrestadorServiciosCard.styles';
 
 // Componente reutilizable para mostrar una tarjeta de prestador de servicio (cuidador, paseador o veterinario)
 const PrestadorServiciosCard = ({ provider, onPress, providerType, misConexiones = false }) => {
+  const { formatDistance } = useLocation();
+  
   const { 
     id,
     nombre, 
@@ -18,6 +21,7 @@ const PrestadorServiciosCard = ({ provider, onPress, providerType, misConexiones
     horario,
     estado,
     tipo,
+    distance,
   } = provider;
   
   const getProviderTypeText = (type) => {
@@ -96,6 +100,11 @@ const PrestadorServiciosCard = ({ provider, onPress, providerType, misConexiones
           <View style={styles.detailItem}>
             <Ionicons name="location-outline" size={16} color={colors.text.secondary} />
             <Text style={styles.detailText}>{ubicacion}</Text>
+            {distance !== null && distance !== undefined && (
+              <View style={styles.distanceBadge}>
+                <Text style={styles.distanceText}>{formatDistance(distance)}</Text>
+              </View>
+            )}
           </View>
           
           <View style={styles.detailItem}>
