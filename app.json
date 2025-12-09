@@ -10,8 +10,20 @@
       "backgroundColor": "#ffffff",
       "resizeMode": "contain"
     },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Permitir a Pawtitas usar tu ubicación para encontrar servicios cercanos a ti."
+        }
+      ]
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Pawtitas necesita tu ubicación para mostrarte servicios cercanos.",
+        "NSLocationAlwaysUsageDescription": "Pawtitas necesita tu ubicación para mostrarte servicios cercanos."
+      }
     },
     "android": {
       "package": "com.pawtitas.app",
@@ -20,7 +32,11 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "softwareKeyboardLayoutMode": "pan"
+      "softwareKeyboardLayoutMode": "pan",
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
+      ]
     },
     "web": {
       "favicon": "./assets/icon.png"
