@@ -12,6 +12,9 @@ const SALUD_DATA = [
     ubicacion: 'Palermo, CABA',
     disponibilidad: 'Lunes a Viernes',
     horario: '9:00 - 18:00',
+    // Coordenadas de Palermo, CABA
+    latitude: -34.5889,
+    longitude: -58.4199,
   },
   {
     id: '2',
@@ -22,6 +25,9 @@ const SALUD_DATA = [
     ubicacion: 'Belgrano, CABA',
     disponibilidad: 'Martes, Jueves, Sábados',
     horario: '10:00 - 19:00',
+    // Coordenadas de Belgrano, CABA
+    latitude: -34.5628,
+    longitude: -58.4556,
   },
   {
     id: '3',
@@ -32,6 +38,9 @@ const SALUD_DATA = [
     ubicacion: 'Recoleta, CABA',
     disponibilidad: 'Lunes, Miércoles, Viernes',
     horario: '8:00 - 16:00',
+    // Coordenadas de Recoleta, CABA
+    latitude: -34.5875,
+    longitude: -58.3974,
   }
 ];
 
