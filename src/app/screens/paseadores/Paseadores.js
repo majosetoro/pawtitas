@@ -12,6 +12,9 @@ const PASEADORES_DATA = [
     ubicacion: 'Belgrano, CABA',
     disponibilidad: 'Lunes, Miércoles, Jueves',
     horario: 'A convenir',
+    // Coordenadas de Belgrano, CABA
+    latitude: -34.5628,
+    longitude: -58.4556,
   },
   {
     id: '2',
@@ -22,6 +25,9 @@ const PASEADORES_DATA = [
     ubicacion: 'Palermo, CABA',
     disponibilidad: 'Martes, Jueves, Viernes',
     horario: '2-4 horas',
+    // Coordenadas de Palermo, CABA
+    latitude: -34.5889,
+    longitude: -58.4199,
   },
   {
     id: '3',
@@ -32,6 +38,9 @@ const PASEADORES_DATA = [
     ubicacion: 'Recoleta, CABA',
     disponibilidad: 'Lunes a Viernes',
     horario: 'A convenir',
+    // Coordenadas de Recoleta, CABA
+    latitude: -34.5875,
+    longitude: -58.3974,
   }
 ];
 

@@ -9,11 +9,12 @@ import Filtros from '../Filtros/Filtros';
 import BottomNavbar from '../BottomNavbar/BottomNavbar';
 import PrestadorServiciosCard from '../PrestadorServiciosCard';
 import PrestadorServiciosDetails from '../PrestadorServiciosDetails';
+import { useLocation } from '../../contexts';
 import { styles } from './PrestadorServiciosScreen.styles';
 
 // Filtros
 const FILTROS_DATA = [
-  { key: 'todos', label: 'Todos' },
+  { key: 'cercania', label: 'Más cercanos' },
   { key: 'mejor-calificacion', label: 'Mejor calificación' },
   { key: 'mejor-precio', label: 'Mejor precio' },
 ];
@@ -26,14 +27,27 @@ const PrestadorServiciosScreen = ({
   screenSubtitle
 }) => {
   const [searchText, setSearchText] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState('todos');
+  const [selectedFilter, setSelectedFilter] = useState('cercania');
   const [showFilters, setShowFilters] = useState(false);
   const [selectedProvider, setSelectedProvider] = useState(null);
   const [showDetalles, setShowDetalles] = useState(false);
 
-  // Filtrar proveedores basado en búsqueda y filtro seleccionado
+  const { userLocation, getDistanceFromUser } = useLocation();
+
+  /**
+   * Filtrar y ordenar proveedores basado en búsqueda y filtro seleccionado
+   */
   const filteredProviders = useMemo(() => {
     let filtered = providers;
+
+    // Distancia a cada proveedor si tiene coordenadas y hay ubicación del usuario
+    filtered = filtered.map(provider => {
+      if (provider.latitude && provider.longitude && userLocation) {
+        const distance = getDistanceFromUser(provider.latitude, provider.longitude);
+        return { ...provider, distance };
+      }
+      return { ...provider, distance: null };
+    });
 
     // Filtrar por texto de búsqueda
     if (searchText.trim()) {
@@ -43,8 +57,16 @@ const PrestadorServiciosScreen = ({
       );
     }
 
-    // Filtrar por filtro seleccionado
+    // Ordenar según el filtro seleccionado
     switch (selectedFilter) {
+      case 'cercania':
+        filtered = filtered.sort((a, b) => {
+          if (a.distance === null && b.distance === null) return 0;
+          if (a.distance === null) return 1; // Los sin distancia van al final
+          if (b.distance === null) return -1;
+          return a.distance - b.distance; // Ordenar de menor a mayor distancia
+        });
+        break;
       case 'mejor-calificacion':
         filtered = filtered.sort((a, b) => b.rating - a.rating);
         break;
@@ -56,13 +78,11 @@ const PrestadorServiciosScreen = ({
         });
         break;
       default:
-        // Por defecto, ordenar por cercanía
-        // Implementar lógica de geolocalización
         break;
     }
 
     return filtered;
-  }, [searchText, selectedFilter, providers]);
+  }, [searchText, selectedFilter, providers, userLocation, getDistanceFromUser]);
 
   const handleSearchChange = (text) => {
     setSearchText(text);

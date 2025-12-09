@@ -149,7 +149,8 @@ export class PrestadorServiciosDetailsController {
       descripcion: provider.descripcion || '',
       estado: provider.estado || '',
       rating: provider.rating || 0,
-      tipo: provider.tipo || ''
+      tipo: provider.tipo || '',
+      distance: provider.distance !== undefined ? provider.distance : null,
     };
   }
 }

@@ -12,6 +12,9 @@ const CUIDADORES_DATA = [
     ubicacion: 'Belgrano, CABA',
     disponibilidad: 'Lunes, Miércoles, Jueves',
     horario: 'A convenir',
+    // Coordenadas de Belgrano, CABA
+    latitude: -34.5628,
+    longitude: -58.4556,
   },
   {
     id: '2',
@@ -21,7 +24,10 @@ const CUIDADORES_DATA = [
     precio: '$15.000',
     ubicacion: 'Colegiales, CABA',
     disponibilidad: 'Viernes, Sábado',
-    horario: '5-8 horas'
+    horario: '5-8 horas',
+    // Coordenadas de Colegiales, CABA
+    latitude: -34.5741,
+    longitude: -58.4487,
   },
   {
     id: '3',
@@ -32,6 +38,9 @@ const CUIDADORES_DATA = [
     ubicacion: 'Belgrano, CABA',
     disponibilidad: 'Lunes, Miércoles, Jueves',
     horario: 'A convenir',
+    // Coordenadas de Belgrano, CABA (diferente punto)
+    latitude: -34.5580,
+    longitude: -58.4589,
   }
 ];
 

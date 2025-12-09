@@ -12,6 +12,7 @@ import GuardarCancelarBtn from '../buttons/GuardarCancelarBtn';
 import EstadosChip from '../EstadosChip';
 import MenuActions from '../MenuActions';
 import { usePrestadorServiciosDetails } from '../../hooks/usePrestadorServiciosDetails';
+import { useLocation } from '../../contexts';
 import { styles } from './PrestadorServiciosDetails.styles';
 
 const PrestadorServiciosDetails = ({ 
@@ -28,6 +29,8 @@ const PrestadorServiciosDetails = ({
   onAgregarResena,
   onRechazar,
 }) => {
+  const { formatDistance } = useLocation();
+  
   // Hook para obtener toda la lógica
   const {
     scrollViewRef,
@@ -68,6 +71,7 @@ const PrestadorServiciosDetails = ({
     disponibilidad,
     descripcion,
     estado,
+    distance,
   } = providerInfo;
 
   return (
@@ -97,7 +101,15 @@ const PrestadorServiciosDetails = ({
                 />
               ))}
             </View>
-            <Text style={styles.ubicacion}>{ubicacion}</Text>
+            <View style={styles.ubicacionRow}>
+              <Text style={styles.ubicacion}>{ubicacion}</Text>
+              {distance !== null && distance !== undefined && (
+                <View style={styles.distanceBadge}>
+                  <Ionicons name="navigate" size={12} color="#f5a3c1ff" />
+                  <Text style={styles.distanceText}>{formatDistance(distance)}</Text>
+                </View>
+              )}
+            </View>
           </View>
           
           <View style={styles.headerActions}>
