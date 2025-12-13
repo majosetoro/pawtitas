@@ -3,7 +3,7 @@ import { View, FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from './misMascotas.styles';
-import { ScreenHeader, BottomNavbar, FloatingAddBtn, MensajeFlotante, ConfirmacionDialogo as ConfirmacionDialogo } from '../../components';
+import { ScreenHeader, MenuInferior, FloatingAddBtn, MensajeFlotante, ConfirmacionDialogo as ConfirmacionDialogo } from '../../components';
 import { MascotaCard, EmptyMascotasList, MascotaFormModal } from './components';
 
 // Pantalla de Mis Mascotas. Muestra la lista de mascotas registradas del cliente
@@ -234,7 +234,7 @@ const MisMascotas = () => {
       />
       
       {/* Navegación inferior */}
-      <BottomNavbar />
+      <MenuInferior />
       
       {/* Diálogo de confirmación para eliminar mascota */}
       <ConfirmacionDialogo

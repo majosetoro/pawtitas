@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { styles } from './perfil.styles';
 import { colors } from '../../../shared/styles';
-import { PerfilHeader, BottomNavbar } from '../../components';
+import { PerfilHeader, MenuInferior } from '../../components';
 import { PerfilInfoCard, MascotasSection, LogoutBtn, SettingsMenu, SupportService } from './components';
 
 // Perfil del usuario
@@ -105,7 +105,7 @@ const PerfilScreen = () => {
       </ScrollView>
 
       {/* Navegación inferior */}
-      <BottomNavbar />
+      <MenuInferior />
     </View>
   );
 };
