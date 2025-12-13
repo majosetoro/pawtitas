@@ -19,9 +19,11 @@ import ValidarUsuarioScreen from "./screens/panelAdmin/ValidarUsuario/ValidarUsu
 import MisConexionesScreen from "./screens/misConexiones/MisConexiones";
 import ResenasScreen from "./screens/resenas/Resenas";
 import ChatScreen from "./screens/chat/Chat";
+import Conversacion from "./screens/chat/Conversacion";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { LocationProvider } from "./contexts";
+import { LocationProvider, StreamChatProvider } from "./contexts";
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 // Importar fuentes de Google
 import {
@@ -112,28 +114,33 @@ export default function App() {
   }
 
   return (
-    <LocationProvider>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Splash" component={SplashScreen} />
-          <Stack.Screen name="Bienvenida" component={BienvenidaScreen} />
-          <Stack.Screen name="Registro" component={RegistroScreen} />
-          <Stack.Screen name="Inicio" component={InicioScreen} />
-          <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="Cuidadores" component={CuidadoresScreen} />
-          <Stack.Screen name="Paseadores" component={PaseadoresScreen} />
-          <Stack.Screen name="Salud" component={SaludScreen} />
-          <Stack.Screen name="Perfil" component={PerfilScreen} />
-          <Stack.Screen name="EditarPerfil" component={EditarPerfil} />
-          <Stack.Screen name="MisMascotas" component={MisMascotasScreen} />
-          <Stack.Screen name="PanelAdmin" component={PanelAdminScreen} />
-          <Stack.Screen name="ValidarUsuario" component={ValidarUsuarioScreen} />
-          <Stack.Screen name="MisConexiones" component={MisConexionesScreen} />
-          <Stack.Screen name="Resenas" component={ResenasScreen} />
-          <Stack.Screen name="Chat" component={ChatScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </LocationProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <LocationProvider>
+        <StreamChatProvider>
+            <NavigationContainer>
+              <Stack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="Splash" component={SplashScreen} />
+                <Stack.Screen name="Bienvenida" component={BienvenidaScreen} />
+                <Stack.Screen name="Registro" component={RegistroScreen} />
+                <Stack.Screen name="Inicio" component={InicioScreen} />
+                <Stack.Screen name="Home" component={HomeScreen} />
+                <Stack.Screen name="Cuidadores" component={CuidadoresScreen} />
+                <Stack.Screen name="Paseadores" component={PaseadoresScreen} />
+                <Stack.Screen name="Salud" component={SaludScreen} />
+                <Stack.Screen name="Perfil" component={PerfilScreen} />
+                <Stack.Screen name="EditarPerfil" component={EditarPerfil} />
+                <Stack.Screen name="MisMascotas" component={MisMascotasScreen} />
+                <Stack.Screen name="PanelAdmin" component={PanelAdminScreen} />
+                <Stack.Screen name="ValidarUsuario" component={ValidarUsuarioScreen} />
+                <Stack.Screen name="MisConexiones" component={MisConexionesScreen} />
+                <Stack.Screen name="Resenas" component={ResenasScreen} />
+                <Stack.Screen name="Chat" component={ChatScreen} />
+                <Stack.Screen name="Conversacion" component={Conversacion} />
+              </Stack.Navigator>
+            </NavigationContainer>
+        </StreamChatProvider>
+      </LocationProvider>
+    </GestureHandlerRootView>
   );
 }
 
