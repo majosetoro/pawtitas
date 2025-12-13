@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, TouchableOpacity, Text, Animated } from 'react-native';
+import { View, TouchableOpacity, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { styles } from './BottomNavbar.styles';
+import { colors } from '../../../shared/styles';
 
 // Componente reutilizable para el menú inferior
 const BottomNavbar = () => {
@@ -26,33 +27,31 @@ const BottomNavbar = () => {
 
   return (
     <View style={styles.container}>
-      {navItems.map((item) => {
-        const isActive = route.name === item.route;
-        return (
-          <TouchableOpacity
-            key={item.name}
-            style={[styles.navItem, isActive && styles.activeNavItem]}
-            onPress={() => navigateTo(item.route)}
-            accessibilityLabel={item.name}
-            accessibilityRole="button"
-          >
-            <Ionicons
-              name={isActive ? item.activeIcon : item.icon}
-              size={isActive ? 26 : 24}
-              color={isActive ? styles.activeColor : styles.inactiveColor}
-            />
-            <Text
-              style={[
-                styles.navText,
-                isActive ? styles.activeText : styles.inactiveText,
-              ]}
+      <View style={styles.navBar}>
+        {navItems.map((item) => {
+          const isActive = route.name === item.route;
+          return (
+            <TouchableOpacity
+              key={item.name}
+              style={[styles.navItem, isActive && styles.activeNavItem]}
+              onPress={() => navigateTo(item.route)}
+              accessibilityLabel={item.name}
+              accessibilityRole="button"
             >
-              {item.name}
-            </Text>
-            {isActive && <View style={styles.indicator} />}
-          </TouchableOpacity>
-        );
-      })}
+              <Ionicons
+                name={isActive ? item.activeIcon : item.icon}
+                size={24}
+                color={isActive ? colors.navigation.active : colors.navigation.inactive}
+              />
+              {isActive && (
+                <Text style={[styles.navText, styles.activeText]}>
+                  {item.name}
+                </Text>
+              )}
+            </TouchableOpacity>
+          );
+        })}
+      </View>
     </View>
   );
 };
