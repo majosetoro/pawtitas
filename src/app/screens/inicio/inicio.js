@@ -16,15 +16,17 @@ import LoginInputField from "../../components/inputs/loginInputField";
 import LoginBtn from "../../components/buttons/loginBtn";
 import { colors } from "../../../shared/styles";
 import iconImage from "../../assets/icon.png";
+import { useStreamChat } from "../../contexts";
 
 const API_BASE =
-  process.env.EXPO_PUBLIC_API_BASE_URL || "http://192.168.1.47:3001";
+  process.env.EXPO_PUBLIC_API_BASE_URL || "http://192.168.1.108:3001";
 
 export default function InicioScreen({ navigation }) {
   const [form, setForm] = useState({ correo: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({ correo: "", password: "" });
   const [touched, setTouched] = useState({ correo: false, password: false });
+  const { initializeChat } = useStreamChat();
 
   const validateEmail = (email) => {
     if (!email.trim()) {
@@ -104,6 +106,15 @@ export default function InicioScreen({ navigation }) {
       const data = await response.json().catch(() => ({}));
 
       if (response.ok && data.success) {
+        // Inicializar el chat
+        await initializeChat(
+          data.user.id,      // ID único del usuario
+          data.user.nombre,  // Nombre a mostrar
+          data.tokenStream,      // Token generado por tu backend
+          data.user.avatar,   // URL del avatar (opcional)
+          data.user.tipo_usuario  // Rol del usuario (Duenio, Cuidador, Paseador, Veterinario, Admin)
+        );
+
         if (data.admin) {
           navigation.navigate("PanelAdmin");
         } else if (data.user) {
