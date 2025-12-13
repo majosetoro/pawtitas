@@ -3,7 +3,7 @@ import { ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import ScreenHeader from '../../components/ScreenHeader';
-import BottomNavbar from '../../components/BottomNavbar/BottomNavbar';
+import MenuInferior from '../../components/MenuInferior/MenuInferior';
 import BarraBuscador from '../../components/BarraBuscador/BarraBuscador';
 import Filtros from '../../components/Filtros/Filtros';
 import ResenaFormModal from '../../components/ResenaFormModal/ResenaFormModal';
@@ -150,7 +150,7 @@ const MisConexiones = () => {
       />
 
       {/* Navegación inferior */}
-      <BottomNavbar />
+      <MenuInferior />
     </SafeAreaView>
   );
 }

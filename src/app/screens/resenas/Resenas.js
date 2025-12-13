@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { ScrollView, View, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { ScreenHeader, BottomNavbar, BarraBuscador, Filtros } from '../../components';
+import { ScreenHeader, MenuInferior, BarraBuscador, Filtros } from '../../components';
 import ResenaCard from '../../components/ResenaCard';
 import { styles } from './Resenas.styles';
 
@@ -177,7 +177,7 @@ const Resenas = () => {
           )}
         </ScrollView>
 
-        <BottomNavbar />
+        <MenuInferior />
       </SafeAreaView>
     );
 }

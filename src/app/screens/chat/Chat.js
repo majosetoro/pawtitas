@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { ScreenHeader, BottomNavbar } from '../../components';
+import { ScreenHeader, MenuInferior } from '../../components';
 import { useStreamChat } from '../../contexts';
 import { ChatController } from '../../controller';
 import { colors } from '../../../shared/styles';
@@ -157,7 +157,7 @@ const Chat = () => {
                 <View style={styles.loadingContainer}>
                     <ActivityIndicator size="large" color={colors.primary} />
                 </View>
-                <BottomNavbar />
+                <MenuInferior />
             </SafeAreaView>
         );
     }
@@ -196,7 +196,7 @@ const Chat = () => {
                     )}
                 </>
             )}
-            <BottomNavbar />
+            <MenuInferior />
         </SafeAreaView>
     );
 };

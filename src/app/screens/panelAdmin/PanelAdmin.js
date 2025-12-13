@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { View, FlatList, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { ScreenHeader, BottomNavbar, BarraBuscador, Filtros } from '../../components';
+import { ScreenHeader, MenuInferior, BarraBuscador, Filtros } from '../../components';
 import { UsuarioCard, EstadisticasCard } from './components';
 import { ESTADOS_USUARIO } from '../../constants/estadosUsuario';
 import { styles } from './PanelAdmin.styles';
@@ -237,7 +237,7 @@ const PanelAdmin = () => {
       />
       
       {/* Navegación inferior */}
-      <BottomNavbar />
+      <MenuInferior />
     </SafeAreaView>
   );
 };

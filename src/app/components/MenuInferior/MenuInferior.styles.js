@@ -1,7 +1,7 @@
 import { StyleSheet, Platform } from 'react-native';
 import { colors } from '../../../shared/styles';
 
-// Estilos para el componente BottomNavbar
+// Estilos para el componente MenuInferior
 export const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
@@ -64,3 +64,4 @@ export const navColors = {
 };
 
 export default styles;
+

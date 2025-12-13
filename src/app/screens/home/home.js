@@ -1,5 +1,5 @@
 import { styles } from './home.styles';
-import BottomNavbar from '../../components/BottomNavbar';
+import MenuInferior from '../../components/MenuInferior';
 import iconImage from '../../assets/icon.png';
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Modal, ScrollView, Image, ActivityIndicator } from "react-native";
@@ -276,7 +276,7 @@ const HomeScreen = () => {
       </ScrollView>
 
       {/* Navbar abajo */}
-      <BottomNavbar />
+      <MenuInferior />
     </View>
   );
 };

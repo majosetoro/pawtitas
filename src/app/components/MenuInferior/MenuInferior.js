@@ -2,11 +2,11 @@ import React from 'react';
 import { View, TouchableOpacity, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { styles } from './BottomNavbar.styles';
+import { styles } from './MenuInferior.styles';
 import { colors } from '../../../shared/styles';
 
 // Componente reutilizable para el menú inferior
-const BottomNavbar = () => {
+const MenuInferior = () => {
   const navigation = useNavigation();
   const route = useRoute();
   
@@ -56,4 +56,5 @@ const BottomNavbar = () => {
   );
 };
 
-export default BottomNavbar;
+export default MenuInferior;
+

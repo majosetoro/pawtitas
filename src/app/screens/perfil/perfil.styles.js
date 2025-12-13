@@ -13,7 +13,7 @@ export const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 20,
-    paddingBottom: 100, // Espacio para el BottomNavbar
+    paddingBottom: 100, // Espacio para el MenuInferior
   },
   settingsButton: {
     padding: 8,

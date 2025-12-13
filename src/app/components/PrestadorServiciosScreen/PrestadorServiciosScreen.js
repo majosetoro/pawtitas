@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import ScreenHeader from '../ScreenHeader';
 import BarraBuscador from '../BarraBuscador/BarraBuscador';
 import Filtros from '../Filtros/Filtros';
-import BottomNavbar from '../BottomNavbar/BottomNavbar';
+import MenuInferior from '../MenuInferior/MenuInferior';
 import PrestadorServiciosCard from '../PrestadorServiciosCard';
 import PrestadorServiciosDetails from '../PrestadorServiciosDetails';
 import { useLocation } from '../../contexts';
@@ -166,7 +166,7 @@ const PrestadorServiciosScreen = ({
       </ScrollView>
       
       {/* Bottom Navbar */}
-      <BottomNavbar />
+      <MenuInferior />
 
       {/* Bottom Sheet de Detalles del Prestador */}
       <PrestadorServiciosDetails
