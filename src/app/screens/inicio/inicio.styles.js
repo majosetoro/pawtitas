@@ -66,7 +66,7 @@ export const styles = StyleSheet.create({
   registerLink: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#966443",
+    color: "#f5a3c1ff",
     textDecorationLine: "underline",
   },
   errorText: {

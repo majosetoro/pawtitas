@@ -1,5 +1,6 @@
 import React from "react";
 import { TouchableOpacity, Text, StyleSheet } from "react-native";
+import { colors } from "../../../shared/styles";
 
 export default function LoginBtn({ label, onPress }) {
   return (
@@ -11,7 +12,7 @@ export default function LoginBtn({ label, onPress }) {
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: "#B77B5D",
+    backgroundColor: colors.button.primary,
     borderRadius: 24,
     paddingVertical: 16,
     alignItems: "center",
@@ -22,7 +23,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   text: {
-    color: "#FFFFFF",
+    color: colors.text.inverse,
     fontSize: 15,
     fontWeight: "600",
     letterSpacing: 0.8,
