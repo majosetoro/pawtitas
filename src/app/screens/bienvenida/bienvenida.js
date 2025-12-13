@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image} from "react-native";
 import Logo from "../../assets/icon.png";
+import { colors, typography } from "../../../shared/styles";
 
 export default function BienvenidaScreen({ navigation }) {
   return (
@@ -50,23 +51,43 @@ export default function BienvenidaScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flexGrow: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#fff", padding: 20 },
-  logo: { fontSize: 28, fontWeight: "bold", color: "#fda7a7ff", marginBottom: 10 },
+  container: { 
+    flexGrow: 1, 
+    justifyContent: "center", 
+    alignItems: "center", 
+    backgroundColor: colors.background, 
+    padding: 20 
+  },
+  logo: { 
+    fontSize: 28, 
+    fontFamily: typography.fontFamily.title,
+    color: colors.brand.highlight, 
+    marginBottom: 10,
+    letterSpacing: 1,
+  },
   card: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#f7f1eb",
+    backgroundColor: colors.primaryLight,
     padding: 15,
     borderRadius: 12,
     width: "100%",
     marginBottom: 15,
   },
   emoji: { fontSize: 28, marginRight: 15 },
-  cardText: { fontSize: 16, color: "#6b4226" },
-  subtitle: { fontSize: 18, color: "#fda7a7ff" },
+  cardText: { 
+    fontSize: 16, 
+    fontFamily: typography.fontFamily.bodyMedium,
+    color: colors.text.primary 
+  },
+  subtitle: { 
+    fontSize: 18, 
+    fontFamily: typography.fontFamily.body,
+    color: colors.brand.highlight 
+  },
 
   button: {
-    backgroundColor: "#966443ff",
+    backgroundColor: colors.button.primary,
     paddingVertical: 12,
     paddingHorizontal: 40,
     borderRadius: 20,
@@ -74,13 +95,21 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
   },
-  buttonText: { color: "#fff", fontSize: 16, fontWeight: "600" },
-  secondaryButton: {
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#6b4226",
+  buttonText: { 
+    color: colors.text.inverse, 
+    fontSize: 16,
+    fontFamily: typography.fontFamily.bodySemiBold,
   },
-  secondaryText: { color: "#6b4226", fontSize: 16, fontWeight: "600" },
+  secondaryButton: {
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.button.primary,
+  },
+  secondaryText: { 
+    color: colors.button.primary, 
+    fontSize: 16,
+    fontFamily: typography.fontFamily.bodySemiBold,
+  },
 
    heroImage: {
     width: "100%",
