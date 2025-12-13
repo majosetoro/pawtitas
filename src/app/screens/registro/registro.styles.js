@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
     },
     title: { 
       fontSize: 28, 
-      fontWeight: "bold", 
+      fontFamily: typography.fontFamily.title,
       marginBottom: 24, 
       marginTop: 30,
       color: colors.brand.highlight,
@@ -24,6 +24,7 @@ export const styles = StyleSheet.create({
       marginBottom: 12,
       backgroundColor: colors.surface,
       fontSize: 15,
+      fontFamily: typography.fontFamily.body,
       color: colors.text.primary,
     },
     inputError: {
@@ -33,12 +34,13 @@ export const styles = StyleSheet.create({
     errorText: {
       color: colors.error,
       fontSize: 12,
+      fontFamily: typography.fontFamily.body,
       marginBottom: 8,
       marginTop: -8,
     },
     subtitle: { 
       fontSize: 16, 
-      fontWeight: "600", 
+      fontFamily: typography.fontFamily.bodySemiBold,
       marginTop: 16, 
       marginBottom: 8,
       color: colors.text.primary,
@@ -65,10 +67,12 @@ export const styles = StyleSheet.create({
     clipText: {
       color: colors.text.primary,
       fontSize: 15,
+      fontFamily: typography.fontFamily.body,
     },
     reminderText: {
       color: colors.text.secondary,
       fontSize: 12,
+      fontFamily: typography.fontFamily.body,
       fontStyle: "italic",
       marginBottom: 8,
       marginTop: -4,
@@ -101,17 +105,18 @@ export const styles = StyleSheet.create({
     },
     cancelText: { 
       color: colors.brand.highlight, 
-      fontWeight: "700",
+      fontFamily: typography.fontFamily.bodySemiBold,
       fontSize: 15,
     },
     confirmText: { 
       color: colors.text.inverse, 
-      fontWeight: "700",
+      fontFamily: typography.fontFamily.bodySemiBold,
       fontSize: 15,
     },
     infoText: {
       color: colors.text.secondary,
       fontSize: 12,
+      fontFamily: typography.fontFamily.body,
       textAlign: "center",
       marginTop: 24,
       marginBottom: 20,

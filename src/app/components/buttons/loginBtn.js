@@ -1,6 +1,6 @@
 import React from "react";
 import { TouchableOpacity, Text, StyleSheet } from "react-native";
-import { colors } from "../../../shared/styles";
+import { colors, typography } from "../../../shared/styles";
 
 export default function LoginBtn({ label, onPress }) {
   return (
@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
   text: {
     color: colors.text.inverse,
     fontSize: 15,
-    fontWeight: "600",
+    fontFamily: typography.fontFamily.bodySemiBold,
     letterSpacing: 0.8,
   },
 });

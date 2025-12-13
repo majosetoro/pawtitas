@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image} from "react-native";
 import Logo from "../../assets/icon.png";
-import { colors } from "../../../shared/styles";
+import { colors, typography } from "../../../shared/styles";
 
 export default function BienvenidaScreen({ navigation }) {
   return (
@@ -60,9 +60,10 @@ const styles = StyleSheet.create({
   },
   logo: { 
     fontSize: 28, 
-    fontWeight: "bold", 
+    fontFamily: typography.fontFamily.title,
     color: colors.brand.highlight, 
-    marginBottom: 10 
+    marginBottom: 10,
+    letterSpacing: 1,
   },
   card: {
     flexDirection: "row",
@@ -76,10 +77,12 @@ const styles = StyleSheet.create({
   emoji: { fontSize: 28, marginRight: 15 },
   cardText: { 
     fontSize: 16, 
+    fontFamily: typography.fontFamily.bodyMedium,
     color: colors.text.primary 
   },
   subtitle: { 
     fontSize: 18, 
+    fontFamily: typography.fontFamily.body,
     color: colors.brand.highlight 
   },
 
@@ -94,8 +97,8 @@ const styles = StyleSheet.create({
   },
   buttonText: { 
     color: colors.text.inverse, 
-    fontSize: 16, 
-    fontWeight: "600" 
+    fontSize: 16,
+    fontFamily: typography.fontFamily.bodySemiBold,
   },
   secondaryButton: {
     backgroundColor: colors.surface,
@@ -104,8 +107,8 @@ const styles = StyleSheet.create({
   },
   secondaryText: { 
     color: colors.button.primary, 
-    fontSize: 16, 
-    fontWeight: "600" 
+    fontSize: 16,
+    fontFamily: typography.fontFamily.bodySemiBold,
   },
 
    heroImage: {
