@@ -1,10 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { View, FlatList, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { ScreenHeader, MenuInferior, BarraBuscador, Filtros } from '../../components';
+import { ScreenHeader, MenuInferior, BarraBuscador, Filtros, Paginador } from '../../components';
 import { UsuarioCard, EstadisticasCard } from './components';
 import { ESTADOS_USUARIO } from '../../constants/estadosUsuario';
+import { usePaginacion } from '../../hooks/usePaginacion';
 import { styles } from './PanelAdmin.styles';
 import ValidarUsuario from './ValidarUsuario';
 
@@ -85,6 +86,18 @@ const PanelAdmin = () => {
 
     return filtered;
   }, [users, searchQuery, selectedFilter]);
+
+  const {
+    paginaActual,
+    totalPaginas,
+    itemsActuales: usuariosActuales,
+    manejarCambioPagina,
+    reiniciarPagina,
+  } = usePaginacion(filteredUsers);
+
+  useEffect(() => {
+    reiniciarPagina();
+  }, [searchQuery, selectedFilter]);
 
   // Manejar navegación hacia atrás
   const handleBackPress = () => {
@@ -217,13 +230,19 @@ const PanelAdmin = () => {
       {/* Lista de usuarios */}
       <View style={styles.content}>
         <FlatList
-          data={filteredUsers}
+          data={usuariosActuales}
           renderItem={renderUser}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.usersList}
           ItemSeparatorComponent={renderSeparator}
           showsVerticalScrollIndicator={false}
           bounces={true}
+          ListFooterComponent={() => (
+            <Paginador
+              paginaActual={paginaActual}
+              totalPaginas={totalPaginas}
+              onCambioPagina={manejarCambioPagina}
+            />
+          )}
         />
       </View>
       

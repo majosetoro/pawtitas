@@ -11,9 +11,6 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    listContent: {
-        paddingBottom: 20,
-    },
     channelItem: {
         flexDirection: 'row',
         padding: 15,

@@ -10,9 +10,6 @@ export const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
   },
-  usersList: {
-    paddingBottom: 20,
-  },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',

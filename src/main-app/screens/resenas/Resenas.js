@@ -1,9 +1,10 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { ScrollView, View, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { ScreenHeader, MenuInferior, BarraBuscador, Filtros } from '../../components';
+import { ScreenHeader, MenuInferior, BarraBuscador, Filtros, Paginador } from '../../components';
 import ResenaCard from '../../components/ResenaCard';
+import { usePaginacion } from '../../hooks/usePaginacion';
 import { styles } from './Resenas.styles';
 
 // Pantalla de Mis Reseñas
@@ -72,6 +73,171 @@ const Resenas = () => {
             fecha: '2024-01-03',
             tipo: 'paseador'
         },
+        {
+          id: '6',
+          usuario: {
+              nombre: 'María González',
+              avatar: null
+          },
+          rating: 4.5,
+          texto: 'Excelente servicio de cuidado. María fue muy profesional con mi perro Max, lo cuidó como si fuera suyo. Muy recomendada.',
+          fecha: '2024-01-15',
+          tipo: 'cuidador'
+      },
+      {
+          id: '7',
+          usuario: {
+              nombre: 'Carlos Gómez',
+              avatar: null
+          },
+          rating: 3.5,
+          texto: 'Buen servicio de paseo. Carlos fue puntual y responsable, aunque podría mejorar en la comunicación durante el paseo.',
+          fecha: '2024-01-10',
+          tipo: 'paseador'
+      },
+      {
+          id: '8',
+          usuario: {
+              nombre: 'Dr. Martínez',
+              avatar: null
+          },
+          rating: 5.0,
+          texto: 'Increíble atención veterinaria. El doctor fue muy profesional, explicó todo detalladamente y mi gato se recuperó perfectamente.',
+          fecha: '2024-01-08',
+          tipo: 'veterinario'
+      },
+      {
+          id: '9',
+          usuario: {
+              nombre: 'Laura Fernández',
+              avatar: null
+          },
+          rating: 4.0,
+          texto: 'Muy buena cuidadora. Laura fue muy cariñosa con mis mascotas y me envió fotos durante todo el día. Servicio confiable.',
+          fecha: '2024-01-05',
+          tipo: 'cuidador'
+      },
+      {
+          id: '10',
+          usuario: {
+              nombre: 'Roberto Silva',
+              avatar: null
+          },
+          rating: 4.5,
+          texto: 'Excelente paseador. Roberto fue muy atento con mi perro, me mantuvo informado durante todo el paseo. Definitivamente lo volveré a contratar.',
+          fecha: '2024-01-03',
+          tipo: 'paseador'
+      },
+      {
+        id: '11',
+        usuario: {
+            nombre: 'María González',
+            avatar: null
+        },
+        rating: 4.5,
+        texto: 'Excelente servicio de cuidado. María fue muy profesional con mi perro Max, lo cuidó como si fuera suyo. Muy recomendada.',
+        fecha: '2024-01-15',
+        tipo: 'cuidador'
+    },
+    {
+        id: '12',
+        usuario: {
+            nombre: 'Carlos Gómez',
+            avatar: null
+        },
+        rating: 3.5,
+        texto: 'Buen servicio de paseo. Carlos fue puntual y responsable, aunque podría mejorar en la comunicación durante el paseo.',
+        fecha: '2024-01-10',
+        tipo: 'paseador'
+    },
+    {
+        id: '13',
+        usuario: {
+            nombre: 'Dr. Martínez',
+            avatar: null
+        },
+        rating: 5.0,
+        texto: 'Increíble atención veterinaria. El doctor fue muy profesional, explicó todo detalladamente y mi gato se recuperó perfectamente.',
+        fecha: '2024-01-08',
+        tipo: 'veterinario'
+    },
+    {
+        id: '14',
+        usuario: {
+            nombre: 'Laura Fernández',
+            avatar: null
+        },
+        rating: 4.0,
+        texto: 'Muy buena cuidadora. Laura fue muy cariñosa con mis mascotas y me envió fotos durante todo el día. Servicio confiable.',
+        fecha: '2024-01-05',
+        tipo: 'cuidador'
+    },
+    {
+        id: '15',
+        usuario: {
+            nombre: 'Roberto Silva',
+            avatar: null
+        },
+        rating: 4.5,
+        texto: 'Excelente paseador. Roberto fue muy atento con mi perro, me mantuvo informado durante todo el paseo. Definitivamente lo volveré a contratar.',
+        fecha: '2024-01-03',
+        tipo: 'paseador'
+    },
+    {
+      id: '16',
+      usuario: {
+          nombre: 'María González',
+          avatar: null
+      },
+      rating: 4.5,
+      texto: 'Excelente servicio de cuidado. María fue muy profesional con mi perro Max, lo cuidó como si fuera suyo. Muy recomendada.',
+      fecha: '2024-01-15',
+      tipo: 'cuidador'
+  },
+  {
+      id: '17',
+      usuario: {
+          nombre: 'Carlos Gómez',
+          avatar: null
+      },
+      rating: 3.5,
+      texto: 'Buen servicio de paseo. Carlos fue puntual y responsable, aunque podría mejorar en la comunicación durante el paseo.',
+      fecha: '2024-01-10',
+      tipo: 'paseador'
+  },
+  {
+      id: '18',
+      usuario: {
+          nombre: 'Dr. Martínez',
+          avatar: null
+      },
+      rating: 5.0,
+      texto: 'Increíble atención veterinaria. El doctor fue muy profesional, explicó todo detalladamente y mi gato se recuperó perfectamente.',
+      fecha: '2024-01-08',
+      tipo: 'veterinario'
+  },
+  {
+      id: '19',
+      usuario: {
+          nombre: 'Laura Fernández',
+          avatar: null
+      },
+      rating: 4.0,
+      texto: 'Muy buena cuidadora. Laura fue muy cariñosa con mis mascotas y me envió fotos durante todo el día. Servicio confiable.',
+      fecha: '2024-01-05',
+      tipo: 'cuidador'
+  },
+  {
+      id: '20',
+      usuario: {
+          nombre: 'Roberto Silva',
+          avatar: null
+      },
+      rating: 4.5,
+      texto: 'Excelente paseador. Roberto fue muy atento con mi perro, me mantuvo informado durante todo el paseo. Definitivamente lo volveré a contratar.',
+      fecha: '2024-01-03',
+      tipo: 'paseador'
+  },
     ]);
 
     const filteredResenas = useMemo(() => {
@@ -107,6 +273,20 @@ const Resenas = () => {
 
     return filtered;
   }, [resenas, searchQuery, selectedFilter]);
+
+    // Añadir paginación
+    const {
+        paginaActual,
+        totalPaginas,
+        itemsActuales: resenasActuales,
+        manejarCambioPagina,
+        reiniciarPagina,
+    } = usePaginacion(filteredResenas);
+
+    // Resetear página cuando cambian filtros
+    useEffect(() => {
+        reiniciarPagina();
+    }, [searchQuery, selectedFilter]);
 
     const handleBackPress = () => {
         navigation.goBack();
@@ -157,15 +337,23 @@ const Resenas = () => {
         <ScrollView 
           style={styles.content}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.usersList}
         >
-          {filteredResenas.length > 0 ? (
-            filteredResenas.map((resena) => (
-              <ResenaCard
-                key={resena.id}
-                resena={resena}
-              />  
-            ))
+          {resenasActuales.length > 0 ? (
+            <>
+              {resenasActuales.map((resena) => (
+                <ResenaCard
+                  key={resena.id}
+                  resena={resena}
+                />  
+              ))}
+              {filteredResenas.length > 0 && (
+                <Paginador
+                  paginaActual={paginaActual}
+                  totalPaginas={totalPaginas}
+                  onCambioPagina={manejarCambioPagina}
+                />
+              )}
+            </>
           ) : (
             <View style={styles.emptyContainer}>
               <Text style={styles.emptyText}>
