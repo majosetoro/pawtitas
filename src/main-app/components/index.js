@@ -18,6 +18,7 @@ export { default as ResenaCard } from './ResenaCard';
 export { default as ResenaFormModal } from './ResenaFormModal';
 export { default as CalendarioPagoModal } from './CalendarioPagoModal';
 export { default as AvatarPicker } from './AvatarPicker';
+export { default as Paginador } from './Paginador';
 
 // Re-exportar componentes de inputs y buttons
 export * from './inputs';
