@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -11,8 +11,10 @@ import PrestadorServiciosCard from '../../components/PrestadorServiciosCard/Pres
 import PrestadorServiciosDetails from '../../components/PrestadorServiciosDetails/PrestadorServiciosDetails';
 import ConfirmacionDialogo from '../../components/ConfirmacionDialogo';
 import CalendarioPagoModal from '../../components/CalendarioPagoModal';
+import Paginador from '../../components/Paginador';
 import { MensajeFlotante } from '../../components';
 import { useMisConexiones } from '../../hooks/useMisConexiones';
+import { usePaginacion } from '../../hooks/usePaginacion';
 import { styles } from './MisConexiones.styles';
 
 // Pantalla de Mis Conexiones
@@ -53,6 +55,18 @@ const MisConexiones = () => {
     handleChat(provider, navigation);
   };
 
+  const {
+    paginaActual,
+    totalPaginas,
+    itemsActuales: providersActuales,
+    manejarCambioPagina,
+    reiniciarPagina,
+  } = usePaginacion(providers);
+
+  useEffect(() => {
+    reiniciarPagina();
+  }, [state.searchQuery, state.selectedFilter]);
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
@@ -86,7 +100,7 @@ const MisConexiones = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.usersList}
       >
-        {providers.map((provider) => (
+        {providersActuales.map((provider) => (
           <PrestadorServiciosCard
             key={provider.id}
             provider={provider}
@@ -95,6 +109,11 @@ const MisConexiones = () => {
             misConexiones={true}
           />
         ))}
+        <Paginador
+          paginaActual={paginaActual}
+          totalPaginas={totalPaginas}
+          onCambioPagina={manejarCambioPagina}
+        />
       </ScrollView>
       
       {/* Detalles del prestador */}

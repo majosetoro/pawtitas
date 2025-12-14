@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { ScreenHeader, MenuInferior } from '../../components';
+import { ScreenHeader, MenuInferior, Paginador } from '../../components';
 import { useStreamChat } from '../../contexts';
 import { ChatController } from '../../controller';
+import { usePaginacion } from '../../hooks/usePaginacion';
 import { colors } from '../../../shared/styles';
 import { styles } from './Chat.styles';
 
@@ -90,6 +91,14 @@ const Chat = () => {
         return ChatController.getUserRole(user);
     };
 
+    // Añadir paginación
+    const {
+        paginaActual,
+        totalPaginas,
+        itemsActuales: canalesActuales,
+        manejarCambioPagina,
+    } = usePaginacion(channels);
+
     const renderChannelItem = ({ item }) => {
         const otherUser = ChatController.getOtherUser(item, currentUser.id);
         const lastMessage = ChatController.getLastMessage(item);
@@ -174,10 +183,16 @@ const Chat = () => {
                 <>
                     {channels.length > 0 ? (
                         <FlatList
-                            data={channels}
+                            data={canalesActuales}
                             keyExtractor={(item) => item.id}
                             renderItem={renderChannelItem}
-                            contentContainerStyle={styles.listContent}
+                            ListFooterComponent={() => (
+                                <Paginador
+                                    paginaActual={paginaActual}
+                                    totalPaginas={totalPaginas}
+                                    onCambioPagina={manejarCambioPagina}
+                                />
+                            )}
                         />
                     ) : (
                          <View style={{flex: 1}}>
@@ -185,7 +200,6 @@ const Chat = () => {
                                 data={ChatController.getMockUsers()}
                                 keyExtractor={(item) => item.id}
                                 renderItem={renderMockUserItem}
-                                contentContainerStyle={styles.listContent}
                             />
                              <View style={styles.emptyContainer}>
                                 <Text style={styles.emptySubtext}>
