@@ -18,6 +18,8 @@ export const LocationProvider = ({ children }) => {
   const [locationPermission, setLocationPermission] = useState(null);
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const [locationError, setLocationError] = useState(null);
+  // Estado para rastrear si el usuario quiere la ubicación activada
+  const [isLocationEnabled, setIsLocationEnabled] = useState(false);
 
   // Solicitar permisos de ubicación
   const requestLocationPermission = async () => {
@@ -33,8 +35,8 @@ export const LocationProvider = ({ children }) => {
     }
   };
 
-// Obtener la ubicación actual
-  const getCurrentLocation = async () => {0
+  // Obtener la ubicación actual (sin cambiar la preferencia del usuario)
+  const getCurrentLocation = async (enableLocation = false) => {
     setIsLoadingLocation(true);
     setLocationError(null);
     
@@ -57,6 +59,10 @@ export const LocationProvider = ({ children }) => {
       };
 
       setUserLocation(userCoords);
+      // Solo marcar como habilitada si se solicita explícitamente
+      if (enableLocation) {
+        setIsLocationEnabled(true);
+      }
       setIsLoadingLocation(false);
       return userCoords;
     } catch (error) {
@@ -113,6 +119,8 @@ export const LocationProvider = ({ children }) => {
   const clearLocation = () => {
     setUserLocation(null);
     setLocationError(null);
+    // Marcar que la ubicación está deshabilitada
+    setIsLocationEnabled(false);
   };
 
   const value = {
@@ -120,6 +128,8 @@ export const LocationProvider = ({ children }) => {
     locationPermission,
     isLoadingLocation,
     locationError,
+    // Exponer el estado de habilitación
+    isLocationEnabled,
     requestLocationPermission,
     getCurrentLocation,
     getDistanceFromUser,
