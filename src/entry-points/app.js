@@ -1,6 +1,6 @@
 // Entry point para la app principal
 import { registerRootComponent } from 'expo';
-import App from '../app/App';
+import App from '../main-app/App';
 import Constants from 'expo-constants';
 
 // Logs para debugging

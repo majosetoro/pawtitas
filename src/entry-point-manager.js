@@ -29,7 +29,7 @@ export const getEntryPointComponent = (entryPoint) => {
     if (entryPoint === ENTRY_POINTS.LANDING) {
       return require('./landing/App').default;
     } else if (entryPoint === ENTRY_POINTS.APP) {
-      return require('./app/App').default;
+      return require('./main-app/App').default;
     } else {
       throw new Error(`Entry point no válido: ${entryPoint}`);
     }
@@ -53,7 +53,7 @@ export const getCurrentEntryPointInfo = () => {
       name: 'Main Application',
       description: 'Aplicación principal con funcionalidades completas',
       features: ['Dashboard', 'Funcionalidades', 'Navegación'],
-      path: 'src/app',
+      path: 'src/main-app',
     },
   };
   
