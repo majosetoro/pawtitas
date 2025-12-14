@@ -28,7 +28,7 @@ export const getEntryPointComponent = (entryPoint) => {
       case ENTRY_POINTS.LANDING:
         return require('../landing/App').default;
       case ENTRY_POINTS.APP:
-        return require('../app/App').default;
+        return require('../main-app/App').default;
       default:
         throw new Error(`Entry point no válido: ${entryPoint}`);
     }
@@ -54,7 +54,7 @@ export const getCurrentEntryPointInfo = () => {
       description: 'Aplicación principal con funcionalidades completas',
       teamMember: 'Mobile Developer',
       features: ['Dashboard', 'Funcionalidades', 'Navegación'],
-      path: 'src/app',
+      path: 'src/main-app',
     },
   };
   

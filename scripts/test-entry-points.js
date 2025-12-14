@@ -11,7 +11,7 @@ console.log(' [TEST] Verificando sistema de entry points\n');
 // Verificar estructura de directorios
 const requiredDirs = [
   'src/landing',
-  'src/app',
+  'src/main-app',
   'src/shared',
   'src/entry-points',
   'src/config'
@@ -20,8 +20,8 @@ const requiredDirs = [
 const requiredFiles = [
   'src/landing/App.js',
   'src/landing/index.js',
-  'src/app/App.js',
-  'src/app/index.js',
+  'src/main-app/App.js',
+  'src/main-app/index.js',
   'src/entry-points/index.js',
   'src/entry-points/app.js',
   'src/entry-points/landing.js',

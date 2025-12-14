@@ -8,7 +8,7 @@ config.resolver.platforms = ['ios', 'android', 'native', 'web'];
 
 // Configurar alias para importaciones
 config.resolver.alias = {
-  '@app': path.resolve(__dirname, 'src/app'),
+  '@app': path.resolve(__dirname, 'src/main-app'),
   '@landing': path.resolve(__dirname, 'src/landing'),
   '@shared': path.resolve(__dirname, 'src/shared'),
   '@assets': path.resolve(__dirname, 'assets'),
