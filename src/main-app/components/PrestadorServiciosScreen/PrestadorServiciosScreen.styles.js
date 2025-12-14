@@ -74,9 +74,6 @@ export const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
   },
-  usersList: {
-    paddingBottom: 20,
-  },
   separator: {
     height: 16,
   },

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
   ScrollView, 
 } from 'react-native';
@@ -9,7 +9,9 @@ import Filtros from '../Filtros/Filtros';
 import MenuInferior from '../MenuInferior/MenuInferior';
 import PrestadorServiciosCard from '../PrestadorServiciosCard';
 import PrestadorServiciosDetails from '../PrestadorServiciosDetails';
+import Paginador from '../Paginador';
 import { useLocation } from '../../contexts';
+import { usePaginacion } from '../../hooks/usePaginacion';
 import { styles } from './PrestadorServiciosScreen.styles';
 
 // Filtros
@@ -84,6 +86,18 @@ const PrestadorServiciosScreen = ({
     return filtered;
   }, [searchText, selectedFilter, providers, userLocation, getDistanceFromUser]);
 
+  const {
+    paginaActual,
+    totalPaginas,
+    itemsActuales,
+    manejarCambioPagina,
+    reiniciarPagina,
+  } = usePaginacion(filteredProviders);
+
+  useEffect(() => {
+    reiniciarPagina();
+  }, [searchText, selectedFilter]);
+
   const handleSearchChange = (text) => {
     setSearchText(text);
   };
@@ -153,9 +167,8 @@ const PrestadorServiciosScreen = ({
       <ScrollView 
         style={styles.content}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.usersList}
       >
-        {filteredProviders.map((provider) => (
+        {itemsActuales.map((provider) => (
           <PrestadorServiciosCard
             key={provider.id}
             provider={provider}
@@ -163,6 +176,11 @@ const PrestadorServiciosScreen = ({
             onPress={() => handleProviderPress(provider)}
           />
         ))}
+        <Paginador
+          paginaActual={paginaActual}
+          totalPaginas={totalPaginas}
+          onCambioPagina={manejarCambioPagina}
+        />
       </ScrollView>
       
       {/* Bottom Navbar */}
