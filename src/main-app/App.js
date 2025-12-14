@@ -20,6 +20,7 @@ import MisConexionesScreen from "./screens/misConexiones/MisConexiones";
 import ResenasScreen from "./screens/resenas/Resenas";
 import ChatScreen from "./screens/chat/Chat";
 import Conversacion from "./screens/chat/Conversacion";
+import MapaScreen from "./screens/mapa/Mapa";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { LocationProvider, StreamChatProvider } from "./contexts";
@@ -136,6 +137,7 @@ export default function App() {
                 <Stack.Screen name="Resenas" component={ResenasScreen} />
                 <Stack.Screen name="Chat" component={ChatScreen} />
                 <Stack.Screen name="Conversacion" component={Conversacion} />
+                <Stack.Screen name="Mapa" component={MapaScreen} />
               </Stack.Navigator>
             </NavigationContainer>
         </StreamChatProvider>
