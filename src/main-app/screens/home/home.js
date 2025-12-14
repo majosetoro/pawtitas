@@ -31,7 +31,7 @@ const HomeHeader = () => {
   
   // Manejar la activación de la ubicación GPS
   const handleActivarUbicacion = async () => {
-    const location = await getCurrentLocation();
+    const location = await getCurrentLocation(true); // Pasar true para habilitar la ubicación
     if (location) {
       alert('¡Ubicación activada correctamente! Ahora verás los servicios más cercanos.');
       setLocationModalVisible(false);

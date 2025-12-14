@@ -2,7 +2,7 @@
 // Este archivo permite tener múltiples entry points
 
 // Obtener el tipo de app desde las variables de entorno
-const appType = process.env.EXPO_PUBLIC_APP_TYPE || 'app'; // Por defecto es 'app'
+const appType = process.env.EXPO_PUBLIC_APP_TYPE || 'app';
 
 // Configuración base común para ambos tipos de app
 const baseConfig = {
@@ -13,9 +13,23 @@ const baseConfig = {
   icon: "./assets/icon.png",
   userInterfaceStyle: "light",
   splash: {
+    backgroundColor: "#ffffff",
+    resizeMode: "contain"
   },
+  plugins: [
+    [
+      "expo-location",
+      {
+        locationAlwaysAndWhenInUsePermission: "Permitir a Pawtitas usar tu ubicación para encontrar servicios cercanos a ti."
+      }
+    ]
+  ],
   ios: {
-    supportsTablet: true
+    supportsTablet: true,
+    infoPlist: {
+      NSLocationWhenInUseUsageDescription: "Pawtitas necesita tu ubicación para mostrarte servicios y lugares cercanos en el mapa.",
+      NSLocationAlwaysUsageDescription: "Pawtitas necesita tu ubicación para mostrarte servicios cercanos."
+    }
   },
   web: {
     favicon: "./assets/favicon.ico"
@@ -37,7 +51,12 @@ const appConfigs = {
         foregroundImage: "./assets/icon.png",
         backgroundColor: "#FDFDFD"
       },
-      edgeToEdgeEnabled: true
+      edgeToEdgeEnabled: true,
+      softwareKeyboardLayoutMode: "pan",
+      permissions: [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
+      ]
     }
   },
   landing: {

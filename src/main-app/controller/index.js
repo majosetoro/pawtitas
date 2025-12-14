@@ -3,3 +3,4 @@ export { MisConexionesController, CONEXIONES_CONFIG } from './MisConexionesContr
 export { PrestadorServiciosDetailsController } from './MisConexionesController/PrestadorServiciosDetailsController';
 export { CalendarioPagoController, CALENDARIO_CONFIG } from './MisConexionesController/CalendarioPagoController';
 export { ChatController, CHAT_CONFIG, MOCK_CHAT_USERS } from './ChatController/ChatController';
+export { MapaController, MAPA_CONFIG } from './MapaController/MapaController';
