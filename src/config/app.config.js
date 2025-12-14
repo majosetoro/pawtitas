@@ -18,7 +18,7 @@ const baseConfig = {
     supportsTablet: true
   },
   web: {
-    favicon: "./assets/icon.png"
+    favicon: "./assets/favicon.ico"
   },
   // Añadir variables de entorno que serán accesibles en la app
   extra: {
