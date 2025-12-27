@@ -16,6 +16,26 @@ config.resolver.alias = {
   '@config': path.resolve(__dirname, 'src/config'),
 };
 
+// Reemplazar react-native-maps con stub en web
+const originalResolveRequest = config.resolver.resolveRequest;
+config.resolver.resolveRequest = (context, moduleName, platform) => {
+  // Reemplazar react-native-maps con stub en web
+  if (platform === 'web' && moduleName === 'react-native-maps') {
+    return {
+      type: 'sourceFile',
+      filePath: path.resolve(__dirname, 'src/main-app/screens/mapa/react-native-maps-stub.js'),
+    };
+  }
+  
+  // Usar el resolver por defecto para otros módulos
+  if (originalResolveRequest) {
+    return originalResolveRequest(context, moduleName, platform);
+  }
+  
+  // Fallback al resolver por defecto de Metro
+  return context.resolveRequest(context, moduleName, platform);
+};
+
 // Configuración para entry points múltiples
 config.resolver.entryPoints = {
   landing: path.resolve(__dirname, 'src/entry-points/landing.js'),
