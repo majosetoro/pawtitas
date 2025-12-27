@@ -7,12 +7,11 @@ import { colors } from "../shared/styles/colors";
 export default function Footer({ scrollToSection, scrollToTop }) {
   return (
     <View style={styles.footer}>
-      {/* Contenedor principal */}
       <View style={styles.container}>
-        {/* Sección superior: Logo + Tagline + Links */}
-        <View style={styles.topSection}>
+        {/* Contenido principal */}
+        <View style={styles.mainContent}>
           {/* Logo y marca */}
-          <View style={styles.brandSection}>
+          <TouchableOpacity onPress={scrollToTop} style={styles.brandSection}>
             <Image
               source={iconImage}
               style={styles.logo}
@@ -22,42 +21,45 @@ export default function Footer({ scrollToSection, scrollToTop }) {
               <Text style={styles.appName}>Pawtitas</Text>
               <Text style={styles.tagline}>Conectando necesidades con servicios verificados 🐾</Text>
             </View>
-          </View>
+          </TouchableOpacity>
 
-          {/* Links de navegación */}
-          <View style={styles.navLinks}>
-            <TouchableOpacity onPress={scrollToTop}>
-              <Text style={styles.linkText}>Inicio</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => scrollToSection && scrollToSection("nosotros")}>
-              <Text style={styles.linkText}>Nosotros</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => scrollToSection && scrollToSection("contacto")}>
-              <Text style={styles.linkText}>Contacto</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View style={styles.divider} />
-
-        {/* Sección inferior: Redes sociales + Copyright */}
-        <View style={styles.bottomSection}>
           {/* Redes sociales */}
           <View style={styles.socials}>
-            <TouchableOpacity onPress={() => Linking.openURL("https://facebook.com")} style={styles.socialIcon}>
-              <FontAwesome name="facebook" size={22} color="#FFFFFF" />
+            <TouchableOpacity onPress={() => Linking.openURL("https://facebook.com")}>
+              <FontAwesome name="facebook" size={20} color={colors.text.secondary} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => Linking.openURL("https://instagram.com")} style={styles.socialIcon}>
-              <FontAwesome name="instagram" size={22} color="#FFFFFF" />
+            <TouchableOpacity onPress={() => Linking.openURL("https://instagram.com")}>
+              <FontAwesome name="instagram" size={20} color={colors.text.secondary} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => Linking.openURL("https://twitter.com")} style={styles.socialIcon}>
-              <FontAwesome name="twitter" size={22} color="#FFFFFF" />
+            <TouchableOpacity onPress={() => Linking.openURL("https://twitter.com")}>
+              <FontAwesome name="twitter" size={20} color={colors.text.secondary} />
             </TouchableOpacity>
           </View>
-
-          {/* Copyright */}
-          <Text style={styles.copyright}>© 2025 Pawtitas. Todos los derechos reservados.</Text>
         </View>
+
+        {/* Links de navegación */}
+        <View style={styles.navLinks}>
+          <TouchableOpacity onPress={scrollToTop}>
+            <Text style={styles.linkText}>Inicio</Text>
+          </TouchableOpacity>
+          <Text style={styles.separator}>•</Text>
+          <TouchableOpacity onPress={() => scrollToSection && scrollToSection("servicios")}>
+            <Text style={styles.linkText}>Servicios</Text>
+          </TouchableOpacity>
+          <Text style={styles.separator}>•</Text>
+          <TouchableOpacity onPress={() => scrollToSection && scrollToSection("nosotros")}>
+            <Text style={styles.linkText}>Nosotros</Text>
+          </TouchableOpacity>
+          <Text style={styles.separator}>•</Text>
+          <TouchableOpacity onPress={() => scrollToSection && scrollToSection("contacto")}>
+            <Text style={styles.linkText}>Contacto</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Copyright */}
+        <Text style={styles.copyright}>
+          © 2025 Pawtitas • Hecho con 🐾 para tu mejor amigo
+        </Text>
       </View>
     </View>
   );
@@ -65,108 +67,88 @@ export default function Footer({ scrollToSection, scrollToTop }) {
 
 const styles = StyleSheet.create({
   footer: {
-    backgroundColor: colors.brand.footer,
+    backgroundColor: colors.surface,
     paddingVertical: 20,
-    paddingHorizontal: 40,
-    marginTop: 40,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    paddingHorizontal: 20,
+    marginTop: 60,
+    borderTopWidth: 1,
+    borderTopColor: colors.border.light,
   },
   container: {
     maxWidth: 1200,
     width: "100%",
     alignSelf: "center",
+    alignItems: "center",
+    gap: 6,
   },
   
-  // Sección superior
-  topSection: {
+  mainContent: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 12,
+    width: "100%",
     flexWrap: "wrap",
-    gap: 20,
+    gap: 16,
   },
   
-  // Marca (Logo + Nombre + Tagline)
+  // Marca minimalista
   brandSection: {
     flexDirection: "row",
     alignItems: "center",
-    flex: 1,
-    minWidth: 250,
+    gap: 10,
   },
   logo: {
-    width: 46,
-    height: 46,
-    marginRight: 12,
+    width: 28,
+    height: 28,
   },
   brandText: {
     flexDirection: "column",
+    gap: 1,
   },
   appName: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "700",
-    color: "#FFFFFF",
-    marginBottom: 2,
-    textShadowColor: "rgba(0, 0, 0, 0.15)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
+    color: colors.brand.accentLanding,
+    letterSpacing: 0.5,
   },
   tagline: {
     fontSize: 14,
-    color: "#FFFFFF",
-    fontWeight: "500",
-    opacity: 0.9,
+    color: colors.text.secondary,
+    fontWeight: "400",
+    opacity: 0.85,
   },
   
   // Links de navegación
   navLinks: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 24,
+    justifyContent: "center",
+    gap: 12,
+    flexWrap: "wrap",
   },
   linkText: {
-    fontSize: 12,
-    color: "#FFFFFF",
-    fontWeight: "600",
-    textTransform: "uppercase",
-    letterSpacing: 0.8,
-    textShadowColor: "rgba(0, 0, 0, 0.1)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 1,
+    fontSize: 14,
+    color: colors.text.secondary,
+    fontWeight: "500",
   },
-  
-  // Divisor
-  divider: {
-    height: 1,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    marginVertical: 14,
-  },
-  
-  // Sección inferior
-  bottomSection: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    flexWrap: "wrap",
-    gap: 16,
+  separator: {
+    fontSize: 14,
+    color: colors.text.disabled,
   },
   
   // Redes sociales
   socials: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 16,
-  },
-  socialIcon: {
-    opacity: 0.95,
+    gap: 12,
   },
   
   // Copyright
   copyright: {
     fontSize: 12,
-    color: "#FFFFFF",
-    fontWeight: "500",
-    opacity: 0.85,
+    color: colors.text.secondary,
+    fontWeight: "400",
+    textAlign: "center",
+    opacity: 0.8,
   },
 });

@@ -1,44 +1,122 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { colors, typography } from "../shared/styles";
 
 const plans = [
   {
     category: "Para Dueños de Mascotas",
+    icon: "🐾",
     options: [
-      { name: "Plan Básico", price: "GRATIS" },
-      { name: "Plan Premium", price: "$8000 MENSUAL" },
+      {
+        name: "Plan Básico",
+        price: "GRATIS",
+        period: "",
+        recommended: false,
+      },
+      {
+        name: "Plan Premium",
+        price: "$8.000",
+        period: "/mes",
+        recommended: true,
+      },
     ],
   },
   {
     category: "Para Prestadores de Servicios",
+    icon: "💼",
     options: [
-        { name: "Plan Básico", price: "$8000 MENSUAL" },
-        { name: "Plan Premium", price: "$10000 MENSUAL" }
+      {
+        name: "Plan Básico",
+        price: "$8.000",
+        period: "/mes",
+        recommended: false,
+      },
+      {
+        name: "Plan Premium",
+        price: "$10.000",
+        period: "/mes",
+        recommended: true,
+      },
     ],
   },
 ];
 
-export default function Suscripciones() {
+export default function Suscripciones({ scrollToSection }) {
   return (
     <View style={styles.section}>
-      <Text style={styles.title}>Suscripciones</Text>
-      <Text style={styles.subtitle}>
-        Suscribite a nuestros planes para una mejor experiencia.
-      </Text>
+      <View style={styles.header}>
+        <Text style={styles.title}>Suscripciones</Text>
+        <Text style={styles.subtitle}>
+          Suscribite a nuestros planes para una mejor experiencia
+        </Text>
+      </View>
 
-      <View style={styles.cardsContainer}>
-        {plans.map((planGroup, idx) => (
-          <View key={idx} style={styles.planCard}>
-            <Text style={styles.planCategory}>{planGroup.category}</Text>
-            {planGroup.options.map((opt, j) => (
-              <View key={j} style={styles.planOption}>
-                <Text style={styles.planName}>{opt.name}</Text>
-                <Text style={styles.planPrice}>{opt.price}</Text>
-                <TouchableOpacity style={styles.button}>
-                  <Text style={styles.buttonText}>Consultar plan</Text>
-                </TouchableOpacity>
-              </View>
-            ))}
+      <View style={styles.plansWrapper}>
+        {plans.map((planGroup, groupIdx) => (
+          <View key={groupIdx} style={styles.categorySection}>
+            <View style={styles.categoryHeader}>
+              <Text style={styles.categoryIcon}>{planGroup.icon}</Text>
+              <Text style={styles.categoryTitle}>{planGroup.category}</Text>
+            </View>
+
+            <View style={styles.cardsRow}>
+              {planGroup.options.map((plan, planIdx) => {
+                const isPrestador = groupIdx === 1; // Prestadores de Servicios es el segundo grupo
+                return (
+                  <View
+                    key={planIdx}
+                    style={[
+                      styles.planCard,
+                      plan.recommended && (isPrestador 
+                        ? styles.planCardRecommendedPrestador 
+                        : styles.planCardRecommended),
+                    ]}
+                  >
+                    {plan.recommended && (
+                      <View style={isPrestador 
+                        ? styles.recommendedBadgePrestador 
+                        : styles.recommendedBadge}>
+                        <Text style={styles.recommendedText}>Recomendado</Text>
+                      </View>
+                    )}
+
+                    <View style={styles.planHeader}>
+                      <Text style={styles.planName}>{plan.name}</Text>
+                      <View style={styles.priceContainer}>
+                        <Text style={[
+                          styles.planPrice,
+                          isPrestador && styles.planPricePrestador
+                        ]}>{plan.price}</Text>
+                        {plan.period && (
+                          <Text style={styles.planPeriod}>{plan.period}</Text>
+                        )}
+                      </View>
+                    </View>
+
+                    <TouchableOpacity
+                      style={[
+                        styles.ctaButton,
+                        isPrestador && styles.ctaButtonPrestador,
+                        plan.recommended && (isPrestador 
+                          ? styles.ctaButtonRecommendedPrestador 
+                          : styles.ctaButtonRecommended),
+                      ]}
+                      onPress={() => scrollToSection?.("contacto")}
+                    >
+                      <Text
+                        style={[
+                          styles.ctaButtonText,
+                          isPrestador && styles.ctaButtonTextPrestador,
+                          plan.recommended && styles.ctaButtonTextRecommended,
+                        ]}
+                      >
+                        Consultar plan
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                );
+              })}
+            </View>
           </View>
         ))}
       </View>
@@ -48,67 +126,183 @@ export default function Suscripciones() {
 
 const styles = StyleSheet.create({
   section: {
-    padding: 20,
+    paddingVertical: 40,
+    paddingHorizontal: 20,
+    backgroundColor: colors.backgroundLanding,
+  },
+  header: {
     alignItems: "center",
+    marginBottom: 40,
   },
   title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#6b2d1d",
-    marginBottom: 10,
+    ...typography.styles.h2,
+    color: colors.text.primary,
+    marginBottom: 12,
+    textAlign: "center",
   },
   subtitle: {
-    fontSize: 14,
-    color: "#555",
-    marginBottom: 20,
+    ...typography.styles.body,
+    color: colors.text.secondary,
     textAlign: "center",
-    maxWidth: 600,
+    maxWidth: 500,
+    lineHeight: 22,
+    fontSize: 16,
   },
-  cardsContainer: {
+  plansWrapper: {
+    maxWidth: 1000,
+    width: "100%",
+    alignSelf: "center",
+  },
+  categorySection: {
+    marginBottom: 40,
+  },
+  categoryHeader: {
     flexDirection: "row",
-    flexWrap: "wrap",
+    alignItems: "center",
     justifyContent: "center",
-    gap: 15,
+    marginBottom: 24,
+    gap: 8,
+  },
+  categoryIcon: {
+    fontSize: 20,
+  },
+  categoryTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: colors.text.primary,
+  },
+  cardsRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    flexWrap: "wrap",
+    gap: 16,
   },
   planCard: {
-    backgroundColor: "#fff",
-    padding: 20,
-    borderRadius: 10,
-    elevation: 3,
+    backgroundColor: colors.surface,
+    borderRadius: 16,
+    padding: 24,
+    minWidth: 220,
+    maxWidth: 260,
+    borderWidth: 1,
+    borderColor: colors.border.light,
+    position: "relative",
     shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    shadowOffset: { width: 0, height: 2 },
-    margin: 10,
-    minWidth: 200,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.02,
+    shadowRadius: 8,
+    elevation: 1,
   },
-  planCategory: {
-    fontWeight: "bold",
-    fontSize: 16,
-    marginBottom: 15,
-    textAlign: "center",
-    color: "#6b2d1d",
+  planCardRecommended: {
+    borderColor: colors.brand.accentLanding,
+    borderWidth: 1.5,
+    shadowColor: colors.brand.accentLanding,
+    shadowOpacity: 0.05,
+    shadowRadius: 12,
+    elevation: 2,
+    transform: [{ scale: 1.0 }],
   },
-  planOption: {
-    marginBottom: 15,
+  planCardRecommendedPrestador: {
+    borderColor: colors.brand.lightBlue,
+    borderWidth: 1.5,
+    shadowColor: colors.brand.lightBlue,
+    shadowOpacity: 0.05,
+    shadowRadius: 12,
+    elevation: 2,
+    transform: [{ scale: 1.0 }],
+  },
+  recommendedBadge: {
+    position: "absolute",
+    top: -10,
+    alignSelf: "center",
+    backgroundColor: colors.brand.accentLanding,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
+    shadowColor: colors.brand.accentLanding,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.15,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  recommendedBadgePrestador: {
+    position: "absolute",
+    top: -10,
+    alignSelf: "center",
+    backgroundColor: colors.brand.lightBlue,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
+    shadowColor: colors.brand.lightBlue,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.15,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  recommendedText: {
+    color: colors.text.inverse,
+    fontSize: 12,
+    fontWeight: "700",
+    textTransform: "uppercase",
+    letterSpacing: 0.6,
+  },
+  planHeader: {
     alignItems: "center",
+    marginBottom: 20,
   },
   planName: {
-    fontWeight: "bold",
-    marginBottom: 5,
+    fontSize: 16,
+    fontWeight: "600",
+    color: colors.text.primary,
+    marginBottom: 12,
+  },
+  priceContainer: {
+    flexDirection: "row",
+    alignItems: "baseline",
+    gap: 3,
   },
   planPrice: {
-    color: "#2e7d32",
-    marginBottom: 10,
+    fontSize: 28,
+    fontWeight: "700",
+    color: colors.brand.accentLanding,
   },
-  button: {
-    backgroundColor: "#c94f7c",
-    paddingVertical: 6,
-    paddingHorizontal: 15,
-    borderRadius: 6,
+  planPricePrestador: {
+    color: colors.brand.lightBlue,
   },
-  buttonText: {
-    color: "#fff",
-    fontWeight: "bold",
+  planPeriod: {
+    fontSize: 13,
+    color: colors.text.secondary,
+    fontWeight: "400",
+  },
+  ctaButton: {
+    marginTop: 16,
+    backgroundColor: "transparent",
+    borderWidth: 1.5,
+    borderColor: colors.brand.accentLanding,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    alignItems: "center",
+  },
+  ctaButtonPrestador: {
+    borderColor: colors.brand.lightBlue,
+  },
+  ctaButtonRecommended: {
+    backgroundColor: colors.brand.accentLanding,
+    borderColor: colors.brand.accentLanding,
+  },
+  ctaButtonRecommendedPrestador: {
+    backgroundColor: colors.brand.lightBlue,
+    borderColor: colors.brand.lightBlue,
+  },
+  ctaButtonText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: colors.brand.accentLanding,
+  },
+  ctaButtonTextPrestador: {
+    color: colors.brand.lightBlue,
+  },
+  ctaButtonTextRecommended: {
+    color: colors.text.inverse,
   },
 });
