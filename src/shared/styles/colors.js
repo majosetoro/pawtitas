@@ -11,15 +11,16 @@ export const colors = {
   secondaryDark: '#fcbad2ff', // Rosa secundario oscuro
   
   // Colores de fondo
-  background: '#FDFDFD',     // Fondo principal
+  background: '#FDFDFD',     // Fondo app mobile
+  backgroundLanding: '#FAFAFA', // Fondo landing page
   surface: '#FFFFFF',        // Superficie de componentes
-  surfaceVariant: '#F8F8F8', // Superficie variante
+  surfaceVariant: '#F5F5F5', // Superficie variante
   
   // Colores de texto
   text: {
-    primary: '#333333',      // Texto principal
-    secondary: '#666666',    // Texto secundario
-    disabled: '#999999',     // Texto deshabilitado
+    primary: '#1A1A1A',      // Texto principal (negro más suave)
+    secondary: '#757575',    // Texto secundario (gris más neutro)
+    disabled: '#BDBDBD',     // Texto deshabilitado
     inverse: '#FFFFFF',      // Texto sobre fondos oscuros
   },
   
@@ -31,25 +32,28 @@ export const colors = {
   
   // Colores de borde
   border: {
-    light: '#fceeeeff',      // Borde claro
+    light: '#F0F0F0',        // Borde claro (más neutro)
     medium: '#E0E0E0',       // Borde medio
-    dark: '#CCCCCC',         // Borde oscuro
+    dark: '#BDBDBD',         // Borde oscuro (más suave)
   },
   
   // Colores específicos de la app
   brand: {
     logo: '#ffabcaff',       // Color del logo
-    accent: '#f9bbd2ff',     // Color de acento
+    accent: '#f9bbd2ff',     // Color de acento (para la app)
+    accentLanding: '#FF81AF', // Color de acento para landing page (títulos)
     highlight: '#f5a3c1ff',  // Color de resaltado
     footer: '#E58CAF',       // Color del footer
+    lightBlue: '#7DB7D2',    // Color celeste
+    
   },
   
   // Colores de botones
   button: {
     primary: '#f5a3c1ff',    // Botón primario
     secondary: '#fcb4b4ff',  // Botón secundario
-    playStore: '#4d2d21',    // Botón Play Store
-    appStore: '#ffb4cfff',   // Botón App Store
+    playStore: '#000000',    // Botón Play Store
+    appStore: '#7DB7D2',   // Botón App Store
   },
   
   // Colores de navegación

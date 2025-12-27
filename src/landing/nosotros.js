@@ -28,17 +28,24 @@ export default function Nosotros() {
       <Text style={styles.title}>Nosotros</Text>
       <Text style={styles.subtitle}>
         Somos estudiantes de la carrera Analista en sistemas y amamos a los animales.{"\n"}
-        Buscamos brindarte soluciones y ayudarte con tus mascotas. 
-
-        
+        Buscamos brindarte soluciones y ayudarte con tus mascotas
       </Text>
+
+      <View style={styles.missionBox}>
+        <Text style={styles.missionTitle}>Nuestra Misión</Text>
+        <Text style={styles.missionText}>
+          Conectar a dueños de mascotas con prestadores de servicios confiables,
+          facilitando el cuidado y bienestar de sus mascotas.
+        </Text>
+      </View>
 
       <View style={styles.teamRow}>
         {equipo.map((persona, idx) => (
           <View key={idx} style={styles.card}>
             <Image 
               source={persona.avatar} 
-              style={styles.avatar} 
+              style={styles.avatar}
+              resizeMode="cover"
             />
             <Text style={styles.name}>{persona.nombre}</Text>
             <Text style={styles.desc}>{persona.descripcion}</Text>
@@ -51,19 +58,44 @@ export default function Nosotros() {
 
 const styles = StyleSheet.create({
   section: {
-    padding: 20,
+    paddingVertical: 40,
+    paddingHorizontal: 20,
     alignItems: "center",
+    backgroundColor: colors.backgroundLanding,
   },
   title: {
     ...typography.styles.h2,
     color: colors.text.primary,
-    marginBottom: 10,
+    marginBottom: 12,
   },
   subtitle: {
     ...typography.styles.body,
     color: colors.text.secondary,
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: 30,
+    lineHeight: 22,
+    fontSize: 16,
+  },
+  missionBox: {
+    maxWidth: 600,
+    paddingVertical: 20,
+    paddingHorizontal: 30,
+    marginBottom: 30,
+    borderLeftWidth: 3,
+    borderLeftColor: colors.brand.accentLanding,
+    backgroundColor: colors.surface,
+  },
+  missionTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: colors.brand.accentLanding,
+    marginBottom: 8,
+    letterSpacing: 0.5,
+  },
+  missionText: {
+    fontSize: 16,
+    lineHeight: 22,
+    color: colors.text.secondary,
   },
   teamRow: {
     flexDirection: "row",
@@ -80,6 +112,7 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 60,
     marginBottom: 8,
+    backgroundColor: 'transparent',
   },
   name: {
     ...typography.styles.caption,
