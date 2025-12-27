@@ -10,12 +10,34 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from 'react-native';
-import MapView, { Marker, Polyline, PROVIDER_DEFAULT } from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocation } from '../../contexts';
 import MenuInferior from '../../components/MenuInferior';
 import { MapaController, MAPA_CONFIG } from '../../controller';
 import { styles } from './Mapa.styles';
+
+// Importación condicional de react-native-maps (solo en plataformas nativas)
+// En web, estas variables permanecerán como null
+let MapView = null;
+let Marker = null;
+let Polyline = null;
+let PROVIDER_DEFAULT = null;
+
+// Función helper para cargar react-native-maps solo en plataformas nativas
+const loadMaps = () => {
+  if (Platform.OS !== 'web') {
+    const Maps = require('react-native-maps');
+    MapView = Maps.default;
+    Marker = Maps.Marker;
+    Polyline = Maps.Polyline;
+    PROVIDER_DEFAULT = Maps.PROVIDER_DEFAULT;
+  }
+};
+
+// Cargar maps inmediatamente si no estamos en web
+if (Platform.OS !== 'web') {
+  loadMaps();
+}
 
 const MapaScreen = () => {
   const mapRef = useRef(null);
@@ -296,52 +318,66 @@ const MapaScreen = () => {
     <TouchableWithoutFeedback onPress={handleDismissKeyboard}>
       <View style={styles.container}>
         {/* Mapa */}
-        <MapView
-          ref={mapRef}
-          style={styles.map}
-          provider={PROVIDER_DEFAULT}
-          region={region}
-          showsCompass={false}
-          onRegionChangeComplete={handleRegionChangeComplete}
-          showsUserLocation={MapaController.hasUserLocation(userLocation)}
-          showsMyLocationButton={false}
-        >
-        {/* Marcador de ubicación del usuario */}
-        {MapaController.hasUserLocation(userLocation) && (
-          <Marker
-            coordinate={userLocation}
-            title="Tu ubicación"
-            pinColor={MAPA_CONFIG.MARKER_COLORS.USER}
-          />
-        )}
-
-        {/* Marcadores de POIs */}
-        {pois.map((poi) => {
-          const pinColor = MapaController.getMarkerColor(poi.type);
-
-          return (
+        {Platform.OS === 'web' ? (
+          <View style={styles.map}>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
+              <Ionicons name="map-outline" size={64} color="#999" />
+              <Text style={{ marginTop: 16, fontSize: 16, color: '#666', textAlign: 'center' }}>
+                El mapa no está disponible en la versión web
+              </Text>
+              <Text style={{ marginTop: 8, fontSize: 14, color: '#999', textAlign: 'center' }}>
+                Por favor, usa la aplicación móvil para acceder a la funcionalidad de mapas
+              </Text>
+            </View>
+          </View>
+        ) : (
+          <MapView
+            ref={mapRef}
+            style={styles.map}
+            provider={PROVIDER_DEFAULT}
+            region={region}
+            showsCompass={false}
+            onRegionChangeComplete={handleRegionChangeComplete}
+            showsUserLocation={MapaController.hasUserLocation(userLocation)}
+            showsMyLocationButton={false}
+          >
+          {/* Marcador de ubicación del usuario */}
+          {MapaController.hasUserLocation(userLocation) && (
             <Marker
-              key={poi.id}
-              coordinate={{ latitude: poi.latitude, longitude: poi.longitude }}
-              title={poi.name}
-              description={poi.address}
-              pinColor={pinColor}
-              onPress={() =>
-                handleGetRoute({ latitude: poi.latitude, longitude: poi.longitude })
-              }
+              coordinate={userLocation}
+              title="Tu ubicación"
+              pinColor={MAPA_CONFIG.MARKER_COLORS.USER}
             />
-          );
-        })}
+          )}
 
-        {/* Ruta */}
-        {routeCoordinates.length > 0 && (
-          <Polyline
-            coordinates={routeCoordinates}
-            strokeColor={MAPA_CONFIG.MARKER_COLORS.USER}
-            strokeWidth={4}
-          />
+          {/* Marcadores de POIs */}
+          {pois.map((poi) => {
+            const pinColor = MapaController.getMarkerColor(poi.type);
+
+            return (
+              <Marker
+                key={poi.id}
+                coordinate={{ latitude: poi.latitude, longitude: poi.longitude }}
+                title={poi.name}
+                description={poi.address}
+                pinColor={pinColor}
+                onPress={() =>
+                  handleGetRoute({ latitude: poi.latitude, longitude: poi.longitude })
+                }
+              />
+            );
+          })}
+
+          {/* Ruta */}
+          {routeCoordinates.length > 0 && (
+            <Polyline
+              coordinates={routeCoordinates}
+              strokeColor={MAPA_CONFIG.MARKER_COLORS.USER}
+              strokeWidth={4}
+            />
+          )}
+        </MapView>
         )}
-      </MapView>
 
       {/* Barra de búsqueda + brújula */}
       <View style={styles.topControls}>
@@ -387,9 +423,10 @@ const MapaScreen = () => {
         <TouchableOpacity
           style={[
             styles.compassButton,
-            compassIsNeutral && styles.compassButtonDisabled,
+            (compassIsNeutral || Platform.OS === 'web') && styles.compassButtonDisabled,
           ]}
           onPress={resetCompass}
+          disabled={Platform.OS === 'web'}
         >
           <Ionicons
             name="compass"
@@ -413,7 +450,7 @@ const MapaScreen = () => {
               key={button.type}
               style={[styles.poiButton, isActive && styles.poiButtonActive]}
               onPress={() => togglePOI(button.type)}
-              disabled={isLoadingPOIs}
+              disabled={isLoadingPOIs || Platform.OS === 'web'}
             >
               <Ionicons
                 name={button.icon}
@@ -481,7 +518,7 @@ const MapaScreen = () => {
       <TouchableOpacity
         style={styles.locationButton}
         onPress={isLoadingLocation ? null : goToUserLocation}
-        disabled={!MapaController.hasUserLocation(userLocation)}
+        disabled={!MapaController.hasUserLocation(userLocation) || Platform.OS === 'web'}
       >
         {isLoadingLocation ? (
           <ActivityIndicator size="small" color={MAPA_CONFIG.MARKER_COLORS.USER} />
