@@ -2,7 +2,12 @@
 // Nominatim: geocoding, Overpass: POIs, OpenRouteService: rutas
 
 const NOMINATIM_BASE = 'https://nominatim.openstreetmap.org';
-const OVERPASS_BASE = 'https://overpass-api.de/api/interpreter';
+// Servidores Overpass alternativos (fallback)
+const OVERPASS_SERVERS = [
+  'https://overpass-api.de/api/interpreter',
+  'https://overpass.kumi.systems/api/interpreter',
+  'https://overpass.openstreetmap.ru/api/interpreter',
+];
 const ORS_BASE = 'https://api.openrouteservice.org/v2';
 
 // OpenRouteService - Lee desde .env con fallback
@@ -19,6 +24,8 @@ const NOMINATIM_HEADERS = {
 
 const DEFAULT_TIMEOUT = 15000;
 const OVERPASS_HEADERS = { 'Content-Type': 'application/x-www-form-urlencoded' };
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 1000; // 1 segundo
 
 const fetchJsonWithTimeout = async (
   url,
@@ -50,20 +57,52 @@ const fetchJsonWithTimeout = async (
   }
 };
 
-const runOverpassQuery = async (query) =>
-  fetchJsonWithTimeout(
-    OVERPASS_BASE,
-    {
-      method: 'POST',
-      headers: OVERPASS_HEADERS,
-      body: `data=${encodeURIComponent(query)}`,
-    },
-    {
-      timeoutMs: DEFAULT_TIMEOUT,
-      timeoutMessage: 'Timeout: La búsqueda tardó demasiado',
-      errorPrefix: 'Overpass',
+// Ejecutar query Overpass con reintentos y servidores alternativos
+const runOverpassQuery = async (query, retryCount = 0, serverIndex = 0) => {
+  const server = OVERPASS_SERVERS[serverIndex % OVERPASS_SERVERS.length];
+  
+  try {
+    const data = await fetchJsonWithTimeout(
+      server,
+      {
+        method: 'POST',
+        headers: OVERPASS_HEADERS,
+        body: `data=${encodeURIComponent(query)}`,
+      },
+      {
+        timeoutMs: DEFAULT_TIMEOUT,
+        timeoutMessage: 'Timeout: La búsqueda tardó demasiado',
+        errorPrefix: 'Overpass',
+      }
+    );
+    return data;
+  } catch (error) {
+    const is504 = error?.message?.includes('504');
+    const isTimeout = error?.message?.includes('Timeout');
+    const shouldRetry = (is504 || isTimeout) && retryCount < MAX_RETRIES;
+    
+    if (shouldRetry) {
+      const delay = RETRY_DELAY * Math.pow(2, retryCount) + Math.random() * 500;
+      
+      console.warn(
+        `[Overpass] Reintento ${retryCount + 1}/${MAX_RETRIES} después de ${delay}ms. ` +
+        `Servidor: ${server}`
+      );
+      
+      await new Promise(resolve => setTimeout(resolve, delay));
+      
+      // Intentar siguiente servidor si es error 504
+      const nextServerIndex = is504 
+        ? (serverIndex + 1) % OVERPASS_SERVERS.length 
+        : serverIndex;
+      
+      return runOverpassQuery(query, retryCount + 1, nextServerIndex);
     }
-  );
+    
+    // Si no se puede reintentar, lanzar el error
+    throw error;
+  }
+};
 
 const mapOverpassPOI = (element, baseData) => {
   const latitude = element.lat || element.center?.lat;
@@ -162,7 +201,7 @@ export const findNearbyVeterinaries = async (latitude, longitude, radius = 2000)
   try {
     // Buscar veterinarias cercanas
     const query = `
-      [out:json][timeout:15];
+      [out:json][timeout:10];
       (
         nwr(around:${radius},${latitude},${longitude})["amenity"="veterinary"];
       );
@@ -194,7 +233,7 @@ export const findNearbyVeterinaries = async (latitude, longitude, radius = 2000)
 export const findNearbyPetshops = async (latitude, longitude, radius = 2000) => {
   try {
     const query = `
-      [out:json][timeout:15];
+      [out:json][timeout:10];
       (
         nwr(around:${radius},${latitude},${longitude})["shop"="pet"];
         nwr(around:${radius},${latitude},${longitude})["shop"="pet_grooming"];
@@ -227,7 +266,7 @@ export const findNearbyPetshops = async (latitude, longitude, radius = 2000) => 
 export const findNearbyParks = async (latitude, longitude, radius = 2000) => {
   try {
     const query = `
-      [out:json][timeout:15];
+      [out:json][timeout:10];
       (
         nwr(around:${radius},${latitude},${longitude})["leisure"="park"];
       );
