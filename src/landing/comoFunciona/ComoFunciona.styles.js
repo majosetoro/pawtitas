@@ -1,41 +1,5 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { colors, typography } from "../shared/styles";
-
-const steps = [
-  { number: "1", title: "Descarga la App", description: "Disponible en Play Store" },
-  { number: "2", title: "Busca el servicio", description: "Encuentra lo que necesitas" },
-  { number: "3", title: "Conecta", description: "Habla con el prestador" },
-  { number: "4", title: "Disfruta", description: "Tu mascota en buenas manos" }
-];
-
-export default function ComoFunciona() {
-  return (
-    <View style={styles.section}>
-      <Text style={styles.title}>¿Cómo funciona?</Text>
-      <Text style={styles.subtitle}>
-        En 4 simples pasos podés comenzar a disfrutar de nuestros servicios
-      </Text>
-
-      <View style={styles.stepsContainer}>
-        {steps.map((step, idx) => (
-          <React.Fragment key={idx}>
-            <View style={styles.stepCard}>
-              <View style={styles.stepNumber}>
-                <Text style={styles.stepNumberText}>{step.number}</Text>
-              </View>
-              <Text style={styles.stepTitle}>{step.title}</Text>
-              <Text style={styles.stepDescription}>{step.description}</Text>
-            </View>
-            {idx < steps.length - 1 && (
-              <Text style={styles.stepArrow}>→</Text>
-            )}
-          </React.Fragment>
-        ))}
-      </View>
-    </View>
-  );
-}
+import { StyleSheet } from "react-native";
+import { colors, typography } from "../../shared/styles";
 
 const styles = StyleSheet.create({
   section: {
@@ -106,4 +70,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 8,
   },
 });
+
+export default styles;
 
