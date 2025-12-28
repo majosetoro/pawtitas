@@ -27,7 +27,7 @@ export default function Nosotros() {
     <View style={styles.section}>
       <Text style={styles.title}>Nosotros</Text>
       <Text style={styles.subtitle}>
-        Somos estudiantes de la carrera Analista en sistemas y amamos a los animales.{"\n"}
+        Somos estudiantes de la carrera Analista en Sistemas y amamos a los animales.{"\n"}
         Buscamos brindarte soluciones y ayudarte con tus mascotas
       </Text>
 
