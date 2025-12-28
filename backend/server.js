@@ -4,6 +4,7 @@ require('dotenv').config();              // ← lee backend/.env
 const express = require('express');
 const cors = require('cors');
 const { PrismaClient } = require('@prisma/client');
+const nodemailer = require('nodemailer');
 
 const app = express();
 const prisma = new PrismaClient();
@@ -12,6 +13,17 @@ const PORT = process.env.PORT || 3001;
 
 app.use(cors());                         // permitir peticiones desde la app
 app.use(express.json());                 // parsear JSON
+
+// Configurar transporter de nodemailer
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST || 'smtp.gmail.com',
+  port: parseInt(process.env.SMTP_PORT || '587'),
+  secure: process.env.SMTP_SECURE === 'true', // true para 465, false para otros puertos
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+});
 
 // Healthcheck: comprueba conexión a MySQL
 app.get('/health', async (_req, res) => {
@@ -40,6 +52,77 @@ app.post('/login', async (req, res) => {
   } catch (e) {
     console.error('Login error:', e);
     res.status(500).json({ success: false, message: 'Error en el servidor' });
+  }
+});
+
+// Endpoint de contacto
+app.post('/contacto', async (req, res) => {
+  try {
+    const { nombre, email, mensaje } = req.body;
+
+    // Validar campos requeridos
+    if (!nombre || !email || !mensaje) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Todos los campos son requeridos' 
+      });
+    }
+
+    // Validar formato de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'El email no es válido' 
+      });
+    }
+
+    // Verificar que las credenciales SMTP estén configuradas
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+      console.error('SMTP no configurado: faltan SMTP_USER o SMTP_PASS');
+      return res.status(500).json({ 
+        success: false, 
+        message: 'Error de configuración del servidor' 
+      });
+    }
+
+    // Configurar el email
+    const mailOptions = {
+      from: process.env.SMTP_USER,
+      to: process.env.CONTACTO_EMAIL || process.env.SMTP_USER, // Email donde recibirás los mensajes
+      replyTo: email, // Para que puedas responder directamente al usuario
+      subject: `Contacto desde Pawtitas - ${nombre}`,
+      html: `
+        <h2>Nuevo mensaje de contacto</h2>
+        <p><strong>Nombre:</strong> ${nombre}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Mensaje:</strong></p>
+        <p>${mensaje.replace(/\n/g, '<br>')}</p>
+      `,
+      text: `
+        Nuevo mensaje de contacto
+        
+        Nombre: ${nombre}
+        Email: ${email}
+        Mensaje: ${mensaje}
+      `,
+    };
+
+    // Enviar email
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Email enviado:', info.messageId);
+
+    res.json({ 
+      success: true, 
+      message: 'Mensaje enviado correctamente. Te responderemos a la brevedad.' 
+    });
+
+  } catch (error) {
+    console.error('Error al enviar email:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error al enviar el mensaje. Por favor, intenta nuevamente más tarde.' 
+    });
   }
 });
 
