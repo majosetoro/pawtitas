@@ -4,7 +4,7 @@
  * Separa la lógica de la presentación (UI) siguiendo principios SOLID
  */
 
-import { Alert } from 'react-native';
+import { Alert, Platform } from 'react-native';
 import {
   searchAddress,
   findNearbyVeterinaries,
@@ -25,7 +25,7 @@ export const MAPA_CONFIG = {
     longitudeDelta: 0.05,
   },
 
-  // Radio de búsqueda para POIs (en metros) - reducido para evitar timeouts
+  // Radio de búsqueda para POIs (en metros)
   SEARCH_RADIUS: 2000,
 
   // Debounce para búsqueda de direcciones (ms)
@@ -172,13 +172,7 @@ export class MapaController {
     }
   }
 
-  /**
-   * Calcular ruta entre origen y destino
-   * @param {Object} origin - { latitude, longitude }
-   * @param {Object} destination - { latitude, longitude }
-   * @param {string} profile - 'driving-car' o 'foot-walking'
-   * @returns {Promise<Object>} - Información de ruta
-   */
+  // Calcular ruta entre origen y destino
   static async calculateRoute(origin, destination, profile) {
     if (!origin) {
       Alert.alert(
@@ -196,12 +190,7 @@ export class MapaController {
     }
   }
 
-  /**
-   * Obtener configuración de región para centrar el mapa
-   * @param {Object} location - { latitude, longitude }
-   * @param {number} zoom - Nivel de zoom (latitudeDelta)
-   * @returns {Object} - Configuración de región
-   */
+  // Obtener configuración de región para centrar el mapa
   static getRegionForLocation(location, zoom = 0.01) {
     return {
       latitude: location.latitude,
@@ -211,11 +200,7 @@ export class MapaController {
     };
   }
 
-  /**
-   * Obtener color de marcador según tipo de POI
-   * @param {string} poiType - Tipo de POI
-   * @returns {string} - Color del marcador
-   */
+  // Obtener color de marcador según tipo de POI
   static getMarkerColor(poiType) {
     switch (poiType) {
       case 'veterinary':
@@ -229,31 +214,19 @@ export class MapaController {
     }
   }
 
-  /**
-   * Validar si el texto de búsqueda es válido
-   * @param {string} query - Texto de búsqueda
-   * @returns {boolean}
-   */
+  // Validar si el texto de búsqueda es válido
   static isValidSearchQuery(query) {
     return query && query.trim().length >= 3;
   }
 
-  /**
-   * Obtener perfil de ruta opuesto (para toggle)
-   * @param {string} currentProfile - Perfil actual
-   * @returns {string} - Perfil opuesto
-   */
+  // Obtener perfil de ruta opuesto (para toggle)
   static toggleRouteProfile(currentProfile) {
     return currentProfile === MAPA_CONFIG.ROUTE_PROFILES.DRIVING
       ? MAPA_CONFIG.ROUTE_PROFILES.WALKING
       : MAPA_CONFIG.ROUTE_PROFILES.DRIVING;
   }
 
-  /**
-   * Formatear información de ruta para mostrar
-   * @param {Object} route - Ruta calculada
-   * @returns {Object} - { distance, duration, profile }
-   */
+  // Formatear información de ruta para mostrar
   static formatRouteInfo(route) {
     if (!route) return null;
 
@@ -264,20 +237,12 @@ export class MapaController {
     };
   }
 
-  /**
-   * Validar si hay ubicación disponible
-   * @param {Object} userLocation - Ubicación del usuario
-   * @returns {boolean}
-   */
+  // Validar si hay ubicación disponible
   static hasUserLocation(userLocation) {
-    return userLocation && userLocation.latitude && userLocation.longitude;
+    return !!(userLocation && userLocation.latitude != null && userLocation.longitude != null);
   }
 
-  /**
-   * Obtener mensaje de error según tipo
-   * @param {string} errorType - Tipo de error
-   * @returns {Object} - { title, message }
-   */
+  // Obtener mensaje de error según tipo
   static getErrorMessage(errorType) {
     const errors = {
       NO_LOCATION: {

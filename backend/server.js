@@ -14,6 +14,54 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());                         // permitir peticiones desde la app
 app.use(express.json());                 // parsear JSON
 
+// Configuración Overpass para proxy
+const OVERPASS_SERVERS = [
+  'https://overpass-api.de/api/interpreter',
+  'https://overpass.kumi.systems/api/interpreter',
+  'https://overpass.openstreetmap.ru/api/interpreter',
+];
+const OVERPASS_TIMEOUT_MS = 25000; // 25s
+const OVERPASS_MAX_RETRIES = 3;
+
+// Proxy Overpass para evitar timeouts en clientes móviles
+app.get('/api/overpass', async (req, res) => {
+  const { query } = req.query;
+  if (!query) {
+    return res.status(400).json({ error: 'missing query' });
+  }
+
+  const encodedQuery = encodeURIComponent(query);
+
+  for (let attempt = 0; attempt < OVERPASS_MAX_RETRIES; attempt++) {
+    const server = OVERPASS_SERVERS[attempt % OVERPASS_SERVERS.length];
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), OVERPASS_TIMEOUT_MS);
+
+    try {
+      const url = `${server}?data=${encodedQuery}`;
+      const response = await fetch(url, { method: 'GET', signal: controller.signal });
+      clearTimeout(timer);
+
+      if (!response.ok) {
+        // Pasar a siguiente servidor o reintento
+        continue;
+      }
+
+      const data = await response.json();
+      return res.json(data);
+    } catch (error) {
+      clearTimeout(timer);
+      // Si es el último intento, devolver error
+      if (attempt === OVERPASS_MAX_RETRIES - 1) {
+        return res.status(504).json({ error: 'timeout', detail: error.message });
+      }
+      // Si no, seguir con el siguiente servidor
+    }
+  }
+
+  return res.status(504).json({ error: 'timeout' });
+});
+
 // Configurar transporter de nodemailer
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || 'smtp.gmail.com',

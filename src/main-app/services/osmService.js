@@ -1,13 +1,22 @@
 // Servicios de OpenStreetMap para mapas, búsqueda y POIs
 // Nominatim: geocoding, Overpass: POIs, OpenRouteService: rutas
 
+import { Platform } from 'react-native';
+
 const NOMINATIM_BASE = 'https://nominatim.openstreetmap.org';
 // Servidores Overpass alternativos (fallback)
-const OVERPASS_SERVERS = [
-  'https://overpass-api.de/api/interpreter',
-  'https://overpass.kumi.systems/api/interpreter',
-  'https://overpass.openstreetmap.ru/api/interpreter',
-];
+// Android usa un orden diferente para mejor rendimiento
+const OVERPASS_SERVERS = Platform.OS === 'android' 
+  ? [
+      'https://overpass.kumi.systems/api/interpreter',
+      'https://overpass-api.de/api/interpreter',
+      'https://overpass.openstreetmap.ru/api/interpreter',
+    ]
+  : [
+      'https://overpass-api.de/api/interpreter',
+      'https://overpass.kumi.systems/api/interpreter',
+      'https://overpass.openstreetmap.ru/api/interpreter',
+    ];
 const ORS_BASE = 'https://api.openrouteservice.org/v2';
 
 // OpenRouteService - Lee desde .env con fallback
@@ -22,10 +31,10 @@ const NOMINATIM_HEADERS = {
   'User-Agent': 'Pawtitas/1.0',
 };
 
-const DEFAULT_TIMEOUT = 15000;
-const OVERPASS_HEADERS = { 'Content-Type': 'application/x-www-form-urlencoded' };
-const MAX_RETRIES = 3;
-const RETRY_DELAY = 1000; // 1 segundo
+// Timeout y configuración unificada para todas las plataformas
+const DEFAULT_TIMEOUT = 30000; // 30 segundos para todas las plataformas
+const MAX_RETRIES = 3; // 3 reintentos para todas las plataformas
+const RETRY_DELAY = 1000; // 1 segundo base
 
 const fetchJsonWithTimeout = async (
   url,
@@ -36,6 +45,52 @@ const fetchJsonWithTimeout = async (
     errorPrefix = 'Request',
   } = {}
 ) => {
+  // Usar XMLHttpRequest en Android para mejor rendimiento con APIs lentas
+  if (Platform.OS === 'android') {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      const timer = setTimeout(() => {
+        xhr.abort();
+        reject(new Error(timeoutMessage));
+      }, timeoutMs);
+
+      xhr.onload = () => {
+        clearTimeout(timer);
+        if (xhr.status >= 200 && xhr.status < 300) {
+          try {
+            resolve(JSON.parse(xhr.responseText));
+          } catch (e) {
+            reject(new Error(`${errorPrefix} error: Invalid JSON`));
+          }
+        } else {
+          reject(new Error(`${errorPrefix} error: ${xhr.status}`));
+        }
+      };
+
+      xhr.onerror = () => {
+        clearTimeout(timer);
+        reject(new Error(`${errorPrefix} error: Network error`));
+      };
+
+      xhr.ontimeout = () => {
+        clearTimeout(timer);
+        reject(new Error(timeoutMessage));
+      };
+
+      xhr.open(options.method || 'GET', url, true);
+      
+      // Agregar headers si existen
+      if (options.headers) {
+        Object.keys(options.headers).forEach(key => {
+          xhr.setRequestHeader(key, options.headers[key]);
+        });
+      }
+      
+      xhr.send(options.body || null);
+    });
+  }
+
+  // iOS y otras plataformas usan fetch normal
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
@@ -57,51 +112,26 @@ const fetchJsonWithTimeout = async (
   }
 };
 
-// Ejecutar query Overpass con reintentos y servidores alternativos
-const runOverpassQuery = async (query, retryCount = 0, serverIndex = 0) => {
-  const server = OVERPASS_SERVERS[serverIndex % OVERPASS_SERVERS.length];
-  
-  try {
-    const data = await fetchJsonWithTimeout(
-      server,
-      {
-        method: 'POST',
-        headers: OVERPASS_HEADERS,
-        body: `data=${encodeURIComponent(query)}`,
-      },
-      {
-        timeoutMs: DEFAULT_TIMEOUT,
-        timeoutMessage: 'Timeout: La búsqueda tardó demasiado',
-        errorPrefix: 'Overpass',
-      }
-    );
-    return data;
-  } catch (error) {
-    const is504 = error?.message?.includes('504');
-    const isTimeout = error?.message?.includes('Timeout');
-    const shouldRetry = (is504 || isTimeout) && retryCount < MAX_RETRIES;
-    
-    if (shouldRetry) {
-      const delay = RETRY_DELAY * Math.pow(2, retryCount) + Math.random() * 500;
-      
-      console.warn(
-        `[Overpass] Reintento ${retryCount + 1}/${MAX_RETRIES} después de ${delay}ms. ` +
-        `Servidor: ${server}`
-      );
-      
-      await new Promise(resolve => setTimeout(resolve, delay));
-      
-      // Intentar siguiente servidor si es error 504
-      const nextServerIndex = is504 
-        ? (serverIndex + 1) % OVERPASS_SERVERS.length 
-        : serverIndex;
-      
-      return runOverpassQuery(query, retryCount + 1, nextServerIndex);
-    }
-    
-    // Si no se puede reintentar, lanzar el error
-    throw error;
+// Ejecutar query Overpass a través del backend (proxy)
+const runOverpassQuery = async (query) => {
+  const baseUrl = process.env.EXPO_PUBLIC_API_BASE_URL;
+  if (!baseUrl) {
+    throw new Error('EXPO_PUBLIC_API_BASE_URL no configurada para proxy de Overpass');
   }
+
+  const url = `${baseUrl.replace(/\/$/, '')}/api/overpass?query=${encodeURIComponent(query)}`;
+
+  const data = await fetchJsonWithTimeout(
+    url,
+    { method: 'GET' },
+    {
+      timeoutMs: DEFAULT_TIMEOUT,
+      timeoutMessage: 'Timeout: La búsqueda tardó demasiado',
+      errorPrefix: 'Overpass proxy',
+    }
+  );
+
+  return data;
 };
 
 const mapOverpassPOI = (element, baseData) => {
@@ -205,7 +235,7 @@ export const findNearbyVeterinaries = async (latitude, longitude, radius = 2000)
       (
         nwr(around:${radius},${latitude},${longitude})["amenity"="veterinary"];
       );
-      out center;
+      out center 20;
     `;
     const data = await runOverpassQuery(query);
     
@@ -238,7 +268,7 @@ export const findNearbyPetshops = async (latitude, longitude, radius = 2000) => 
         nwr(around:${radius},${latitude},${longitude})["shop"="pet"];
         nwr(around:${radius},${latitude},${longitude})["shop"="pet_grooming"];
       );
-      out center;
+      out center 20;
     `;
     const data = await runOverpassQuery(query);
     
@@ -270,7 +300,7 @@ export const findNearbyParks = async (latitude, longitude, radius = 2000) => {
       (
         nwr(around:${radius},${latitude},${longitude})["leisure"="park"];
       );
-      out center;
+      out center 20;
     `;
     const data = await runOverpassQuery(query);
     

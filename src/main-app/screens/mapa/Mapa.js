@@ -26,11 +26,15 @@ let PROVIDER_DEFAULT = null;
 // Función helper para cargar react-native-maps solo en plataformas nativas
 const loadMaps = () => {
   if (Platform.OS !== 'web') {
-    const Maps = require('react-native-maps');
-    MapView = Maps.default;
-    Marker = Maps.Marker;
-    Polyline = Maps.Polyline;
-    PROVIDER_DEFAULT = Maps.PROVIDER_DEFAULT;
+    try {
+      const Maps = require('react-native-maps');
+      MapView = Maps.default;
+      Marker = Maps.Marker;
+      Polyline = Maps.Polyline;
+      PROVIDER_DEFAULT = Maps.PROVIDER_DEFAULT;
+    } catch (error) {
+      console.error('Error cargando react-native-maps:', error);
+    }
   }
 };
 
@@ -330,7 +334,7 @@ const MapaScreen = () => {
               </Text>
             </View>
           </View>
-        ) : (
+        ) : MapView ? (
           <MapView
             ref={mapRef}
             style={styles.map}
@@ -377,6 +381,15 @@ const MapaScreen = () => {
             />
           )}
         </MapView>
+        ) : (
+          <View style={styles.map}>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
+              <ActivityIndicator size="large" color={MAPA_CONFIG.MARKER_COLORS.USER} />
+              <Text style={{ marginTop: 16, fontSize: 16, color: '#666', textAlign: 'center' }}>
+                Cargando mapa...
+              </Text>
+            </View>
+          </View>
         )}
 
       {/* Barra de búsqueda + brújula */}
