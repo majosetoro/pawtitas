@@ -292,29 +292,76 @@ export const findNearbyPetshops = async (latitude, longitude, radius = 2000) => 
   }
 };
 
-// Buscar parques cercanos
+// Buscar parques y plazas cercanos
 export const findNearbyParks = async (latitude, longitude, radius = 2000) => {
   try {
     const query = `
       [out:json][timeout:10];
       (
+        // Parques (leisure=park)
         nwr(around:${radius},${latitude},${longitude})["leisure"="park"];
+        // Nodos de ubicación de plazas (place=square)
+        node(around:${radius},${latitude},${longitude})["place"="square"];
+        // Áreas recreativas que pueden incluir plazas
+        nwr(around:${radius},${latitude},${longitude})["leisure"="recreation_ground"];
+        // Áreas públicas
+        nwr(around:${radius},${latitude},${longitude})["leisure"="public"];
       );
-      out center 20;
+      out center;
     `;
+    
+    console.log('[findNearbyParks] Ejecutando query para parques y plazas...');
     const data = await runOverpassQuery(query);
     
-    return data.elements
-      .map(element =>
-        mapOverpassPOI(element, {
-          type: 'park',
-          name: element.tags?.name || 'Parque',
-          address: formatAddress(element.tags),
-          area: element.tags?.area,
-          surface: element.tags?.surface,
-        })
-      )
+    console.log('[findNearbyParks] Elementos encontrados:', data.elements?.length || 0);
+    
+    const results = data.elements
+      .map(element => {
+        const tags = element.tags || {};
+        const name = (tags.name || '').toLowerCase();
+        const leisure = tags['leisure'] || '';
+        
+        // Determinar el tipo y nombre por defecto según los tags y nombre
+        let type = 'park';
+        let defaultName = 'Parque';
+        
+        // Detectar plazas por múltiples criterios (en orden de prioridad):
+        // 1. Si tiene place=square (nodo de ubicación de plaza)
+        if (tags['place'] === 'square') {
+          type = 'square';
+          defaultName = 'Plaza';
+        }
+        // 2. Si el nombre contiene "plaza" o "square" (más importante - muchas plazas están etiquetadas como park)
+        else if (name.includes('plaza') || name.includes('square')) {
+          type = 'square';
+          defaultName = 'Plaza';
+        }
+        // 3. Si tiene leisure específico de plaza (aunque no sea común)
+        else if (tags['leisure'] === 'recreation_ground' || tags['leisure'] === 'public') {
+          type = 'square';
+          defaultName = 'Plaza';
+        }
+        
+        const result = mapOverpassPOI(element, {
+          type: type,
+          name: tags.name || defaultName,
+          address: formatAddress(tags),
+          area: tags.area,
+          surface: tags.surface,
+        });
+        
+        if (result) {
+          console.log(`[findNearbyParks] POI encontrado: ${result.name} (${result.type}) - leisure: ${leisure}, name: "${tags.name}"`);
+        }
+        
+        return result;
+      })
       .filter(Boolean);
+    
+    const parksCount = results.filter(r => r.type === 'park').length;
+    const squaresCount = results.filter(r => r.type === 'square').length;
+    console.log(`[findNearbyParks] POIs procesados: ${results.length} total (${parksCount} parques, ${squaresCount} plazas)`);
+    return results;
   } catch (error) {
     console.error('Error en findNearbyParks:', error);
     

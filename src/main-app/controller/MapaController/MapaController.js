@@ -134,12 +134,7 @@ export class MapaController {
     }
   }
 
-  /**
-   * Cargar POIs según tipo
-   * @param {string} type - Tipo de POI (veterinaries, petshops, parks)
-   * @param {Object} userLocation - { latitude, longitude }
-   * @returns {Promise<Array>} - Lista de POIs
-   */
+  // Cargar POIs según tipo
   static async loadPOIs(type, userLocation) {
     if (!userLocation) {
       Alert.alert(
@@ -208,6 +203,7 @@ export class MapaController {
       case 'petshop':
         return MAPA_CONFIG.MARKER_COLORS.PETSHOP;
       case 'park':
+      case 'square':
         return MAPA_CONFIG.MARKER_COLORS.PARK;
       default:
         return MAPA_CONFIG.MARKER_COLORS.USER;
