@@ -19,7 +19,7 @@ export default function Footer({ scrollToSection, scrollToTop }) {
             />
             <View style={styles.brandText}>
               <Text style={styles.appName}>Pawtitas</Text>
-              <Text style={styles.tagline}>Conectando necesidades con servicios verificados 🐾</Text>
+              <Text style={styles.tagline}>Conectando necesidades con servicios verificados ❤️</Text>
             </View>
           </TouchableOpacity>
 
