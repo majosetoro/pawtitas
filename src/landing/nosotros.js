@@ -34,8 +34,7 @@ export default function Nosotros() {
       <View style={styles.missionBox}>
         <Text style={styles.missionTitle}>Nuestra Misión</Text>
         <Text style={styles.missionText}>
-          Conectar a dueños de mascotas con prestadores de servicios confiables,
-          facilitando el cuidado y bienestar de sus mascotas.
+          Unimos a dueños de mascotas con prestadores de confianza, facilitando una conexión segura y de calidad para acompañar su bienestar.
         </Text>
       </View>
 
