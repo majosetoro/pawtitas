@@ -101,12 +101,10 @@ export default function RegistroScreen({ navigation }) {
 
   const handleSubmit = () => {
     if (validateForm()) {
-      // Agregar para enviar datos a la bd
-      if (perfil === "prestador") {
-        setSuccessMessage("¡Listo! Tu registro fue exitoso. Revisaremos tus datos y te notificaremos por correo cuando tu cuenta esté habilitada.");
-      } else if (perfil === "dueno") {
-        setSuccessMessage("¡Bienvenido/a! Tu registro fue exitoso, ya podés usar la app.");
-      }
+      // Navegar a suscripciones
+      navigation.navigate('Suscripciones', { 
+        tipoPerfil: perfil // 'dueno' o 'prestador'
+      });
     }
   };
 
@@ -263,10 +261,10 @@ export default function RegistroScreen({ navigation }) {
         </TouchableOpacity>
 
         <TouchableOpacity 
-          style={[styles.button, styles.confirm]}
+          style={[styles.button, styles.continue]}
           onPress={handleSubmit}
         >
-          <Text style={styles.confirmText}>Confirmar</Text>
+          <Text style={styles.continueText}>Continuar</Text>
         </TouchableOpacity>
       </View>
 

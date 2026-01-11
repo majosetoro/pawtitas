@@ -100,7 +100,7 @@ export const styles = StyleSheet.create({
       borderWidth: 2,
       borderColor: colors.brand.highlight,
     },
-    confirm: { 
+    continue: { 
       backgroundColor: colors.brand.highlight,
     },
     cancelText: { 
@@ -108,7 +108,7 @@ export const styles = StyleSheet.create({
       fontFamily: typography.fontFamily.bodySemiBold,
       fontSize: 15,
     },
-    confirmText: { 
+    continueText: { 
       color: colors.text.inverse, 
       fontFamily: typography.fontFamily.bodySemiBold,
       fontSize: 15,
