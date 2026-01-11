@@ -21,6 +21,7 @@ import ResenasScreen from "./screens/resenas/Resenas";
 import ChatScreen from "./screens/chat/Chat";
 import Conversacion from "./screens/chat/Conversacion";
 import MapaScreen from "./screens/mapa/Mapa";
+import SuscripcionesScreen from "./screens/registro/suscripciones/suscripciones";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { LocationProvider, StreamChatProvider } from "./contexts";
@@ -123,6 +124,7 @@ export default function App() {
                 <Stack.Screen name="Splash" component={SplashScreen} />
                 <Stack.Screen name="Bienvenida" component={BienvenidaScreen} />
                 <Stack.Screen name="Registro" component={RegistroScreen} />
+                <Stack.Screen name="Suscripciones" component={SuscripcionesScreen} />
                 <Stack.Screen name="Inicio" component={InicioScreen} />
                 <Stack.Screen name="Home" component={HomeScreen} />
                 <Stack.Screen name="Cuidadores" component={CuidadoresScreen} />
