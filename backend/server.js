@@ -4,6 +4,9 @@ require('dotenv').config();              // ← lee backend/.env
 const express = require('express');
 const cors = require('cors');
 const { PrismaClient } = require('@prisma/client');
+require('dotenv').config();
+const nodemailer = require('nodemailer');
+
 
 
 
