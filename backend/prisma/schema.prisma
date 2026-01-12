@@ -1,5 +1,3 @@
-// prisma/schema.prisma
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -9,9 +7,215 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Admin {
-  id        BigInt   @id @default(autoincrement())
-  email     String   @unique
-  password  String
-  creadoEn  DateTime @default(now())
+model admin {
+  id       BigInt   @id @default(autoincrement())
+  email    String   @unique(map: "Admin_email_key")
+  password String
+  creadoEn DateTime @default(now())
+}
+
+model chat {
+  id            BigInt    @id @default(autoincrement())
+  duenioId      BigInt
+  prestadorId   BigInt
+  estado        String
+  fechaCreacion DateTime  @default(now())
+  mensaje       mensaje[]
+}
+
+model domicilio {
+  id      BigInt    @id @default(autoincrement())
+  calle   String
+  numero  String
+  ciudad  String
+  persona persona[]
+  usuario usuario[]
+}
+
+model duenio {
+  id          BigInt     @id @default(autoincrement())
+  usuarioId   BigInt     @unique(map: "Duenio_usuarioId_key")
+  comentarios String?
+  usuario     usuario    @relation(fields: [usuarioId], references: [id], map: "Duenio_usuarioId_fkey")
+  favorito    favorito[]
+  mascota     mascota[]
+  reserva     reserva[]
+}
+
+model favorito {
+  id          BigInt   @id @default(autoincrement())
+  duenioId    BigInt
+  prestadorId BigInt
+  fecha       DateTime @default(now())
+  duenio      duenio   @relation(fields: [duenioId], references: [id], map: "Favorito_duenioId_fkey")
+
+  @@unique([duenioId, prestadorId], map: "Favorito_duenioId_prestadorId_key")
+}
+
+model genero {
+  id      BigInt    @id @default(autoincrement())
+  nombre  String    @unique(map: "Genero_nombre_key")
+  persona persona[]
+  usuario usuario[]
+}
+
+model mascota {
+  id          BigInt    @id @default(autoincrement())
+  tipo        String
+  edad        Int
+  condiciones String?
+  genero      String
+  duenioId    BigInt
+  duenio      duenio    @relation(fields: [duenioId], references: [id], map: "Mascota_duenioId_fkey")
+  reserva     reserva[]
+
+  @@index([duenioId], map: "Mascota_duenioId_fkey")
+}
+
+model mensaje {
+  id         BigInt             @id @default(autoincrement())
+  chatId     BigInt
+  emisorTipo mensaje_emisorTipo
+  texto      String
+  adjuntoUrl String?
+  fechaEnvio DateTime           @default(now())
+  chat       chat               @relation(fields: [chatId], references: [id], map: "Mensaje_chatId_fkey")
+
+  @@index([chatId], map: "Mensaje_chatId_fkey")
+}
+
+model pago {
+  id             BigInt          @id @default(autoincrement())
+  reservaId      BigInt          @unique(map: "Pago_reservaId_key")
+  linkPago       String
+  monto          Decimal         @db.Decimal(10, 2)
+  moneda         String
+  estadoPago     pago_estadoPago
+  fechaPago      DateTime?
+  mpPreferenceId String?
+  mpPaymentId    String?
+  reserva        reserva         @relation(fields: [reservaId], references: [id], map: "Pago_reservaId_fkey")
+}
+
+model persona {
+  id          BigInt    @id @default(autoincrement())
+  domicilioId BigInt
+  generoId    BigInt
+  domicilio   domicilio @relation(fields: [domicilioId], references: [id], map: "Persona_domicilioId_fkey")
+  genero      genero    @relation(fields: [generoId], references: [id], map: "Persona_generoId_fkey")
+
+  @@index([domicilioId], map: "Persona_domicilioId_fkey")
+  @@index([generoId], map: "Persona_generoId_fkey")
+}
+
+model prestador {
+  id                BigInt              @id @default(autoincrement())
+  usuarioId         BigInt              @unique(map: "Prestador_usuarioId_key")
+  fechaIngreso      DateTime            @default(now())
+  certificaciones   String?
+  documentos        String?
+  usuario           usuario             @relation(fields: [usuarioId], references: [id], map: "Prestador_usuarioId_fkey")
+  prestadorservicio prestadorservicio[]
+  reserva           reserva[]
+}
+
+model prestadorservicio {
+  id          BigInt    @id @default(autoincrement())
+  prestadorId BigInt
+  servicioId  BigInt
+  prestador   prestador @relation(fields: [prestadorId], references: [id], map: "PrestadorServicio_prestadorId_fkey")
+  servicio    servicio  @relation(fields: [servicioId], references: [id], map: "PrestadorServicio_servicioId_fkey")
+
+  @@unique([prestadorId, servicioId], map: "PrestadorServicio_prestadorId_servicioId_key")
+  @@index([servicioId], map: "PrestadorServicio_servicioId_fkey")
+}
+
+model reserva {
+  id                     BigInt         @id @default(autoincrement())
+  prestadorId            BigInt
+  duenioId               BigInt
+  mascotaId              BigInt
+  servicioId             BigInt
+  fechaServicio          DateTime
+  fechaReserva           DateTime       @default(now())
+  cantidad               Int
+  precioUnitario         Decimal        @db.Decimal(10, 2)
+  montoTotal             Decimal        @db.Decimal(10, 2)
+  comision               Decimal        @db.Decimal(10, 2)
+  efectuado              Boolean        @default(false)
+  confirmadoPorDuenio    Boolean        @default(false)
+  confirmadoPorPrestador Boolean        @default(false)
+  estado                 reserva_estado
+  pagoId                 BigInt?
+  pago                   pago?
+  duenio                 duenio         @relation(fields: [duenioId], references: [id], map: "Reserva_duenioId_fkey")
+  mascota                mascota        @relation(fields: [mascotaId], references: [id], map: "Reserva_mascotaId_fkey")
+  prestador              prestador      @relation(fields: [prestadorId], references: [id], map: "Reserva_prestadorId_fkey")
+  servicio               servicio       @relation(fields: [servicioId], references: [id], map: "Reserva_servicioId_fkey")
+
+  @@index([duenioId], map: "Reserva_duenioId_fkey")
+  @@index([mascotaId], map: "Reserva_mascotaId_fkey")
+  @@index([prestadorId], map: "Reserva_prestadorId_fkey")
+  @@index([servicioId], map: "Reserva_servicioId_fkey")
+}
+
+model servicio {
+  id                BigInt              @id @default(autoincrement())
+  descripcion       String
+  disponible        Boolean             @default(true)
+  tipoMascota       String
+  precio            Decimal             @db.Decimal(10, 2)
+  imagen1           String?
+  prestadorservicio prestadorservicio[]
+  reserva           reserva[]
+}
+
+model usuario {
+  id              BigInt      @id @default(autoincrement())
+  usuario         String      @unique(map: "Usuario_usuario_key")
+  clave           String
+  nombre          String
+  apellido        String
+  dni             String      @unique(map: "Usuario_dni_key")
+  fechaNacimiento DateTime
+  celular         String
+  email           String      @unique(map: "Usuario_email_key")
+  activo          Boolean     @default(true)
+  rol             usuario_rol
+  domicilioId     BigInt
+  generoId        BigInt
+  creadoEn        DateTime    @default(now())
+  duenio          duenio?
+  prestador       prestador?
+  domicilio       domicilio   @relation(fields: [domicilioId], references: [id], map: "Usuario_domicilioId_fkey")
+  genero          genero      @relation(fields: [generoId], references: [id], map: "Usuario_generoId_fkey")
+
+  @@index([domicilioId], map: "Usuario_domicilioId_fkey")
+  @@index([generoId], map: "Usuario_generoId_fkey")
+}
+
+enum mensaje_emisorTipo {
+  DUENIO
+  PRESTADOR
+}
+
+enum pago_estadoPago {
+  PENDIENTE
+  PAGADO
+  REEMBOLSADO
+  LIBERADO
+}
+
+enum usuario_rol {
+  ADMIN
+  PRESTADOR
+  DUENIO
+}
+
+enum reserva_estado {
+  PENDIENTE_PAGO
+  PAGADO
+  EN_PROGRESO
+  FINALIZADO
+  CANCELADO
 }
