@@ -19,7 +19,7 @@ import iconImage from "../../assets/icon.png";
 import { useStreamChat } from "../../contexts";
 
 const API_BASE =
-  process.env.EXPO_PUBLIC_API_BASE_URL || "http://192.168.1.31:3001";
+  process.env.EXPO_PUBLIC_API_BASE_URL || "http://192.168.1.91:3001";
 
 export default function InicioScreen({ navigation }) {
   const [form, setForm] = useState({ correo: "", password: "" });
