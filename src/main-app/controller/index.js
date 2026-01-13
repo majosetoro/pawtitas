@@ -4,3 +4,10 @@ export { PrestadorServiciosDetailsController } from './MisConexionesController/P
 export { CalendarioPagoController, CALENDARIO_CONFIG } from './MisConexionesController/CalendarioPagoController';
 export { ChatController, CHAT_CONFIG, MOCK_CHAT_USERS } from './ChatController/ChatController';
 export { MapaController, MAPA_CONFIG } from './MapaController/MapaController';
+export {
+  RegistroController,
+  REGISTRO_CONFIG,
+  VALIDATION_RULES as REGISTRO_VALIDATION_RULES,
+  ESPECIALIDADES_OPTIONS,
+  PERFIL_OPTIONS
+} from './RegistroController';
