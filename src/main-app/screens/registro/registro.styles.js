@@ -31,6 +31,19 @@ export const styles = StyleSheet.create({
       borderColor: colors.error,
       borderWidth: 1.5,
     },
+    dateInput: {
+      justifyContent: 'center',
+    },
+    dateText: {
+      fontSize: 15,
+      fontFamily: typography.fontFamily.body,
+      color: colors.text.primary,
+    },
+    datePlaceholder: {
+      fontSize: 15,
+      fontFamily: typography.fontFamily.body,
+      color: '#999',
+    },
     errorText: {
       color: colors.error,
       fontSize: 12,
