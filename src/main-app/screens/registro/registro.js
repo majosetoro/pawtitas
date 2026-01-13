@@ -2,109 +2,123 @@ import React, { useState, useRef } from "react";
 import {
   View,
   Text,
-  StyleSheet,
   TextInput,
   TouchableOpacity,
   ScrollView,
+  Platform,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
+import DateTimePicker from '@react-native-community/datetimepicker';
 import * as DocumentPicker from 'expo-document-picker';
 import { MensajeFlotante } from "../../components";
+import { RegistroController, REGISTRO_CONFIG, ESPECIALIDADES_OPTIONS, PERFIL_OPTIONS } from "../../controller";
 import { styles } from "./registro.styles";
 
 export default function RegistroScreen({ navigation }) {
-  const [perfil, setPerfil] = useState(""); // dueño o prestador
+  const [perfil, setPerfil] = useState("");
   const [especialidad, setEspecialidad] = useState("");
-  const [form, setForm] = useState({
-    nombre: "",
-    edad: "",
-    correo: "",
-    password: "",
-    telefono: "",
-    ubicacion: "",
-    documento: "",
-    documentosFile: null,
-    certificadosFile: null,
-  });
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [form, setForm] = useState(() => RegistroController.getInitialFormData());
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
   const [isScrollAtBottom, setIsScrollAtBottom] = useState(false);
   const scrollViewRef = useRef(null);
 
+  // Función para manejar el cambio de fecha
+  const handleDateChange = (event, selectedDate) => {
+    const result = RegistroController.handleDateChange(
+      event,
+      selectedDate,
+      form,
+      Platform.OS
+    );
+    
+    if (result.shouldClosePicker) {
+      setShowDatePicker(false);
+    }
+    
+    if (result.updatedForm !== form) {
+      setForm(result.updatedForm);
+    }
+  };
+
+  // Función para abrir/cerrar el date picker
+  const toggleDatePicker = () => {
+    setShowDatePicker(!showDatePicker);
+  };
+
+  // Función para cerrar el date picker
+  const closeDatePicker = () => {
+    setShowDatePicker(false);
+  };
+
   // Función para seleccionar documento
   const pickFile = async (field) => {
     try {
       const result = await DocumentPicker.getDocumentAsync({
-        type: "*/*",
+        type: REGISTRO_CONFIG.DOCUMENT_FILE_TYPES,
         copyToCacheDirectory: true,
       });
 
       if (result.type === "success") {
         setForm({ ...form, [field]: result });
+        // Limpiar error del campo cuando se selecciona un archivo
+        if (errors[field]) {
+          setErrors(RegistroController.clearFieldError(errors, field));
+        }
       }
     } catch (error) {
       console.log("Error al seleccionar archivo:", error);
     }
   };
 
+  // Manejar cambios en los inputs
+  const handleInputChange = (field, value) => {
+    setForm({ ...form, [field]: value });
+    // Limpiar error del campo cuando el usuario interactúe
+    if (errors[field]) {
+      setErrors(RegistroController.clearFieldError(errors, field));
+    }
+  };
+
+  // Manejar cambio de perfil
+  const handlePerfilChange = (value) => {
+    setPerfil(value);
+    // Si cambia el perfil, limpiar especialidad y archivos
+    if (value !== "prestador") {
+      setEspecialidad("");
+      setForm({
+        ...form,
+        documentosFile: null,
+        certificadosFile: null
+      });
+    }
+    // Limpiar error del campo
+    if (errors.perfil) {
+      setErrors(RegistroController.clearFieldError(errors, "perfil"));
+    }
+  };
+
+  // Manejar cambio de especialidad
+  const handleEspecialidadChange = (value) => {
+    setEspecialidad(value);
+    // Limpiar error del campo
+    if (errors.especialidad) {
+      setErrors(RegistroController.clearFieldError(errors, "especialidad"));
+    }
+  };
+
   // Validar el formulario
   const validateForm = () => {
-    const newErrors = {};
-
-    if (!form.nombre.trim()) {
-      newErrors.nombre = "El nombre es obligatorio";
-    }
-
-    if (!form.edad.trim()) {
-      newErrors.edad = "La edad es obligatoria";
-    } else if (isNaN(form.edad) || parseInt(form.edad) <= 0) {
-      newErrors.edad = "La edad debe ser un número válido mayor a 0";
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!form.correo.trim()) {
-      newErrors.correo = "El correo es obligatorio";
-    } else if (!emailRegex.test(form.correo)) {
-      newErrors.correo = "El correo no es válido";
-    }
-
-    if (!form.password) {
-      newErrors.password = "La contraseña es obligatoria";
-    } else if (form.password.length < 6) {
-      newErrors.password = "La contraseña debe tener al menos 6 caracteres";
-    }
-
-    if (!form.telefono.trim()) {
-      newErrors.telefono = "El número telefónico es obligatorio";
-    }
-
-    if (!form.ubicacion.trim()) {
-      newErrors.ubicacion = "La ubicación es obligatoria";
-    }
-
-    if (!form.documento.trim()) {
-      newErrors.documento = "El documento de identidad es obligatorio";
-    }
-
-    // Validar perfil
-    if (!perfil) {
-      newErrors.perfil = "Debe seleccionar un rol";
-    }
-
-    if (perfil === "prestador" && !especialidad) {
-      newErrors.especialidad = "Debe seleccionar una especialidad";
-    }
-
+    const newErrors = RegistroController.validateForm(form, perfil, especialidad);
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = () => {
     if (validateForm()) {
-      // Navegar a suscripciones
-      navigation.navigate('Suscripciones', { 
-        tipoPerfil: perfil // 'dueno' o 'prestador'
-      });
+      const navigationData = RegistroController.prepareDataForNavigation(form, perfil);
+      navigation.navigate('Suscripciones', navigationData);
     }
   };
 
@@ -114,8 +128,11 @@ export default function RegistroScreen({ navigation }) {
 
   const handleScroll = (event) => {
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
-    const paddingToBottom = 20;
-    const isAtBottom = layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
+    const isAtBottom = RegistroController.isScrollAtBottom(
+      layoutMeasurement,
+      contentOffset,
+      contentSize
+    );
     setIsScrollAtBottom(isAtBottom);
   };
 
@@ -134,18 +151,30 @@ export default function RegistroScreen({ navigation }) {
         placeholder="Nombre y Apellido"
         style={[styles.input, errors.nombre && styles.inputError]}
         value={form.nombre}
-        onChangeText={(v) => setForm({ ...form, nombre: v })}
+        onChangeText={(v) => handleInputChange("nombre", v)}
+        onFocus={closeDatePicker}
       />
       {errors.nombre && <Text style={styles.errorText}>{errors.nombre}</Text>}
 
-      <TextInput
-        placeholder="Edad"
-        style={[styles.input, errors.edad && styles.inputError]}
-        keyboardType="numeric"
-        value={form.edad}
-        onChangeText={(v) => setForm({ ...form, edad: v })}
-      />
-      {errors.edad && <Text style={styles.errorText}>{errors.edad}</Text>}
+      <TouchableOpacity
+        style={[styles.input, styles.dateInput, errors.fechaNacimiento && styles.inputError]}
+        onPress={toggleDatePicker}
+      >
+        <Text style={form.fechaNacimiento ? styles.dateText : styles.datePlaceholder}>
+          {form.fechaNacimiento ? RegistroController.formatDate(form.fechaNacimiento) : "Fecha de Nacimiento"}
+        </Text>
+      </TouchableOpacity>
+      {errors.fechaNacimiento && <Text style={styles.errorText}>{errors.fechaNacimiento}</Text>}
+      {showDatePicker && (
+        <DateTimePicker
+          value={form.fechaNacimiento || new Date()}
+          mode="date"
+          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+          onChange={handleDateChange}
+          maximumDate={new Date()}
+          minimumDate={REGISTRO_CONFIG.MIN_DATE}
+        />
+      )}
 
       <TextInput
         placeholder="Correo Electrónico"
@@ -153,7 +182,8 @@ export default function RegistroScreen({ navigation }) {
         keyboardType="email-address"
         textContentType="emailAddress"
         value={form.correo}
-        onChangeText={(v) => setForm({ ...form, correo: v })}
+        onChangeText={(v) => handleInputChange("correo", v)}
+        onFocus={closeDatePicker}
       />
       {errors.correo && <Text style={styles.errorText}>{errors.correo}</Text>}
 
@@ -162,7 +192,8 @@ export default function RegistroScreen({ navigation }) {
         style={[styles.input, errors.password && styles.inputError]}
         secureTextEntry={true}
         value={form.password}
-        onChangeText={(v) => setForm({ ...form, password: v })}
+        onChangeText={(v) => handleInputChange("password", v)}
+        onFocus={closeDatePicker}
       />
       {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
 
@@ -171,7 +202,8 @@ export default function RegistroScreen({ navigation }) {
         style={[styles.input, errors.telefono && styles.inputError]}
         keyboardType="phone-pad"
         value={form.telefono}
-        onChangeText={(v) => setForm({ ...form, telefono: v })}
+        onChangeText={(v) => handleInputChange("telefono", v)}
+        onFocus={closeDatePicker}
       />
       {errors.telefono && <Text style={styles.errorText}>{errors.telefono}</Text>}
 
@@ -179,7 +211,8 @@ export default function RegistroScreen({ navigation }) {
         placeholder="Ubicación"
         style={[styles.input, errors.ubicacion && styles.inputError]}
         value={form.ubicacion}
-        onChangeText={(v) => setForm({ ...form, ubicacion: v })}
+        onChangeText={(v) => handleInputChange("ubicacion", v)}
+        onFocus={closeDatePicker}
       />
       {errors.ubicacion && <Text style={styles.errorText}>{errors.ubicacion}</Text>}
 
@@ -188,7 +221,8 @@ export default function RegistroScreen({ navigation }) {
         style={[styles.input, errors.documento && styles.inputError]}
         keyboardType="numeric"
         value={form.documento}
-        onChangeText={(v) => setForm({ ...form, documento: v })}
+        onChangeText={(v) => handleInputChange("documento", v)}
+        onFocus={closeDatePicker}
       />
       {errors.documento && <Text style={styles.errorText}>{errors.documento}</Text>}
 
@@ -197,11 +231,15 @@ export default function RegistroScreen({ navigation }) {
       <Picker
         selectedValue={perfil}
         style={styles.picker}
-        onValueChange={(itemValue) => setPerfil(itemValue)}
+        onValueChange={handlePerfilChange}
       >
-        <Picker.Item label="Seleccione un rol..." value="" />
-        <Picker.Item label="Dueño" value="dueno" />
-        <Picker.Item label="Prestador de Servicio" value="prestador" />
+        {PERFIL_OPTIONS.map((option) => (
+          <Picker.Item
+            key={option.value}
+            label={option.label}
+            value={option.value}
+          />
+        ))}
       </Picker>
       {errors.perfil && <Text style={styles.errorText}>{errors.perfil}</Text>}
 
@@ -212,16 +250,15 @@ export default function RegistroScreen({ navigation }) {
           <Picker
             selectedValue={especialidad}
             style={styles.picker}
-            onValueChange={(itemValue) => setEspecialidad(itemValue)}
+            onValueChange={handleEspecialidadChange}
           >
-            <Picker.Item label="Seleccione una especialidad..." value="" />
-            <Picker.Item label="Cuidador" value="Cuidador" />
-            <Picker.Item label="Paseador" value="Paseador" />
-            <Picker.Item label="Veterinaria" value="Veterinaria" />
-            <Picker.Item
-              label="Veterinaria a domicilio"
-              value="VeterinariaDomicilio"
-            />
+            {ESPECIALIDADES_OPTIONS.map((option) => (
+              <Picker.Item
+                key={option.value}
+                label={option.label}
+                value={option.value}
+              />
+            ))}
           </Picker>
           {errors.especialidad && <Text style={styles.errorText}>{errors.especialidad}</Text>}
 
@@ -276,7 +313,7 @@ export default function RegistroScreen({ navigation }) {
         message={successMessage}
         type="success"
         onHide={handleHideMessage}
-        duration={5000}
+        duration={REGISTRO_CONFIG.FLOATING_MESSAGE_DURATION}
         position="top"
       />
     </View>
