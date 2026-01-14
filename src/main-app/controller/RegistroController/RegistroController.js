@@ -14,6 +14,10 @@ export const VALIDATION_RULES = {
     required: true,
     message: "El nombre es obligatorio"
   },
+  apellido: {
+    required: true,
+    message: "El apellido es obligatorio"
+  },
   fechaNacimiento: {
     required: true,
     message: "La fecha de nacimiento es obligatoria",
@@ -43,6 +47,10 @@ export const VALIDATION_RULES = {
   documento: {
     required: true,
     message: "El documento de identidad es obligatorio"
+  },
+  genero: {
+    required: true,
+    message: "Debe seleccionar un género"
   },
   perfil: {
     required: true,
@@ -77,12 +85,21 @@ export const PERFIL_OPTIONS = [
   { label: "Prestador de Servicio", value: "prestador" }
 ];
 
+// Opciones de género
+export const GENERO_OPTIONS = [
+  { label: "Seleccione un género", value: "" },
+  { label: "Femenino", value: "femenino" },
+  { label: "Masculino", value: "masculino" }
+];
+
 export class RegistroController {
   // Obtener formulario inicial vacío
   static getInitialFormData() {
     return {
       nombre: "",
+      apellido: "",
       fechaNacimiento: null,
+      genero: "",
       correo: "",
       password: "",
       telefono: "",

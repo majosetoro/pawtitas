@@ -23,3 +23,7 @@ export { default as Paginador } from './Paginador';
 // Re-exportar componentes de inputs y buttons
 export * from './inputs';
 export * from './buttons';
+
+// Componentes de formulario
+export { default as CampoSeleccion } from './CampoSeleccion';
+export { default as CampoFecha } from './CampoFecha';
