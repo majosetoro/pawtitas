@@ -6,18 +6,19 @@ import {
   TouchableOpacity,
   ScrollView,
   Platform,
+  Modal,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import DateTimePicker from '@react-native-community/datetimepicker';
 import * as DocumentPicker from 'expo-document-picker';
-import { MensajeFlotante } from "../../components";
-import { RegistroController, REGISTRO_CONFIG, ESPECIALIDADES_OPTIONS, PERFIL_OPTIONS } from "../../controller";
+import { MensajeFlotante, CampoSeleccion, CampoFecha } from "../../components";
+import { RegistroController, REGISTRO_CONFIG, ESPECIALIDADES_OPTIONS, PERFIL_OPTIONS, GENERO_OPTIONS } from "../../controller";
 import { styles } from "./registro.styles";
 
 export default function RegistroScreen({ navigation }) {
   const [perfil, setPerfil] = useState("");
   const [especialidad, setEspecialidad] = useState("");
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showGeneroPicker, setShowGeneroPicker] = useState(false);
   const [form, setForm] = useState(() => RegistroController.getInitialFormData());
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
@@ -50,6 +51,25 @@ export default function RegistroScreen({ navigation }) {
   // Función para cerrar el date picker
   const closeDatePicker = () => {
     setShowDatePicker(false);
+  };
+
+  // Función para abrir/cerrar el picker de género
+  const toggleGeneroPicker = () => {
+    setShowGeneroPicker(!showGeneroPicker);
+  };
+
+  const closeGeneroPicker = () => {
+    setShowGeneroPicker(false);
+  };
+
+  // Cambio de género
+  const handleGeneroChange = (value) => {
+    handleInputChange("genero", value);
+    // Limpiar error del campo
+    if (errors.genero) {
+      setErrors(RegistroController.clearFieldError(errors, "genero"));
+    }
+    closeGeneroPicker();
   };
 
   // Función para seleccionar documento
@@ -148,7 +168,7 @@ export default function RegistroScreen({ navigation }) {
 
       {/* Campos básicos */}
       <TextInput
-        placeholder="Nombre y Apellido"
+        placeholder="Nombre"
         style={[styles.input, errors.nombre && styles.inputError]}
         value={form.nombre}
         onChangeText={(v) => handleInputChange("nombre", v)}
@@ -156,24 +176,80 @@ export default function RegistroScreen({ navigation }) {
       />
       {errors.nombre && <Text style={styles.errorText}>{errors.nombre}</Text>}
 
-      <TouchableOpacity
-        style={[styles.input, styles.dateInput, errors.fechaNacimiento && styles.inputError]}
-        onPress={toggleDatePicker}
-      >
-        <Text style={form.fechaNacimiento ? styles.dateText : styles.datePlaceholder}>
-          {form.fechaNacimiento ? RegistroController.formatDate(form.fechaNacimiento) : "Fecha de Nacimiento"}
-        </Text>
-      </TouchableOpacity>
-      {errors.fechaNacimiento && <Text style={styles.errorText}>{errors.fechaNacimiento}</Text>}
-      {showDatePicker && (
-        <DateTimePicker
-          value={form.fechaNacimiento || new Date()}
-          mode="date"
-          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-          onChange={handleDateChange}
-          maximumDate={new Date()}
-          minimumDate={REGISTRO_CONFIG.MIN_DATE}
-        />
+      <TextInput
+        placeholder="Apellido"
+        style={[styles.input, errors.apellido && styles.inputError]}
+        value={form.apellido}
+        onChangeText={(v) => handleInputChange("apellido", v)}
+        onFocus={closeDatePicker}
+      />
+      {errors.apellido && <Text style={styles.errorText}>{errors.apellido}</Text>}
+
+      <CampoSeleccion
+        value={form.fechaNacimiento}
+        placeholder="Fecha de Nacimiento"
+        error={errors.fechaNacimiento}
+        onOpen={toggleDatePicker}
+        label={
+          form.fechaNacimiento
+            ? RegistroController.formatDate(form.fechaNacimiento)
+            : null
+        }
+      />
+      <CampoFecha
+        visible={showDatePicker}
+        value={form.fechaNacimiento}
+        onChange={handleDateChange}
+      />
+
+      <CampoSeleccion
+        value={form.genero}
+        placeholder="Género"
+        error={errors.genero}
+        onOpen={toggleGeneroPicker}
+        label={
+          form.genero
+            ? GENERO_OPTIONS.find(o => o.value === form.genero)?.label
+            : null
+        }
+      />
+      {showGeneroPicker && (
+        <Modal
+          transparent
+          animationType="slide"
+          visible={showGeneroPicker}
+          onRequestClose={closeGeneroPicker}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>Seleccionar Género</Text>
+                <TouchableOpacity onPress={closeGeneroPicker}>
+                  <Text style={styles.modalCloseButton}>Cerrar</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.modalOptionsContainer}>
+                {GENERO_OPTIONS.filter(option => option.value !== "").map(option => (
+                  <TouchableOpacity
+                    key={option.value}
+                    style={[
+                      styles.modalOption,
+                      form.genero === option.value && styles.modalOptionSelected
+                    ]}
+                    onPress={() => handleGeneroChange(option.value)}
+                  >
+                    <Text style={[
+                      styles.modalOptionText,
+                      form.genero === option.value && styles.modalOptionTextSelected
+                    ]}>
+                      {option.label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          </View>
+        </Modal>
       )}
 
       <TextInput

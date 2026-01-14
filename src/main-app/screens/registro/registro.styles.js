@@ -136,5 +136,64 @@ export const styles = StyleSheet.create({
       fontStyle: "italic",
       lineHeight: 18,
     },
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
+      justifyContent: "flex-end",
+    },
+    modalContent: {
+      backgroundColor: colors.surface,
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+      paddingTop: 20,
+      paddingBottom: 40,
+      maxHeight: "50%",
+    },
+    modalHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      paddingHorizontal: 20,
+      paddingBottom: 16,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border.light,
+    },
+    modalTitle: {
+      fontSize: 18,
+      fontFamily: typography.fontFamily.title,
+      color: colors.text.primary,
+    },
+    modalCloseButton: {
+      fontSize: 16,
+      fontFamily: typography.fontFamily.bodySemiBold,
+      color: colors.brand.highlight,
+    },
+    modalOptionsContainer: {
+      paddingHorizontal: 20,
+      paddingVertical: 16,
+    },
+    modalOption: {
+      paddingVertical: 16,
+      paddingHorizontal: 20,
+      borderRadius: 12,
+      marginBottom: 12,
+      backgroundColor: colors.surfaceVariant,
+      borderWidth: 1.5,
+      borderColor: colors.border.light,
+    },
+    modalOptionSelected: {
+      backgroundColor: colors.brand.highlight,
+      borderColor: colors.brand.highlight,
+    },
+    modalOptionText: {
+      fontSize: 16,
+      fontFamily: typography.fontFamily.body,
+      color: colors.text.primary,
+      textAlign: 'center',
+    },
+    modalOptionTextSelected: {
+      color: colors.text.inverse,
+      fontFamily: typography.fontFamily.bodySemiBold,
+    },
   });
   
