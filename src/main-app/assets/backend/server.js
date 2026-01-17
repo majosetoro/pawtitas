@@ -24,7 +24,7 @@ app.get('/health', async (_req, res) => {
   }
 });
 
-// Login admin simple (sin hash, solo dev)
+// Login (admin + usuario)
 app.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body || {};
@@ -36,7 +36,29 @@ app.post('/login', async (req, res) => {
     if (admin && admin.password === password) {
       return res.json({ success: true, admin: true, user: false });
     }
-    return res.status(401).json({ success: false, message: 'Credenciales inválidas' });
+
+    const user = await prisma.usuario.findFirst({
+      where: {
+        OR: [{ email }, { usuario: email }],
+      },
+    });
+
+    if (!user || user.clave !== password) {
+      return res.status(401).json({ success: false, message: 'Credenciales inválidas' });
+    }
+
+    const safeUser = {
+      id: user.id?.toString?.(),
+      usuario: user.usuario,
+      nombre: user.nombre,
+      apellido: user.apellido,
+      email: user.email,
+      rol: user.rol,
+      domicilioId: user.domicilioId?.toString?.(),
+      generoId: user.generoId?.toString?.(),
+    };
+
+    return res.json({ success: true, admin: false, user: true, userData: safeUser });
   } catch (e) {
     console.error('Login error:', e);
     res.status(500).json({ success: false, message: 'Error en el servidor' });
