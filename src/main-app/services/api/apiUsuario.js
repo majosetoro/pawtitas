@@ -1,9 +1,25 @@
 const API_BASE =
   process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.1.5:3001';
 
+let authToken = null;
+
+export const setAuthToken = (token) => {
+  authToken = token || null;
+};
+
+export const clearAuthToken = () => {
+  authToken = null;
+};
+
 export async function apiUsuario(path, options = {}) {
+  const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
+
+  if (authToken) {
+    headers.Authorization = `Bearer ${authToken}`;
+  }
+
   const response = await fetch(`${API_BASE}${path}`, {
-    headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
+    headers,
     ...options,
   });
 

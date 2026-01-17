@@ -7,6 +7,7 @@ const { PrismaClient, Prisma } = require('@prisma/client');
 require('dotenv').config();
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 const prisma = new PrismaClient();
@@ -15,6 +16,34 @@ const PORT = process.env.PORT || 3001;
 
 app.use(cors());                         // permitir peticiones desde la app
 app.use(express.json());                 // parsear JSON
+
+const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change';
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
+
+const signToken = (payload) => jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+
+const requireAuth = (req, res, next) => {
+  const header = req.headers.authorization || '';
+  const token = header.startsWith('Bearer ') ? header.slice(7) : null;
+
+  if (!token) {
+    return res.status(401).json({ success: false, message: 'Token requerido' });
+  }
+
+  try {
+    req.user = jwt.verify(token, JWT_SECRET);
+    return next();
+  } catch (err) {
+    return res.status(401).json({ success: false, message: 'Token inválido' });
+  }
+};
+
+const requireRole = (...allowedRoles) => (req, res, next) => {
+  if (!req.user?.role || !allowedRoles.includes(req.user.role)) {
+    return res.status(403).json({ success: false, message: 'No autorizado' });
+  }
+  return next();
+};
 
 // Descomponer "Calle 123, Ciudad" o "Calle 123 Ciudad"
 function descomponerUbicacion(ubicacionRaw) {
@@ -155,7 +184,8 @@ app.post('/login', async (req, res) => {
       }
 
       if (adminOk) {
-        return res.json({ success: true, admin: true, user: false });
+        const token = signToken({ sub: admin.id?.toString?.(), role: 'ADMIN', type: 'admin' });
+        return res.json({ success: true, admin: true, user: false, token });
       }
     }
 
@@ -200,10 +230,37 @@ app.post('/login', async (req, res) => {
       generoId: user.generoId?.toString?.(),
     };
 
-    return res.json({ success: true, admin: false, user: true, userData: safeUser });
+    const token = signToken({ sub: safeUser.id, role: safeUser.rol, type: 'user' });
+    return res.json({ success: true, admin: false, user: true, userData: safeUser, token });
   } catch (e) {
     console.error('Login error:', e);
     res.status(500).json({ success: false, message: 'Error en el servidor' });
+  }
+});
+
+// Endpoint admin protegido (MVP)
+app.get('/api/admin/usuarios', requireAuth, requireRole('ADMIN'), async (_req, res) => {
+  try {
+    const users = await prisma.usuario.findMany({
+      select: {
+        id: true,
+        nombre: true,
+        apellido: true,
+        email: true,
+        rol: true,
+        activo: true,
+      },
+    });
+
+    const safeUsers = users.map((u) => ({
+      ...u,
+      id: u.id?.toString?.(),
+    }));
+
+    return res.json({ success: true, users: safeUsers });
+  } catch (e) {
+    console.error('admin usuarios error', e);
+    return res.status(500).json({ success: false, message: 'Error en el servidor' });
   }
 });
 

@@ -1,31 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, Image, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useFonts } from "expo-font";
 import { colors, typography } from "../shared/styles";
-import SplashScreen from "./screens/splash/splash";
-import BienvenidaScreen from "./screens/bienvenida/bienvenida";
-import RegistroScreen from "./screens/registro/registro";
-import InicioScreen from "./screens/inicio/inicio";
-import HomeScreen from "./screens/home/home";
-import CuidadoresScreen from "./screens/cuidadores/Cuidadores";
-import PaseadoresScreen from "./screens/paseadores/Paseadores";
-import SaludScreen from "./screens/salud/Salud";
-import PerfilScreen from "./screens/perfil/perfil";
-import EditarPerfil from "./screens/perfil/editarPerfil/editarPerfil";
-import MisMascotasScreen from "./screens/misMascotas/MisMascotas";
-import PanelAdminScreen from "./screens/panelAdmin";
-import ValidarUsuarioScreen from "./screens/panelAdmin/ValidarUsuario/ValidarUsuario";
-import MisConexionesScreen from "./screens/misConexiones/MisConexiones";
-import ResenasScreen from "./screens/resenas/Resenas";
-import ChatScreen from "./screens/chat/Chat";
-import Conversacion from "./screens/chat/Conversacion";
-import MapaScreen from "./screens/mapa/Mapa";
-import SuscripcionesScreen from "./screens/registro/suscripciones/suscripciones";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { LocationProvider, StreamChatProvider } from "./contexts";
+import { LocationProvider, StreamChatProvider, AuthProvider, useAuth } from "./contexts";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { isRouteAllowed } from "./constants/roles";
+import { publicScreens, guardedScreens } from "./routes/appRoutes";
 
 // Importar fuentes de Google
 import {
@@ -42,6 +25,43 @@ import {
 } from "@expo-google-fonts/nunito";
 
 const Stack = createNativeStackNavigator();
+
+const RoleGuard = ({ routeName, navigation, children }) => {
+  const { role } = useAuth();
+
+  useEffect(() => {
+    if (!isRouteAllowed(role, routeName)) {
+      navigation.reset({ index: 0, routes: [{ name: "Home" }] });
+    }
+  }, [role, routeName, navigation]);
+
+  if (!isRouteAllowed(role, routeName)) {
+    return null;
+  }
+
+  return children;
+};
+
+
+const AppNavigator = () => (
+  <NavigationContainer>
+    <Stack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false }}>
+      {publicScreens.map((screen) => (
+        <Stack.Screen key={screen.name} name={screen.name} component={screen.component} />
+      ))}
+
+      {guardedScreens.map((screen) => (
+        <Stack.Screen key={screen.name} name={screen.name}>
+          {(props) => (
+            <RoleGuard routeName={screen.name} navigation={props.navigation}>
+              <screen.component {...props} />
+            </RoleGuard>
+          )}
+        </Stack.Screen>
+      ))}
+    </Stack.Navigator>
+  </NavigationContainer>
+);
 
 function MobilePage() {
   return (
@@ -119,29 +139,9 @@ export default function App() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <LocationProvider>
         <StreamChatProvider>
-            <NavigationContainer>
-              <Stack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false }}>
-                <Stack.Screen name="Splash" component={SplashScreen} />
-                <Stack.Screen name="Bienvenida" component={BienvenidaScreen} />
-                <Stack.Screen name="Registro" component={RegistroScreen} />
-                <Stack.Screen name="Suscripciones" component={SuscripcionesScreen} />
-                <Stack.Screen name="Inicio" component={InicioScreen} />
-                <Stack.Screen name="Home" component={HomeScreen} />
-                <Stack.Screen name="Cuidadores" component={CuidadoresScreen} />
-                <Stack.Screen name="Paseadores" component={PaseadoresScreen} />
-                <Stack.Screen name="Salud" component={SaludScreen} />
-                <Stack.Screen name="Perfil" component={PerfilScreen} />
-                <Stack.Screen name="EditarPerfil" component={EditarPerfil} />
-                <Stack.Screen name="MisMascotas" component={MisMascotasScreen} />
-                <Stack.Screen name="PanelAdmin" component={PanelAdminScreen} />
-                <Stack.Screen name="ValidarUsuario" component={ValidarUsuarioScreen} />
-                <Stack.Screen name="MisConexiones" component={MisConexionesScreen} />
-                <Stack.Screen name="Resenas" component={ResenasScreen} />
-                <Stack.Screen name="Chat" component={ChatScreen} />
-                <Stack.Screen name="Conversacion" component={Conversacion} />
-                <Stack.Screen name="Mapa" component={MapaScreen} />
-              </Stack.Navigator>
-            </NavigationContainer>
+          <AuthProvider>
+            <AppNavigator />
+          </AuthProvider>
         </StreamChatProvider>
       </LocationProvider>
     </GestureHandlerRootView>
