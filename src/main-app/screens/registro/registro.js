@@ -136,10 +136,14 @@ export default function RegistroScreen({ navigation }) {
   };
 
   const handleSubmit = () => {
-    if (validateForm()) {
-      const navigationData = RegistroController.prepareDataForNavigation(form, perfil);
-      navigation.navigate('Suscripciones', navigationData);
-    }
+    if (!validateForm()) return;
+
+    const navigationData = RegistroController.prepareDataForNavigation(form, perfil);
+    navigation.navigate('Suscripciones', {
+      ...navigationData,
+      perfil,
+      especialidad,
+    });
   };
 
   const handleHideMessage = () => {
