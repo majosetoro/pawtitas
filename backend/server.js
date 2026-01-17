@@ -7,7 +7,9 @@ const { PrismaClient, Prisma } = require('@prisma/client');
 require('dotenv').config();
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+
+
+
 
 const app = express();
 const prisma = new PrismaClient();
@@ -17,35 +19,7 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());                         // permitir peticiones desde la app
 app.use(express.json());                 // parsear JSON
 
-const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change';
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
-
-const signToken = (payload) => jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
-
-const requireAuth = (req, res, next) => {
-  const header = req.headers.authorization || '';
-  const token = header.startsWith('Bearer ') ? header.slice(7) : null;
-
-  if (!token) {
-    return res.status(401).json({ success: false, message: 'Token requerido' });
-  }
-
-  try {
-    req.user = jwt.verify(token, JWT_SECRET);
-    return next();
-  } catch (err) {
-    return res.status(401).json({ success: false, message: 'Token inválido' });
-  }
-};
-
-const requireRole = (...allowedRoles) => (req, res, next) => {
-  if (!req.user?.role || !allowedRoles.includes(req.user.role)) {
-    return res.status(403).json({ success: false, message: 'No autorizado' });
-  }
-  return next();
-};
-
-// Descomponer "Calle 123, Ciudad" o "Calle 123 Ciudad"
+// Helper para descomponer "Calle 123, Ciudad" o "Calle 123 Ciudad"
 function descomponerUbicacion(ubicacionRaw) {
   if (!ubicacionRaw) {
     return { calle: 'Pendiente', numero: 'S/N', ciudad: 'Pendiente' };
@@ -157,7 +131,7 @@ app.get('/health', async (_req, res) => {
   }
 });
 
-// Login (admin + usuario)
+// Login admin o usuario (sin hash, solo dev)
 app.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body || {};
@@ -166,101 +140,60 @@ app.post('/login', async (req, res) => {
     }
 
     const admin = await prisma.admin.findUnique({ where: { email } });
-    if (admin) {
-      const adminHasBcrypt = typeof admin.password === 'string' && admin.password.startsWith('$2');
-      let adminOk = false;
-
-      if (adminHasBcrypt) {
-        adminOk = await bcrypt.compare(password, admin.password);
-      } else {
-        adminOk = admin.password === password;
-        if (adminOk) {
-          const upgradedHash = await bcrypt.hash(password, 10);
-          await prisma.admin.update({
-            where: { id: admin.id },
-            data: { password: upgradedHash },
-          });
-        }
-      }
-
-      if (adminOk) {
-        const token = signToken({ sub: admin.id?.toString?.(), role: 'ADMIN', type: 'admin' });
-        return res.json({ success: true, admin: true, user: false, token });
-      }
+    const isAdminPasswordValid = admin
+      ? await bcrypt.compare(password, admin.password)
+      : false;
+    if (admin && isAdminPasswordValid) {
+      return res.json({
+        success: true,
+        admin: true,
+        user: false,
+        userData: {
+          id: admin.id?.toString?.() || admin.id,
+          nombre: 'Administrador',
+          apellido: '',
+          email: admin.email,
+          rol: 'ADMIN',
+        },
+      });
     }
 
-    const user = await prisma.usuario.findFirst({
-      where: {
-        OR: [{ email }, { usuario: email }],
+    const usuario = await prisma.usuario.findUnique({
+      where: { email },
+      include: {
+        domicilio: true,
       },
     });
 
-    if (!user) {
+    const isValidPassword = usuario
+      ? await bcrypt.compare(password, usuario.clave)
+      : false;
+
+    if (!usuario || !isValidPassword) {
       return res.status(401).json({ success: false, message: 'Credenciales inválidas' });
     }
 
-    const hasBcryptHash = typeof user.clave === 'string' && user.clave.startsWith('$2');
-    let passwordOk = false;
-
-    if (hasBcryptHash) {
-      passwordOk = await bcrypt.compare(password, user.clave);
-    } else {
-      passwordOk = user.clave === password;
-      if (passwordOk) {
-        const upgradedHash = await bcrypt.hash(password, 10);
-        await prisma.usuario.update({
-          where: { id: user.id },
-          data: { clave: upgradedHash },
-        });
-      }
-    }
-
-    if (!passwordOk) {
-      return res.status(401).json({ success: false, message: 'Credenciales inválidas' });
-    }
-
-    const safeUser = {
-      id: user.id?.toString?.(),
-      usuario: user.usuario,
-      nombre: user.nombre,
-      apellido: user.apellido,
-      email: user.email,
-      rol: user.rol,
-      domicilioId: user.domicilioId?.toString?.(),
-      generoId: user.generoId?.toString?.(),
+    const userData = {
+      id: usuario.id?.toString?.() || usuario.id,
+      nombre: usuario.nombre,
+      apellido: usuario.apellido,
+      email: usuario.email,
+      celular: usuario.celular,
+      rol: usuario.rol,
+      domicilio: usuario.domicilio
+        ? {
+            calle: usuario.domicilio.calle,
+            numero: usuario.domicilio.numero,
+            ciudad: usuario.domicilio.ciudad,
+          }
+        : null,
+      creadoEn: usuario.creadoEn,
     };
 
-    const token = signToken({ sub: safeUser.id, role: safeUser.rol, type: 'user' });
-    return res.json({ success: true, admin: false, user: true, userData: safeUser, token });
+    return res.json({ success: true, admin: false, user: true, userData });
   } catch (e) {
     console.error('Login error:', e);
     res.status(500).json({ success: false, message: 'Error en el servidor' });
-  }
-});
-
-// Endpoint admin protegido (MVP)
-app.get('/api/admin/usuarios', requireAuth, requireRole('ADMIN'), async (_req, res) => {
-  try {
-    const users = await prisma.usuario.findMany({
-      select: {
-        id: true,
-        nombre: true,
-        apellido: true,
-        email: true,
-        rol: true,
-        activo: true,
-      },
-    });
-
-    const safeUsers = users.map((u) => ({
-      ...u,
-      id: u.id?.toString?.(),
-    }));
-
-    return res.json({ success: true, users: safeUsers });
-  } catch (e) {
-    console.error('admin usuarios error', e);
-    return res.status(500).json({ success: false, message: 'Error en el servidor' });
   }
 });
 
@@ -301,7 +234,7 @@ app.post('/api/registro', async (req, res) => {
 
   const fecha = new Date(fechaNacimiento);
   if (Number.isNaN(fecha.getTime())) {
-    return res.status(400).json({ success: false, message: 'Fecha de nacimiento inválida' });
+    return res.status(400).json({ success: false, message: 'fechaNacimiento inválida' });
   }
 
   const { calle, numero, ciudad } = descomponerUbicacion(ubicacion);
@@ -331,6 +264,7 @@ app.post('/api/registro', async (req, res) => {
       });
     }
 
+    // Hashear la contraseña antes de guardarla
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const result = await prisma.$transaction(async (tx) => {
@@ -370,18 +304,15 @@ app.post('/api/registro', async (req, res) => {
         });
 
         if (especialidad) {
-          let servicio = await tx.servicio.findFirst({
+          const servicio = await tx.servicio.upsert({
             where: { descripcion: especialidad },
+            update: {},
+            create: {
+              descripcion: especialidad,
+              tipoMascota: 'General',
+              precio: new Prisma.Decimal(0),
+            },
           });
-          if (!servicio) {
-            servicio = await tx.servicio.create({
-              data: {
-                descripcion: especialidad,
-                tipoMascota: 'General',
-                precio: new Prisma.Decimal(0),
-              },
-            });
-          }
           await tx.prestadorservicio.upsert({
             where: {
               prestadorId_servicioId: { prestadorId: prestador.id, servicioId: servicio.id },
@@ -397,14 +328,7 @@ app.post('/api/registro', async (req, res) => {
       return usuarioRow;
     });
 
-    const safeUser = {
-      ...result,
-      id: result?.id?.toString?.(),
-      domicilioId: result?.domicilioId?.toString?.(),
-      generoId: result?.generoId?.toString?.(),
-    };
-
-    return res.status(201).json({ success: true, user: safeUser });
+    return res.status(201).json({ success: true, user: result });
   } catch (err) {
     if (err.code === 'P2002') {
       return res
@@ -495,6 +419,7 @@ app.post('/contacto', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Servidor backend corriendo en http://localhost:${PORT}`);
 });
+
 // Cierre prolijo
 process.on('SIGINT', async () => {
   await prisma.$disconnect();
@@ -504,4 +429,3 @@ process.on('SIGTERM', async () => {
   await prisma.$disconnect();
   process.exit(0);
 });
-
