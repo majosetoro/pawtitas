@@ -1,8 +1,9 @@
-// Definición de los tipos de roles
+import { ROLES as APP_ROLES } from '../../../../constants/roles';
+
 export const ROLES = {
-  PET_OWNER: 'pet_owner', // Dueño de mascota
-  SERVICE_PROVIDER: 'service_provider', // Prestador de servicio
-  ADMIN: 'admin', // Administrador
+  DUENIO: APP_ROLES.DUENIO,
+  PRESTADOR: APP_ROLES.PRESTADOR,
+  ADMIN: APP_ROLES.ADMIN,
 };
 
 export default ROLES;
