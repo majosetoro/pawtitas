@@ -61,8 +61,7 @@ export const VALIDATION_RULES = {
     message: "Debe seleccionar una especialidad"
   },
   documentosFile: {
-    required: true,
-    message: "Debe adjuntar los documentos requeridos"
+    required: false
   },
   certificadosFile: {
     required: false
@@ -239,9 +238,7 @@ export class RegistroController {
       formData.ubicacion.trim() !== "" &&
       formData.documento.trim() !== "" &&
       perfil !== "" &&
-      (perfil !== "prestador" ||
-        (especialidad !== "" &&
-          formData.documentosFile !== null))
+      (perfil !== "prestador" || especialidad !== "")
     );
   }
 
