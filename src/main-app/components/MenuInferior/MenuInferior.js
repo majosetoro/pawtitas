@@ -4,11 +4,14 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { styles } from './MenuInferior.styles';
 import { colors } from '../../../shared/styles';
+import { useAuth } from '../../contexts';
+import { isRouteAllowed } from '../../constants/roles';
 
 // Componente reutilizable para el menú inferior
 const MenuInferior = () => {
   const navigation = useNavigation();
   const route = useRoute();
+  const { role } = useAuth();
   
   // Configuración de las rutas de navegación
   const navItems = [
@@ -25,10 +28,12 @@ const MenuInferior = () => {
     }
   };
 
+  const visibleItems = navItems.filter((item) => isRouteAllowed(role, item.route));
+
   return (
     <View style={styles.container}>
       <View style={styles.navBar}>
-        {navItems.map((item) => {
+        {visibleItems.map((item) => {
           const isActive = route.name === item.route;
           return (
             <TouchableOpacity

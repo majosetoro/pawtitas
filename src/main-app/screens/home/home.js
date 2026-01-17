@@ -5,7 +5,8 @@ import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Modal, ScrollView, Image, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons"; // librería de íconos
 import { useNavigation } from "@react-navigation/native";
-import { useLocation } from '../../contexts';
+import { useLocation, useAuth } from '../../contexts';
+import { isRouteAllowed } from '../../constants/roles';
 
 // Componentes de categoría de servicios
 const ServiceCategory = ({ emoji, title, description, onPress }) => (
@@ -194,6 +195,7 @@ const HomeHeader = () => {
 
 const HomeScreen = () => {
   const navigation = useNavigation();
+  const { role } = useAuth();
 
   // Categorías de servicios
   const serviceCategories = [
@@ -202,6 +204,7 @@ const HomeScreen = () => {
       emoji: "🏠",
       title: "Cuidadores",
       description: "Encontrá el cuidador ideal",
+      route: "Cuidadores",
       onPress: () => navigation.navigate("Cuidadores"),
     },
     {
@@ -209,6 +212,7 @@ const HomeScreen = () => {
       emoji: "🦮",
       title: "Paseadores",
       description: "Caminatas seguras cerca de tu zona",
+      route: "Paseadores",
       onPress: () => navigation.navigate("Paseadores"),
     },
     {
@@ -216,6 +220,7 @@ const HomeScreen = () => {
       emoji: "🚑",
       title: "Salud y Bienestar",
       description: "Médicos veterinarios y clínicas cercanas",
+      route: "Salud",
       onPress: () => navigation.navigate("Salud"),
     },
 
@@ -225,6 +230,7 @@ const HomeScreen = () => {
       emoji: "👥",
       title: "Mis conexiones",
       description: "Tu red de confianza en un solo lugar",
+      route: "MisConexiones",
       onPress: () => navigation.navigate("MisConexiones"),
     },
 
@@ -234,9 +240,14 @@ const HomeScreen = () => {
       emoji: "👨‍💻",
       title: "Panel de Administrador",
       description: "Gestión de usuarios",
+      route: "PanelAdmin",
       onPress: () => navigation.navigate("PanelAdmin"),
     },
   ];
+
+  const visibleCategories = serviceCategories.filter((category) =>
+    isRouteAllowed(role, category.route)
+  );
 
   return (
     <View style={styles.container}>
@@ -249,7 +260,7 @@ const HomeScreen = () => {
         
         {/* Bloque de categorías */}
         <View style={styles.categoriesContainer}>
-          {serviceCategories.map((category) => (
+          {visibleCategories.map((category) => (
             <ServiceCategory
               key={category.id}
               emoji={category.emoji}
@@ -262,16 +273,15 @@ const HomeScreen = () => {
 
         {/* Nuevo container de opciones */}
         <View style={styles.extraContainer}>
-         
-          {/* Reseñas */}
-          <TouchableOpacity
-            style={styles.option}
-            onPress={() => navigation.navigate("Resenas")}
-          >
-            <Ionicons name="star-outline" size={15} color="#f9d2ec" />
-            <Text style={styles.backText}>Mis reseñas</Text>
-            
-          </TouchableOpacity>
+          {isRouteAllowed(role, "Resenas") && (
+            <TouchableOpacity
+              style={styles.option}
+              onPress={() => navigation.navigate("Resenas")}
+            >
+              <Ionicons name="star-outline" size={15} color="#f9d2ec" />
+              <Text style={styles.backText}>Mis reseñas</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </ScrollView>
 
