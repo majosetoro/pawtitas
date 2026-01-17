@@ -12,7 +12,8 @@ const PlanCard = ({
   esPremium = false, 
   colorPrincipal,
   caracteristicas = [],
-  onConsultar 
+  onConsultar,
+  disabled = false 
 }) => {
   return (
     <View style={[
@@ -65,16 +66,18 @@ const PlanCard = ({
       <TouchableOpacity
         style={[
           styles.consultarButton,
-          { backgroundColor: colorPrincipal }
+          { backgroundColor: colorPrincipal },
+          disabled && { opacity: 0.5 }
         ]}
         onPress={onConsultar}
         activeOpacity={0.7}
+        disabled={disabled}
       >
         <Text style={[
           styles.consultarButtonText,
           { color: colors.text.inverse }
         ]}>
-          Comenzar
+          {disabled ? "Procesando..." : "Comenzar"}
         </Text>
       </TouchableOpacity>
     </View>
