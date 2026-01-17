@@ -1,25 +1,59 @@
 import React, { useState, useEffect } from "react";
-import { 
-  View, 
-  Text, 
+import {
+  View,
+  Text,
   ScrollView,
   ActivityIndicator,
   KeyboardAvoidingView,
-  Platform 
+  Platform
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScreenHeader, GuardarCancelarBtn, MensajeFlotante, MenuInferior } from "../../../components";
 import { styles } from "./editarPerfil.styles";
 import PerfilFactory from "./roles/PerfilFactory";
 import ROLES from "./roles/types";
+import { useAuth } from "../../../contexts";
+
+const buildLocation = (user) => {
+  if (!user) return "";
+  if (user.domicilio) {
+    const { calle, numero, ciudad } = user.domicilio;
+    const calleNumero = [calle, numero].filter(Boolean).join(' ');
+    return ciudad ? `${calleNumero}, ${ciudad}` : calleNumero;
+  }
+  return user.ubicacion || "";
+};
+
+const buildFullName = (user) => {
+  const full = [user?.nombre, user?.apellido].filter(Boolean).join(' ').trim();
+  return full || user?.name || "";
+};
+
+const buildFormDataFromUser = (role, userData) => {
+  const base = PerfilFactory.getInitialFormState(role);
+  if (!userData) return base;
+
+  const next = { ...base };
+
+  if ("avatarUri" in next) next.avatarUri = userData.avatar || null;
+  if ("nombreApellido" in next) next.nombreApellido = buildFullName(userData);
+  if ("descripcion" in next) next.descripcion = userData.descripcion || next.descripcion;
+  if ("email" in next) next.email = userData.email || next.email;
+  if ("telefono" in next) next.telefono = userData.celular || userData.telefono || next.telefono;
+  if ("ubicacion" in next) next.ubicacion = buildLocation(userData);
+
+  return next;
+};
 
 // Componente principal para la pantalla de editar perfil
 export default function EditarPerfil({ navigation, route }) {
+  const { user, role: authRole } = useAuth();
+
   // Obtener el rol del usuario
-  const userRole = route?.params?.role || ROLES.PET_OWNER;
-  
+  const userRole = route?.params?.role || authRole || ROLES.DUENIO;
+
   // Estado del formulario inicializado según el rol
-  const [formData, setFormData] = useState(PerfilFactory.getInitialFormState(userRole));
+  const [formData, setFormData] = useState(() => buildFormDataFromUser(userRole, user));
 
   // Estado de la aplicación
   const [loading, setLoading] = useState(false);
@@ -31,17 +65,14 @@ export default function EditarPerfil({ navigation, route }) {
   // Cargar datos del perfil al montar el componente
   useEffect(() => {
     loadProfileData();
-  }, [userRole]);
+  }, [userRole, user]);
 
-  // Cargar los datos del perfil del usuario con una API
-  // Implementar la llamada a la API
+  // Cargar los datos del perfil del usuario
   const loadProfileData = async () => {
     setLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Cargar datos del usuario según su rol
-      setFormData(PerfilFactory.getInitialFormState(userRole));
+      const hydrated = buildFormDataFromUser(userRole, user);
+      setFormData(hydrated);
     } catch (error) {
       setMessage({ type: "error", text: "Error al cargar los datos del perfil" });
       setShowMensajeFlotante(true);
