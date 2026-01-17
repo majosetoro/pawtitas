@@ -12,6 +12,8 @@ model admin {
   email    String   @unique(map: "Admin_email_key")
   password String
   creadoEn DateTime @default(now())
+
+  @@map("Admin")
 }
 
 model chat {
@@ -21,6 +23,8 @@ model chat {
   estado        String
   fechaCreacion DateTime  @default(now())
   mensaje       mensaje[]
+
+  @@map("Chat")
 }
 
 model domicilio {
@@ -30,6 +34,8 @@ model domicilio {
   ciudad  String
   persona persona[]
   usuario usuario[]
+
+  @@map("Domicilio")
 }
 
 model duenio {
@@ -40,6 +46,8 @@ model duenio {
   favorito    favorito[]
   mascota     mascota[]
   reserva     reserva[]
+
+  @@map("Duenio")
 }
 
 model favorito {
@@ -50,6 +58,7 @@ model favorito {
   duenio      duenio   @relation(fields: [duenioId], references: [id], map: "Favorito_duenioId_fkey")
 
   @@unique([duenioId, prestadorId], map: "Favorito_duenioId_prestadorId_key")
+  @@map("Favorito")
 }
 
 model genero {
@@ -57,6 +66,8 @@ model genero {
   nombre  String    @unique(map: "Genero_nombre_key")
   persona persona[]
   usuario usuario[]
+
+  @@map("Genero")
 }
 
 model mascota {
@@ -70,6 +81,7 @@ model mascota {
   reserva     reserva[]
 
   @@index([duenioId], map: "Mascota_duenioId_fkey")
+  @@map("Mascota")
 }
 
 model mensaje {
@@ -82,6 +94,7 @@ model mensaje {
   chat       chat               @relation(fields: [chatId], references: [id], map: "Mensaje_chatId_fkey")
 
   @@index([chatId], map: "Mensaje_chatId_fkey")
+  @@map("Mensaje")
 }
 
 model pago {
@@ -95,6 +108,8 @@ model pago {
   mpPreferenceId String?
   mpPaymentId    String?
   reserva        reserva         @relation(fields: [reservaId], references: [id], map: "Pago_reservaId_fkey")
+
+  @@map("Pago")
 }
 
 model persona {
@@ -106,6 +121,7 @@ model persona {
 
   @@index([domicilioId], map: "Persona_domicilioId_fkey")
   @@index([generoId], map: "Persona_generoId_fkey")
+  @@map("Persona")
 }
 
 model prestador {
@@ -117,6 +133,8 @@ model prestador {
   usuario           usuario             @relation(fields: [usuarioId], references: [id], map: "Prestador_usuarioId_fkey")
   prestadorservicio prestadorservicio[]
   reserva           reserva[]
+
+  @@map("Prestador")
 }
 
 model prestadorservicio {
@@ -128,6 +146,7 @@ model prestadorservicio {
 
   @@unique([prestadorId, servicioId], map: "PrestadorServicio_prestadorId_servicioId_key")
   @@index([servicioId], map: "PrestadorServicio_servicioId_fkey")
+  @@map("PrestadorServicio")
 }
 
 model reserva {
@@ -157,6 +176,7 @@ model reserva {
   @@index([mascotaId], map: "Reserva_mascotaId_fkey")
   @@index([prestadorId], map: "Reserva_prestadorId_fkey")
   @@index([servicioId], map: "Reserva_servicioId_fkey")
+  @@map("Reserva")
 }
 
 model servicio {
@@ -168,6 +188,8 @@ model servicio {
   imagen1           String?
   prestadorservicio prestadorservicio[]
   reserva           reserva[]
+
+  @@map("Servicio")
 }
 
 model usuario {
@@ -192,6 +214,7 @@ model usuario {
 
   @@index([domicilioId], map: "Usuario_domicilioId_fkey")
   @@index([generoId], map: "Usuario_generoId_fkey")
+  @@map("Usuario")
 }
 
 enum mensaje_emisorTipo {
