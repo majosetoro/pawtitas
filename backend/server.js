@@ -313,15 +313,18 @@ app.post('/api/registro', async (req, res) => {
         });
 
         if (especialidad) {
-          const servicio = await tx.servicio.upsert({
+          let servicio = await tx.servicio.findFirst({
             where: { descripcion: especialidad },
-            update: {},
-            create: {
-              descripcion: especialidad,
-              tipoMascota: 'General',
-              precio: new Prisma.Decimal(0),
-            },
           });
+          if (!servicio) {
+            servicio = await tx.servicio.create({
+              data: {
+                descripcion: especialidad,
+                tipoMascota: 'General',
+                precio: new Prisma.Decimal(0),
+              },
+            });
+          }
           await tx.prestadorservicio.upsert({
             where: {
               prestadorId_servicioId: { prestadorId: prestador.id, servicioId: servicio.id },
