@@ -16,10 +16,12 @@ import LoginInputField from "../../components/inputs/loginInputField";
 import LoginBtn from "../../components/buttons/loginBtn";
 import { colors } from "../../../shared/styles";
 import iconImage from "../../assets/icon.png";
-import { useStreamChat } from "../../contexts";
+import { useStreamChat, useAuth } from "../../contexts";
+import { normalizeRole, ROLES } from "../../constants/roles";
+import { setAuthToken } from "../../services";
 
 const API_BASE =
-  process.env.EXPO_PUBLIC_API_BASE_URL || "http://192.168.1.91:3001";
+  process.env.EXPO_PUBLIC_API_BASE_URL || "http://192.168.1.5:3001";
 
 export default function InicioScreen({ navigation }) {
   const [form, setForm] = useState({ correo: "", password: "" });
@@ -27,6 +29,7 @@ export default function InicioScreen({ navigation }) {
   const [errors, setErrors] = useState({ correo: "", password: "" });
   const [touched, setTouched] = useState({ correo: false, password: false });
   const { initializeChat } = useStreamChat();
+  const { setAuthFromLogin } = useAuth();
 
   const validateEmail = (email) => {
     if (!email.trim()) {
@@ -106,19 +109,28 @@ export default function InicioScreen({ navigation }) {
       const data = await response.json().catch(() => ({}));
 
       if (response.ok && data.success) {
-        // Inicializar el chat
-        await initializeChat(
-          data.user.id,      // ID único del usuario
-          data.user.nombre,  // Nombre a mostrar
-          data.tokenStream,      // Token generado por tu backend
-          data.user.avatar,   // URL del avatar (opcional)
-          data.user.tipo_usuario  // Rol del usuario (Duenio, Cuidador, Paseador, Veterinario, Admin)
-        );
+        const role = normalizeRole(data?.userData?.rol, data?.admin);
 
-        if (data.admin) {
-          navigation.navigate("PanelAdmin");
-        } else if (data.user) {
-          navigation.navigate("Home");
+        setAuthFromLogin(data);
+        if (data?.token) {
+          setAuthToken(data.token);
+        }
+
+        if (role !== ROLES.ADMIN && data?.tokenStream && data?.userData) {
+          // Inicializar el chat si el backend envía token
+          await initializeChat(
+            data.userData.id,      // ID único del usuario
+            data.userData.nombre,  // Nombre a mostrar
+            data.tokenStream,      // Token generado por tu backend
+            data.userData.avatar,  // URL del avatar (opcional)
+            role
+          );
+        }
+
+        if (role === ROLES.ADMIN) {
+          navigation.reset({ index: 0, routes: [{ name: "PanelAdmin" }] });
+        } else if (role) {
+          navigation.reset({ index: 0, routes: [{ name: "Home" }] });
         } else {
           alert("Inicio de sesión correcto, pero rol no identificado.");
         }
