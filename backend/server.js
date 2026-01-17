@@ -6,6 +6,7 @@ const cors = require('cors');
 const { PrismaClient, Prisma } = require('@prisma/client');
 require('dotenv').config();
 const nodemailer = require('nodemailer');
+const bcrypt = require('bcryptjs');
 
 const app = express();
 const prisma = new PrismaClient();
@@ -136,8 +137,26 @@ app.post('/login', async (req, res) => {
     }
 
     const admin = await prisma.admin.findUnique({ where: { email } });
-    if (admin && admin.password === password) {
-      return res.json({ success: true, admin: true, user: false });
+    if (admin) {
+      const adminHasBcrypt = typeof admin.password === 'string' && admin.password.startsWith('$2');
+      let adminOk = false;
+
+      if (adminHasBcrypt) {
+        adminOk = await bcrypt.compare(password, admin.password);
+      } else {
+        adminOk = admin.password === password;
+        if (adminOk) {
+          const upgradedHash = await bcrypt.hash(password, 10);
+          await prisma.admin.update({
+            where: { id: admin.id },
+            data: { password: upgradedHash },
+          });
+        }
+      }
+
+      if (adminOk) {
+        return res.json({ success: true, admin: true, user: false });
+      }
     }
 
     const user = await prisma.usuario.findFirst({
@@ -146,7 +165,27 @@ app.post('/login', async (req, res) => {
       },
     });
 
-    if (!user || user.clave !== password) {
+    if (!user) {
+      return res.status(401).json({ success: false, message: 'Credenciales inválidas' });
+    }
+
+    const hasBcryptHash = typeof user.clave === 'string' && user.clave.startsWith('$2');
+    let passwordOk = false;
+
+    if (hasBcryptHash) {
+      passwordOk = await bcrypt.compare(password, user.clave);
+    } else {
+      passwordOk = user.clave === password;
+      if (passwordOk) {
+        const upgradedHash = await bcrypt.hash(password, 10);
+        await prisma.usuario.update({
+          where: { id: user.id },
+          data: { clave: upgradedHash },
+        });
+      }
+    }
+
+    if (!passwordOk) {
       return res.status(401).json({ success: false, message: 'Credenciales inválidas' });
     }
 
@@ -235,6 +274,8 @@ app.post('/api/registro', async (req, res) => {
       });
     }
 
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const result = await prisma.$transaction(async (tx) => {
       const generoRow = await tx.genero.upsert({
         where: { nombre: genero },
@@ -249,7 +290,7 @@ app.post('/api/registro', async (req, res) => {
       const usuarioRow = await tx.usuario.create({
         data: {
           usuario: correo,
-          clave: password, // Hashear cuando ajustemos login
+          clave: hashedPassword,
           nombre,
           apellido,
           dni: documento,
