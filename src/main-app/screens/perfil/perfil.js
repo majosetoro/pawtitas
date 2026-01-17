@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo } from 'react';
 import { View, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -6,30 +6,82 @@ import { styles } from './perfil.styles';
 import { colors } from '../../../shared/styles';
 import { PerfilHeader, MenuInferior } from '../../components';
 import { PerfilInfoCard, MascotasSection, LogoutBtn, SettingsMenu, SupportService } from './components';
+import { useAuth } from '../../contexts';
+import { ROLES } from '../../constants/roles';
+import { clearAuthToken } from '../../services';
+
+const formatDate = (value) => {
+  if (!value) return 'Pendiente';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return 'Pendiente';
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
+};
+
+const buildFullName = (user) => {
+  const full = [user?.nombre, user?.apellido].filter(Boolean).join(' ').trim();
+  return full || user?.name || 'Usuario';
+};
+
+const buildLocation = (user) => {
+  if (!user) return 'Pendiente';
+  if (user.domicilio) {
+    const { calle, numero, ciudad } = user.domicilio;
+    const calleNumero = [calle, numero].filter(Boolean).join(' ');
+    return ciudad ? `${calleNumero}, ${ciudad}` : calleNumero || 'Pendiente';
+  }
+  return user.ubicacion || 'Pendiente';
+};
+
+const roleLabelByRole = (role) => {
+  if (role === ROLES.DUENIO) return 'Dueño de mascota';
+  if (role === ROLES.PRESTADOR) return 'Prestador de servicios';
+  if (role === ROLES.ADMIN) return 'Administrador';
+  return 'Usuario';
+};
 
 // Perfil del usuario
 const PerfilScreen = () => {
   const navigation = useNavigation();
-  
-  // Estado del usuario
-  // Implementar la llamada a la API. Estos datos son de ejemplo.
-  const [userProfile] = useState({
-    id: '1',
-    avatarUri: null,
-    name: 'María López',
-    email: 'maria.lopez@gmail.com',
-    phone: '+54 9 11 12345678',
-    location: 'Belgrano, CABA',
-    role: 'Cliente (Dueño de mascota)',
-    rating: 4,
-    description: 'Soy dueña de Luna y busco un lugar confiable para dejarla mientras estoy de vacaciones.',
-    registrationDate: '15-08-2025',
-    petsCount: 1,
-  });
+  const { user, role, clearAuth } = useAuth();
+
+  const userProfile = useMemo(() => {
+    if (!user) {
+      return {
+        id: null,
+        avatarUri: null,
+        name: 'Usuario',
+        email: '',
+        phone: '',
+        location: 'Pendiente',
+        role: roleLabelByRole(role),
+        rating: 0,
+        description: 'Sin descripción',
+        registrationDate: 'Pendiente',
+        petsCount: 0,
+      };
+    }
+
+    return {
+      id: user.id,
+      avatarUri: user.avatar || null,
+      name: buildFullName(user),
+      email: user.email || '',
+      phone: user.celular || user.telefono || '',
+      location: buildLocation(user),
+      role: roleLabelByRole(role),
+      rating: user.rating ?? 0,
+      description: user.descripcion || 'Sin descripción',
+      registrationDate: formatDate(user.creadoEn),
+      petsCount: user.petsCount ?? 0,
+    };
+  }, [user, role]);
 
   // Handlers para acciones del usuario
   const handleEditProfile = () => {
-    navigation.navigate('EditarPerfil');
+    navigation.navigate('EditarPerfil', { role });
   };
 
   const handleNavigateToPets = () => {
@@ -42,11 +94,12 @@ const PerfilScreen = () => {
       '¿Estás seguro de que deseas cerrar sesión?',
       [
         { text: 'Cancelar', style: 'cancel' },
-        { 
-          text: 'Cerrar Sesión', 
+        {
+          text: 'Cerrar Sesión',
           style: 'destructive',
           onPress: () => {
-            // Limpiar el estado de autenticación
+            clearAuth();
+            clearAuthToken();
             navigation.reset({
               index: 0,
               routes: [{ name: 'Inicio' }],
@@ -71,7 +124,7 @@ const PerfilScreen = () => {
       <PerfilHeader
         title="PERFIL"
         rightComponent={
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.settingsButton}
             onPress={handleSettingsMenu}
             activeOpacity={0.7}
@@ -82,8 +135,8 @@ const PerfilScreen = () => {
       />
 
       {/* Contenido principal */}
-      <ScrollView 
-        style={styles.content} 
+      <ScrollView
+        style={styles.content}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
@@ -94,11 +147,13 @@ const PerfilScreen = () => {
         />
 
         {/* Sección de mascotas */}
-        <MascotasSection
-          petsCount={userProfile.petsCount}
-          description={userProfile.petsDescription}
-          onPress={handleNavigateToPets}
-        />
+        {role === ROLES.DUENIO && (
+          <MascotasSection
+            petsCount={userProfile.petsCount}
+            description={userProfile.petsDescription}
+            onPress={handleNavigateToPets}
+          />
+        )}
 
         {/* Botón de cerrar sesión */}
         <LogoutBtn onPress={handleLogout} />
