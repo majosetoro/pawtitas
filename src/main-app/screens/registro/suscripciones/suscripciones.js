@@ -11,20 +11,47 @@ import { styles } from "./suscripciones.styles";
 import { colors } from "../../../../shared/styles";
 import { MensajeFlotante } from "../../../components";
 import { PlanCard, getPlansByProfileType } from "../../../components/Suscripciones";
+import { registrarUsuario } from "../../../services";
 
 export default function SuscripcionesScreen() {
   const route = useRoute();
   const navigation = useNavigation();
-  const { tipoPerfil } = route.params || {};
+  const { tipoPerfil, formData, perfil, especialidad } = route.params || {};
   const [successMessage, setSuccessMessage] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const mostrarSeccion = getPlansByProfileType(tipoPerfil);
 
-  const handleConsultarPlan = (planTitulo, esPremium) => {
-    if (tipoPerfil === "prestador") {
-      setSuccessMessage("¡Listo! Tu registro fue exitoso. Revisaremos tus datos y te notificaremos por correo cuando tu cuenta esté habilitada.");
-    } else if (tipoPerfil === "dueno") {
-      setSuccessMessage("¡Bienvenido/a! Tu registro fue exitoso, ya podés usar la app.");
+  const handleConsultarPlan = async (planTitulo, esPremium) => {
+    if (submitting) return;
+
+    try {
+      setSubmitting(true);
+      
+      // Reconstruir form con fecha como Date
+      const formWithDate = {
+        ...formData,
+        fechaNacimiento: formData.fechaNacimiento ? new Date(formData.fechaNacimiento) : null,
+      };
+
+      // Registrar usuario en la base de datos
+      await registrarUsuario(formWithDate, perfil, especialidad);
+
+      // Mostrar mensaje de éxito según el tipo de perfil
+      if (tipoPerfil === "prestador") {
+        setSuccessMessage("¡Listo! Tu registro fue exitoso. Revisaremos tus datos y te notificaremos por correo cuando tu cuenta esté habilitada.");
+      } else if (tipoPerfil === "dueno") {
+        setSuccessMessage("¡Bienvenido/a! Tu registro fue exitoso, ya podés usar la app.");
+      }
+      
+      // Navegar a Inicio después de 3 segundos para que el usuario se loguee
+      setTimeout(() => {
+        navigation.navigate('Inicio');
+      }, 3000);
+    } catch (error) {
+      console.log("Registro error:", error?.message);
+      alert(error?.message || "No se pudo completar el registro");
+      setSubmitting(false);
     }
   };
 
@@ -83,6 +110,7 @@ export default function SuscripcionesScreen() {
               colorPrincipal={mostrarSeccion.color}
               caracteristicas={plan.caracteristicas}
               onConsultar={() => handleConsultarPlan(plan.titulo, plan.esPremium)}
+              disabled={submitting}
             />
           ))}
         </View>
