@@ -7,10 +7,10 @@ import AdminPerfilForm from './AdminPerfilForm';
 // Factory Pattern. Componente de formulario según el rol del usuario autenticado
 export default class PerfilFactory {
   static createProfileForm(role, props) {
-    switch(role) {
-      case ROLES.PET_OWNER:
+    switch (role) {
+      case ROLES.DUENIO:
         return <PetOwnerProfileForm {...props} />;
-      case ROLES.SERVICE_PROVIDER:
+      case ROLES.PRESTADOR:
         return <PrestadorServicioPerfilForm {...props} />;
       case ROLES.ADMIN:
         return <AdminPerfilForm {...props} />;
@@ -29,14 +29,14 @@ export default class PerfilFactory {
       email: "",
     };
 
-    switch(role) {
-      case ROLES.PET_OWNER:
+    switch (role) {
+      case ROLES.DUENIO:
         return {
           ...baseFormState,
           telefono: "",
           ubicacion: "",
         };
-      case ROLES.SERVICE_PROVIDER:
+      case ROLES.PRESTADOR:
         return {
           ...baseFormState,
           telefono: "",
@@ -98,9 +98,9 @@ export default class PerfilFactory {
     }
 
     // Validaciones específicas por rol
-    switch(role) {
-      case ROLES.PET_OWNER:
-      case ROLES.SERVICE_PROVIDER:
+    switch (role) {
+      case ROLES.DUENIO:
+      case ROLES.PRESTADOR:
         if (!formData.telefono?.trim()) {
           errors.telefono = "El número de teléfono es requerido";
         }
@@ -108,24 +108,22 @@ export default class PerfilFactory {
         if (!formData.ubicacion?.trim()) {
           errors.ubicacion = "La ubicación es requerida";
         }
-        
+
         // Validaciones específicas para prestador de servicios
-        if (role === ROLES.SERVICE_PROVIDER) {
+        if (role === ROLES.PRESTADOR) {
           if (!formData.precio?.trim()) {
             errors.precio = "El precio es requerido";
           }
-          
+
           if (!formData.duracion?.trim()) {
             errors.duracion = "La duración es requerida";
           }
-          
-          // Validar al menos un servicio seleccionado
+
           const hasService = Object.values(formData.services || {}).some(value => value === true);
           if (!hasService) {
             errors.services = "Debes seleccionar al menos un tipo de servicio";
           }
-          
-          // Validar al menos un día de disponibilidad seleccionado solo si el servicio está activo
+
           if (formData.serviceActive === true) {
             const hasAvailability = Object.values(formData.availability || {}).some(value => value === true);
             if (!hasAvailability) {
@@ -135,7 +133,6 @@ export default class PerfilFactory {
         }
         break;
       case ROLES.ADMIN:
-        // Validaciones para administrador, agregar en caso de ser necesario
         break;
       default:
         break;
