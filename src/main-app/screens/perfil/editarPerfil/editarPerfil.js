@@ -52,6 +52,10 @@ const buildFormDataFromUser = (role, userData) => {
       next.precio = String(userData.precio);
     }
 
+    if ("duracion" in next && userData.duracion) {
+      next.duracion = userData.duracion;
+    }
+
     if ("serviceActive" in next && userData.serviceActive != null) {
       next.serviceActive = Boolean(userData.serviceActive);
     }

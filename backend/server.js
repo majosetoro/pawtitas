@@ -368,6 +368,9 @@ app.get('/api/perfil/:id', async (req, res) => {
       if (servicio?.precio != null) {
         userData.precio = servicio.precio;
       }
+      if (servicio?.duracion) {
+        userData.duracion = servicio.duracion;
+      }
       if (servicio?.disponible != null) {
         userData.serviceActive = Boolean(servicio.disponible);
       }
@@ -404,6 +407,7 @@ app.put('/api/perfil/:id', async (req, res) => {
       ubicacion,
       services,
       precio,
+      duracion,
       availability,
       petTypes,
       petTypesCustom,
@@ -519,6 +523,7 @@ app.put('/api/perfil/:id', async (req, res) => {
           tipoMascota: tipoMascotaValue,
           precio: new Prisma.Decimal(hasPrice ? priceNumber : 0),
           horarios: horariosValue || null,
+          duracion: duracion || null,
           disponible: serviceActive === true,
         };
 
@@ -546,6 +551,7 @@ app.put('/api/perfil/:id', async (req, res) => {
     let horariosServicio = null;
     let tipoMascotaServicio = null;
     let precioServicio = null;
+    let duracionServicio = null;
     let estadoServicio = null;
     if (updatedUser?.rol === 'PRESTADOR') {
       const prestador = await prisma.prestador.findUnique({
@@ -564,6 +570,7 @@ app.put('/api/perfil/:id', async (req, res) => {
       horariosServicio = servicio?.horarios || null;
       tipoMascotaServicio = servicio?.tipoMascota || null;
       precioServicio = servicio?.precio ?? null;
+      duracionServicio = servicio?.duracion || null;
       estadoServicio = servicio?.disponible ?? null;
     }
 
@@ -581,6 +588,7 @@ app.put('/api/perfil/:id', async (req, res) => {
         horarios: horariosServicio || undefined,
         tipoMascota: tipoMascotaServicio || undefined,
         precio: precioServicio ?? undefined,
+        duracion: duracionServicio || undefined,
         serviceActive: estadoServicio ?? undefined,
         domicilio: updatedUser.domicilio
           ? {

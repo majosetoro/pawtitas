@@ -187,6 +187,7 @@ model servicio {
   horarios          String
   tipoMascota       String
   precio            Decimal             @db.Decimal(10, 2)
+  duracion          String?
   imagen1           String?
   prestadorservicio prestadorservicio[]
   reserva           reserva[]
