@@ -130,6 +130,7 @@ model prestador {
   fechaIngreso      DateTime            @default(now())
   certificaciones   String?
   documentos        String?
+  perfil            String
   usuario           usuario             @relation(fields: [usuarioId], references: [id], map: "Prestador_usuarioId_fkey")
   prestadorservicio prestadorservicio[]
   reserva           reserva[]
@@ -183,8 +184,10 @@ model servicio {
   id                BigInt              @id @default(autoincrement())
   descripcion       String
   disponible        Boolean             @default(true)
+  horarios          String
   tipoMascota       String
   precio            Decimal             @db.Decimal(10, 2)
+  duracion          String?
   imagen1           String?
   prestadorservicio prestadorservicio[]
   reserva           reserva[]

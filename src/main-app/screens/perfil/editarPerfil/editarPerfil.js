@@ -13,6 +13,7 @@ import { styles } from "./editarPerfil.styles";
 import PerfilFactory from "./roles/PerfilFactory";
 import ROLES from "./roles/types";
 import { useAuth } from "../../../contexts";
+import { getUserProfile, updateUserProfile } from "../../../services";
 
 const buildLocation = (user) => {
   if (!user) return "";
@@ -42,12 +43,71 @@ const buildFormDataFromUser = (role, userData) => {
   if ("telefono" in next) next.telefono = userData.celular || userData.telefono || next.telefono;
   if ("ubicacion" in next) next.ubicacion = buildLocation(userData);
 
+  if (role === ROLES.PRESTADOR) {
+    const perfil = userData.perfil || "";
+    const horarios = userData.horarios || "";
+    const tipoMascota = userData.tipoMascota || "";
+
+    if ("precio" in next && userData.precio != null) {
+      next.precio = String(userData.precio);
+    }
+
+    if ("duracion" in next && userData.duracion) {
+      next.duracion = userData.duracion;
+    }
+
+    if ("serviceActive" in next && userData.serviceActive != null) {
+      next.serviceActive = Boolean(userData.serviceActive);
+    }
+
+    if ("services" in next) {
+      const selected = perfil.split(',').map((s) => s.trim());
+      next.services = {
+        cuidador: selected.includes('Cuidador'),
+        paseador: selected.includes('Paseador'),
+        veterinarioDomicilio: selected.includes('Veterinario a domicilio'),
+        clinicaVeterinaria: selected.includes('Clínica Veterinaria'),
+      };
+    }
+
+    if ("availability" in next) {
+      const selectedDays = horarios.split(',').map((s) => s.trim()).filter(Boolean);
+      next.availability = {
+        lunes: selectedDays.includes('lunes'),
+        martes: selectedDays.includes('martes'),
+        miercoles: selectedDays.includes('miercoles'),
+        jueves: selectedDays.includes('jueves'),
+        viernes: selectedDays.includes('viernes'),
+        sabado: selectedDays.includes('sabado'),
+        domingo: selectedDays.includes('domingo'),
+      };
+    }
+
+    if ("petTypes" in next) {
+      const selectedTypes = tipoMascota.split(',').map((s) => s.trim()).filter(Boolean);
+      next.petTypes = {
+        perro: selectedTypes.includes('Perro'),
+        gato: selectedTypes.includes('Gato'),
+        conejo: selectedTypes.includes('Conejo'),
+        ave: selectedTypes.includes('Ave'),
+        roedor: selectedTypes.includes('Roedor'),
+        otro: selectedTypes.some((t) => !['Perro', 'Gato', 'Conejo', 'Ave', 'Roedor'].includes(t)),
+      };
+      if (next.petTypes.otro) {
+        const custom = selectedTypes.find(
+          (t) => !['Perro', 'Gato', 'Conejo', 'Ave', 'Roedor'].includes(t)
+        );
+        next.petTypesCustom = custom || next.petTypesCustom;
+      }
+    }
+  }
+
   return next;
 };
 
 // Componente principal para la pantalla de editar perfil
 export default function EditarPerfil({ navigation, route }) {
-  const { user, role: authRole } = useAuth();
+  const { user, role: authRole, updateUser } = useAuth();
 
   // Obtener el rol del usuario
   const userRole = route?.params?.role || authRole || ROLES.DUENIO;
@@ -71,8 +131,14 @@ export default function EditarPerfil({ navigation, route }) {
   const loadProfileData = async () => {
     setLoading(true);
     try {
-      const hydrated = buildFormDataFromUser(userRole, user);
-      setFormData(hydrated);
+      if (user?.id) {
+        const response = await getUserProfile(user.id, userRole);
+        const hydrated = buildFormDataFromUser(userRole, response?.userData || user);
+        setFormData(hydrated);
+      } else {
+        const hydrated = buildFormDataFromUser(userRole, user);
+        setFormData(hydrated);
+      }
     } catch (error) {
       setMessage({ type: "error", text: "Error al cargar los datos del perfil" });
       setShowMensajeFlotante(true);
@@ -106,18 +172,52 @@ export default function EditarPerfil({ navigation, route }) {
       return;
     }
 
+    if (!user?.id) {
+      setMessage({ type: "error", text: "No se encontró el usuario autenticado" });
+      setShowMensajeFlotante(true);
+      return;
+    }
+
     setSaving(true);
     setMessage({ type: "", text: "" });
     setShowMensajeFlotante(false);
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
+      const payload = {
+        role: userRole,
+        nombreApellido: formData.nombreApellido,
+        descripcion: formData.descripcion,
+        email: formData.email,
+        telefono: formData.telefono,
+        ubicacion: formData.ubicacion,
+        services: formData.services,
+        precio: formData.precio,
+        duracion: formData.duracion,
+        availability: formData.availability,
+        petTypes: formData.petTypes,
+        petTypesCustom: formData.petTypesCustom,
+        serviceActive: formData.serviceActive,
+      };
+
+      const response = await updateUserProfile(user.id, payload);
+
+      if (response?.userData) {
+        updateUser(response.userData);
+        setFormData(buildFormDataFromUser(userRole, response.userData));
+      }
+
       setMessage({ type: "success", text: "Perfil actualizado exitosamente" });
       setShowMensajeFlotante(true);
+
+      setTimeout(() => {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Perfil" }],
+        });
+      }, 3000);
       
     } catch (error) {
-      setMessage({ type: "error", text: "Error al guardar el perfil. Inténtalo de nuevo." });
+      setMessage({ type: "error", text: error?.message || "Error al guardar el perfil. Inténtalo de nuevo." });
       setShowMensajeFlotante(true);
     } finally {
       setSaving(false);

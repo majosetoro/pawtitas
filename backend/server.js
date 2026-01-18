@@ -61,6 +61,54 @@ function descomponerUbicacion(ubicacionRaw) {
   return { calle, numero, ciudad };
 }
 
+function splitNombreApellido(nombreApellido) {
+  const txt = String(nombreApellido || '').trim();
+  if (!txt) return { nombre: '', apellido: '' };
+  const [nombre, ...resto] = txt.split(/\s+/);
+  return { nombre, apellido: resto.join(' ') };
+}
+
+function buildHorariosFromAvailability(availability = {}) {
+  const days = Object.entries(availability)
+    .filter(([, value]) => value === true)
+    .map(([key]) => key);
+  return days.join(',');
+}
+
+function buildPerfilFromServices(services = {}) {
+  const labels = {
+    cuidador: 'Cuidador',
+    paseador: 'Paseador',
+    veterinarioDomicilio: 'Veterinario a domicilio',
+    clinicaVeterinaria: 'Clínica Veterinaria',
+  };
+
+  const selected = Object.entries(services)
+    .filter(([, value]) => value === true)
+    .map(([key]) => labels[key])
+    .filter(Boolean);
+
+  return selected.join(',');
+}
+
+function buildTipoMascotaFromPetTypes(petTypes = {}, petTypesCustom = '') {
+  const labels = {
+    perro: 'Perro',
+    gato: 'Gato',
+    conejo: 'Conejo',
+    ave: 'Ave',
+    roedor: 'Roedor',
+    otro: petTypesCustom ? petTypesCustom.trim() : 'Otro',
+  };
+
+  const selected = Object.entries(petTypes)
+    .filter(([, value]) => value === true)
+    .map(([key]) => labels[key])
+    .filter(Boolean);
+
+  return selected.length ? selected.join(',') : 'General';
+}
+
 // Configuración Overpass para proxy
 const OVERPASS_SERVERS = [
   'https://overpass-api.de/api/interpreter',
@@ -190,10 +238,374 @@ app.post('/login', async (req, res) => {
       creadoEn: usuario.creadoEn,
     };
 
+    if (usuario.rol === 'PRESTADOR') {
+      const prestador = await prisma.prestador.findUnique({
+        where: { usuarioId: usuario.id },
+        include: {
+          prestadorservicio: {
+            take: 1,
+            orderBy: { id: 'desc' },
+            include: { servicio: true },
+          },
+        },
+      });
+      const servicio = prestador?.prestadorservicio?.[0]?.servicio || null;
+      if (servicio?.descripcion) {
+        userData.descripcion = servicio.descripcion;
+      }
+      if (prestador?.perfil) {
+        userData.perfil = prestador.perfil;
+      }
+      if (servicio?.tipoMascota) {
+        userData.tipoMascota = servicio.tipoMascota;
+      }
+      if (servicio?.horarios) {
+        userData.horarios = servicio.horarios;
+      }
+      if (servicio?.precio != null) {
+        userData.precio = servicio.precio;
+      }
+      if (servicio?.disponible != null) {
+        userData.serviceActive = Boolean(servicio.disponible);
+      }
+    }
+
     return res.json({ success: true, admin: false, user: true, userData });
   } catch (e) {
     console.error('Login error:', e);
     res.status(500).json({ success: false, message: 'Error en el servidor' });
+  }
+});
+
+// Obtener perfil (dueño/prestador/admin)
+app.get('/api/perfil/:id', async (req, res) => {
+  try {
+    const { id } = req.params || {};
+    const roleParam = String(req.query?.role || '').toLowerCase();
+
+    if (!id) {
+      return res.status(400).json({ success: false, message: 'Falta id de usuario' });
+    }
+
+    let userId;
+    try {
+      userId = BigInt(id);
+    } catch (error) {
+      return res.status(400).json({ success: false, message: 'Id inválido' });
+    }
+
+    if (roleParam === 'admin') {
+      const admin = await prisma.admin.findUnique({ where: { id: userId } });
+      if (!admin) {
+        return res.status(404).json({ success: false, message: 'Admin no encontrado' });
+      }
+      return res.json({
+        success: true,
+        userData: {
+          id: admin.id?.toString?.() || admin.id,
+          nombre: 'Administrador',
+          apellido: '',
+          email: admin.email,
+          rol: 'ADMIN',
+        },
+      });
+    }
+
+    const usuario = await prisma.usuario.findUnique({
+      where: { id: userId },
+      include: { domicilio: true, duenio: true },
+    });
+
+    if (!usuario) {
+      return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
+    }
+
+    const userData = {
+      id: usuario.id?.toString?.() || usuario.id,
+      nombre: usuario.nombre,
+      apellido: usuario.apellido,
+      email: usuario.email,
+      celular: usuario.celular,
+      rol: usuario.rol,
+      domicilio: usuario.domicilio
+        ? {
+            calle: usuario.domicilio.calle,
+            numero: usuario.domicilio.numero,
+            ciudad: usuario.domicilio.ciudad,
+          }
+        : null,
+      creadoEn: usuario.creadoEn,
+    };
+
+    if (usuario.rol === 'DUENIO' && usuario.duenio?.comentarios) {
+      userData.descripcion = usuario.duenio.comentarios;
+    }
+
+    if (usuario.rol === 'PRESTADOR') {
+      const prestador = await prisma.prestador.findUnique({
+        where: { usuarioId: usuario.id },
+        include: {
+          prestadorservicio: {
+            take: 1,
+            orderBy: { id: 'desc' },
+            include: { servicio: true },
+          },
+        },
+      });
+      const servicio = prestador?.prestadorservicio?.[0]?.servicio || null;
+      if (servicio?.descripcion) {
+        userData.descripcion = servicio.descripcion;
+      }
+      if (prestador?.perfil) {
+        userData.perfil = prestador.perfil;
+      }
+      if (servicio?.tipoMascota) {
+        userData.tipoMascota = servicio.tipoMascota;
+      }
+      if (servicio?.horarios) {
+        userData.horarios = servicio.horarios;
+      }
+      if (servicio?.precio != null) {
+        userData.precio = servicio.precio;
+      }
+      if (servicio?.duracion) {
+        userData.duracion = servicio.duracion;
+      }
+      if (servicio?.disponible != null) {
+        userData.serviceActive = Boolean(servicio.disponible);
+      }
+    }
+
+    return res.json({ success: true, userData });
+  } catch (err) {
+    console.error('perfil get error', err);
+    return res.status(500).json({ success: false, message: 'Error al obtener perfil' });
+  }
+});
+
+// Actualizar perfil (dueño/prestador/admin)
+app.put('/api/perfil/:id', async (req, res) => {
+  try {
+    const { id } = req.params || {};
+    if (!id) {
+      return res.status(400).json({ success: false, message: 'Falta id de usuario' });
+    }
+
+    let userId;
+    try {
+      userId = BigInt(id);
+    } catch (error) {
+      return res.status(400).json({ success: false, message: 'Id inválido' });
+    }
+
+    const {
+      role,
+      nombreApellido,
+      descripcion,
+      email,
+      telefono,
+      ubicacion,
+      services,
+      precio,
+      duracion,
+      availability,
+      petTypes,
+      petTypesCustom,
+      serviceActive,
+    } = req.body || {};
+
+    const normalizedRole = String(role || '').toLowerCase();
+    if (!normalizedRole) {
+      return res.status(400).json({ success: false, message: 'Falta role' });
+    }
+
+    if (normalizedRole === 'admin') {
+      const admin = await prisma.admin.findUnique({ where: { id: userId } });
+      if (!admin) {
+        return res.status(404).json({ success: false, message: 'Admin no encontrado' });
+      }
+
+      const adminData = {};
+      if (email) adminData.email = email;
+
+      const updatedAdmin = Object.keys(adminData).length
+        ? await prisma.admin.update({ where: { id: userId }, data: adminData })
+        : admin;
+
+      return res.json({
+        success: true,
+        userData: {
+          id: updatedAdmin.id?.toString?.() || updatedAdmin.id,
+          nombre: 'Administrador',
+          apellido: '',
+          email: updatedAdmin.email,
+          rol: 'ADMIN',
+        },
+      });
+    }
+
+    const usuario = await prisma.usuario.findUnique({
+      where: { id: userId },
+      include: { domicilio: true },
+    });
+
+    if (!usuario) {
+      return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
+    }
+
+    const { nombre, apellido } = splitNombreApellido(nombreApellido);
+    const { calle, numero, ciudad } = descomponerUbicacion(ubicacion);
+    const priceNumber = Number(precio);
+    const hasPrice = Number.isFinite(priceNumber);
+
+    await prisma.$transaction(async (tx) => {
+      const dataUsuario = {};
+      if (nombre) dataUsuario.nombre = nombre;
+      if (apellido) dataUsuario.apellido = apellido;
+      if (email) dataUsuario.email = email;
+      if (telefono) dataUsuario.celular = telefono;
+
+      if (Object.keys(dataUsuario).length) {
+        await tx.usuario.update({ where: { id: userId }, data: dataUsuario });
+      }
+
+      if (ubicacion) {
+        if (usuario.domicilioId) {
+          await tx.domicilio.update({
+            where: { id: usuario.domicilioId },
+            data: { calle, numero, ciudad },
+          });
+        } else {
+          const nuevoDom = await tx.domicilio.create({
+            data: { calle, numero, ciudad },
+          });
+          await tx.usuario.update({
+            where: { id: userId },
+            data: { domicilioId: nuevoDom.id },
+          });
+        }
+      }
+
+      if (normalizedRole === 'duenio' && descripcion) {
+        await tx.duenio.upsert({
+          where: { usuarioId: userId },
+          update: { comentarios: descripcion },
+          create: { usuarioId: userId, comentarios: descripcion },
+        });
+      }
+
+      if (normalizedRole === 'prestador') {
+        const perfilValue = buildPerfilFromServices(services);
+        const horariosValue = buildHorariosFromAvailability(availability);
+        const tipoMascotaValue = buildTipoMascotaFromPetTypes(petTypes, petTypesCustom);
+
+        const prestador = await tx.prestador.upsert({
+          where: { usuarioId: userId },
+          update: {},
+          create: { usuarioId: userId, perfil: perfilValue || 'Pendiente' },
+        });
+
+        await tx.prestador.update({
+          where: { id: prestador.id },
+          data: {
+            perfil: perfilValue || null,
+          },
+        });
+
+        const existingLink = await tx.prestadorservicio.findFirst({
+          where: { prestadorId: prestador.id },
+          orderBy: { id: 'desc' },
+          select: { servicioId: true },
+        });
+
+        const servicioData = {
+          descripcion: descripcion || 'Sin descripción',
+          tipoMascota: tipoMascotaValue,
+          precio: new Prisma.Decimal(hasPrice ? priceNumber : 0),
+          horarios: horariosValue || null,
+          duracion: duracion || null,
+          disponible: serviceActive === true,
+        };
+
+        if (existingLink?.servicioId) {
+          await tx.servicio.update({
+            where: { id: existingLink.servicioId },
+            data: servicioData,
+          });
+        } else {
+          const servicio = await tx.servicio.create({ data: servicioData });
+          await tx.prestadorservicio.create({
+            data: { prestadorId: prestador.id, servicioId: servicio.id },
+          });
+        }
+      }
+    });
+
+    const updatedUser = await prisma.usuario.findUnique({
+      where: { id: userId },
+      include: { domicilio: true },
+    });
+
+    let descripcionServicio = null;
+    let perfilServicio = null;
+    let horariosServicio = null;
+    let tipoMascotaServicio = null;
+    let precioServicio = null;
+    let duracionServicio = null;
+    let estadoServicio = null;
+    if (updatedUser?.rol === 'PRESTADOR') {
+      const prestador = await prisma.prestador.findUnique({
+        where: { usuarioId: userId },
+        include: {
+          prestadorservicio: {
+            take: 1,
+            orderBy: { id: 'desc' },
+            include: { servicio: true },
+          },
+        },
+      });
+      const servicio = prestador?.prestadorservicio?.[0]?.servicio || null;
+      descripcionServicio = servicio?.descripcion || null;
+      perfilServicio = prestador?.perfil || null;
+      horariosServicio = servicio?.horarios || null;
+      tipoMascotaServicio = servicio?.tipoMascota || null;
+      precioServicio = servicio?.precio ?? null;
+      duracionServicio = servicio?.duracion || null;
+      estadoServicio = servicio?.disponible ?? null;
+    }
+
+    return res.json({
+      success: true,
+      userData: {
+        id: updatedUser.id?.toString?.() || updatedUser.id,
+        nombre: updatedUser.nombre,
+        apellido: updatedUser.apellido,
+        email: updatedUser.email,
+        celular: updatedUser.celular,
+        rol: updatedUser.rol,
+        descripcion: descripcionServicio || (normalizedRole === 'duenio' ? descripcion : undefined),
+        perfil: perfilServicio || undefined,
+        horarios: horariosServicio || undefined,
+        tipoMascota: tipoMascotaServicio || undefined,
+        precio: precioServicio ?? undefined,
+        duracion: duracionServicio || undefined,
+        serviceActive: estadoServicio ?? undefined,
+        domicilio: updatedUser.domicilio
+          ? {
+              calle: updatedUser.domicilio.calle,
+              numero: updatedUser.domicilio.numero,
+              ciudad: updatedUser.domicilio.ciudad,
+            }
+          : null,
+        creadoEn: updatedUser.creadoEn,
+      },
+    });
+  } catch (err) {
+    if (err.code === 'P2002') {
+      return res.status(409).json({ success: false, message: 'Email ya registrado' });
+    }
+    console.error('perfil update error', err);
+    return res.status(500).json({ success: false, message: 'Error al actualizar perfil' });
   }
 });
 
@@ -300,6 +712,7 @@ app.post('/api/registro', async (req, res) => {
             usuarioId: usuarioRow.id,
             certificaciones: certificadosFile?.name || null,
             documentos: documentosFile?.name || null,
+            perfil: especialidad || null,
           },
         });
 
