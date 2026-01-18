@@ -18,10 +18,17 @@ export const AuthProvider = ({ children }) => {
     setAuth({ user: loginResponse?.userData || null, role, token });
   };
 
+  const updateUser = (nextUser) => {
+    setAuth((prev) => ({
+      ...prev,
+      user: nextUser ? { ...(prev.user || {}), ...nextUser } : prev.user,
+    }));
+  };
+
   const clearAuth = () => setAuth({ user: null, role: null, token: null });
 
   const value = useMemo(
-    () => ({ ...auth, setAuthFromLogin, clearAuth }),
+    () => ({ ...auth, setAuthFromLogin, clearAuth, updateUser }),
     [auth]
   );
 
