@@ -34,3 +34,17 @@ export async function apiUsuario(path, options = {}) {
   return data;
 }
 
+export async function updateUserProfile(userId, payload) {
+  return apiUsuario(`/api/perfil/${userId}`, {
+    method: 'PUT',
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function getUserProfile(userId, role) {
+  const roleParam = role ? `?role=${encodeURIComponent(role)}` : '';
+  return apiUsuario(`/api/perfil/${userId}${roleParam}`, {
+    method: 'GET',
+  });
+}
+
