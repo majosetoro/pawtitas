@@ -1,0 +1,332 @@
+const { Prisma } = require('@prisma/client');
+const prisma = require('../config/prisma');
+const usuarioRepo = require('../repositories/usuario.repo');
+const prestadorRepo = require('../repositories/prestador.repo');
+const duenioRepo = require('../repositories/duenio.repo');
+const servicioRepo = require('../repositories/servicio.repo');
+const { splitNombreApellido } = require('../utils/strings');
+const { descomponerUbicacion } = require('../utils/ubicacion');
+const {
+  buildPerfilFromServices,
+  buildHorariosFromAvailability,
+  buildTipoMascotaFromPetTypes,
+} = require('../utils/mappers');
+
+// Obtener perfil de usuario
+async function getPerfilController(req, res) {
+  try {
+    const { id } = req.params || {};
+    const roleParam = String(req.query?.role || '').toLowerCase();
+
+    if (!id) {
+      return res.status(400).json({ success: false, message: 'Falta id de usuario' });
+    }
+
+    let userId;
+    try {
+      userId = BigInt(id);
+    } catch (error) {
+      return res.status(400).json({ success: false, message: 'Id inválido' });
+    }
+
+    // Verificar si es admin
+    if (roleParam === 'admin') {
+      const admin = await prisma.admin.findUnique({ where: { id: userId } });
+      if (!admin) {
+        return res.status(404).json({ success: false, message: 'Admin no encontrado' });
+      }
+      return res.json({
+        success: true,
+        userData: {
+          id: admin.id?.toString?.() || admin.id,
+          nombre: 'Administrador',
+          apellido: '',
+          email: admin.email,
+          rol: 'ADMIN',
+        },
+      });
+    }
+
+    // Verificar si es usuario (Dueño o Prestador)
+    const usuario = await usuarioRepo.findById(userId);
+
+    if (!usuario) {
+      return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
+    }
+
+    const userData = {
+      id: usuario.id?.toString?.() || usuario.id,
+      nombre: usuario.nombre,
+      apellido: usuario.apellido,
+      email: usuario.email,
+      celular: usuario.celular,
+      rol: usuario.rol,
+      domicilio: usuario.domicilio
+        ? {
+            calle: usuario.domicilio.calle,
+            numero: usuario.domicilio.numero,
+            ciudad: usuario.domicilio.ciudad,
+          }
+        : null,
+      creadoEn: usuario.creadoEn,
+    };
+
+    if (usuario.rol === 'DUENIO' && usuario.duenio?.comentarios) {
+      userData.descripcion = usuario.duenio.comentarios;
+    }
+
+    if (usuario.rol === 'PRESTADOR') {
+      const prestador = await prestadorRepo.findByUsuarioId(usuario.id);
+      const servicio = prestador?.prestadorservicio?.[0]?.servicio || null;
+      
+      if (servicio?.descripcion) userData.descripcion = servicio.descripcion;
+      if (prestador?.perfil) userData.perfil = prestador.perfil;
+      if (servicio?.tipoMascota) userData.tipoMascota = servicio.tipoMascota;
+      if (servicio?.horarios) userData.horarios = servicio.horarios;
+      if (servicio?.precio != null) userData.precio = servicio.precio;
+      if (servicio?.duracion) userData.duracion = servicio.duracion;
+      if (servicio?.disponible != null) userData.serviceActive = Boolean(servicio.disponible);
+    }
+
+    return res.json({ success: true, userData });
+  } catch (err) {
+    console.error('perfil get error', err);
+    return res.status(500).json({ success: false, message: 'Error al obtener perfil' });
+  }
+}
+
+// Actualizar perfil de usuario
+async function updatePerfilController(req, res) {
+  try {
+    const { id } = req.params || {};
+    if (!id) {
+      return res.status(400).json({ success: false, message: 'Falta id de usuario' });
+    }
+
+    let userId;
+    try {
+      userId = BigInt(id);
+    } catch (error) {
+      return res.status(400).json({ success: false, message: 'Id inválido' });
+    }
+
+    const {
+      role,
+      nombreApellido,
+      descripcion,
+      email,
+      telefono,
+      ubicacion,
+      services,
+      precio,
+      duracion,
+      availability,
+      petTypes,
+      petTypesCustom,
+      serviceActive,
+    } = req.body || {};
+
+    const normalizedRole = String(role || '').toLowerCase();
+    if (!normalizedRole) {
+      return res.status(400).json({ success: false, message: 'Falta role' });
+    }
+
+    // Verificar si es admin
+    if (normalizedRole === 'admin') {
+      const admin = await prisma.admin.findUnique({ where: { id: userId } });
+      if (!admin) {
+        return res.status(404).json({ success: false, message: 'Admin no encontrado' });
+      }
+
+      const adminData = {};
+      if (email) adminData.email = email;
+
+      const updatedAdmin = Object.keys(adminData).length
+        ? await prisma.admin.update({ where: { id: userId }, data: adminData })
+        : admin;
+
+      return res.json({
+        success: true,
+        userData: {
+          id: updatedAdmin.id?.toString?.() || updatedAdmin.id,
+          nombre: 'Administrador',
+          apellido: '',
+          email: updatedAdmin.email,
+          rol: 'ADMIN',
+        },
+      });
+    }
+
+    // Verificar si es usuario (Dueño o Prestador)
+    const usuario = await prisma.usuario.findUnique({
+      where: { id: userId },
+      include: { domicilio: true },
+    });
+
+    if (!usuario) {
+      return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
+    }
+
+    const { nombre, apellido } = splitNombreApellido(nombreApellido);
+    const { calle, numero, ciudad } = descomponerUbicacion(ubicacion);
+    const priceNumber = Number(precio);
+    const hasPrice = Number.isFinite(priceNumber);
+
+    // Actualizar datos
+    await prisma.$transaction(async (tx) => {
+      const dataUsuario = {};
+      if (nombre) dataUsuario.nombre = nombre;
+      if (apellido) dataUsuario.apellido = apellido;
+      if (email) dataUsuario.email = email;
+      if (telefono) dataUsuario.celular = telefono;
+
+      if (Object.keys(dataUsuario).length) {
+        await tx.usuario.update({ where: { id: userId }, data: dataUsuario });
+      }
+
+      if (ubicacion) {
+        if (usuario.domicilioId) {
+          await tx.domicilio.update({
+            where: { id: usuario.domicilioId },
+            data: { calle, numero, ciudad },
+          });
+        } else {
+          const nuevoDom = await tx.domicilio.create({
+            data: { calle, numero, ciudad },
+          });
+          await tx.usuario.update({
+            where: { id: userId },
+            data: { domicilioId: nuevoDom.id },
+          });
+        }
+      }
+
+      if (normalizedRole === 'duenio' && descripcion) {
+        await tx.duenio.upsert({
+          where: { usuarioId: userId },
+          update: { comentarios: descripcion },
+          create: { usuarioId: userId, comentarios: descripcion },
+        });
+      }
+
+      if (normalizedRole === 'prestador') {
+        const perfilValue = buildPerfilFromServices(services);
+        const horariosValue = buildHorariosFromAvailability(availability);
+        const tipoMascotaValue = buildTipoMascotaFromPetTypes(petTypes, petTypesCustom);
+
+        const prestador = await tx.prestador.upsert({
+          where: { usuarioId: userId },
+          update: {},
+          create: { usuarioId: userId, perfil: perfilValue || 'Pendiente' },
+        });
+
+        await tx.prestador.update({
+          where: { id: prestador.id },
+          data: {
+            perfil: perfilValue || null,
+          },
+        });
+
+        const existingLink = await tx.prestadorservicio.findFirst({
+          where: { prestadorId: prestador.id },
+          orderBy: { id: 'desc' },
+          select: { servicioId: true },
+        });
+
+        const servicioData = {
+          descripcion: descripcion || 'Sin descripción',
+          tipoMascota: tipoMascotaValue,
+          precio: new Prisma.Decimal(hasPrice ? priceNumber : 0),
+          horarios: horariosValue || null,
+          duracion: duracion || null,
+          disponible: serviceActive === true,
+        };
+
+        if (existingLink?.servicioId) {
+          await tx.servicio.update({
+            where: { id: existingLink.servicioId },
+            data: servicioData,
+          });
+        } else {
+          const servicio = await tx.servicio.create({ data: servicioData });
+          await tx.prestadorservicio.create({
+            data: { prestadorId: prestador.id, servicioId: servicio.id },
+          });
+        }
+      }
+    });
+
+    // Obtener usuario actualizado
+    const updatedUser = await prisma.usuario.findUnique({
+      where: { id: userId },
+      include: { domicilio: true },
+    });
+
+    let descripcionServicio = null;
+    let perfilServicio = null;
+    let horariosServicio = null;
+    let tipoMascotaServicio = null;
+    let precioServicio = null;
+    let duracionServicio = null;
+    let estadoServicio = null;
+    
+    if (updatedUser?.rol === 'PRESTADOR') {
+      const prestador = await prisma.prestador.findUnique({
+        where: { usuarioId: userId },
+        include: {
+          prestadorservicio: {
+            take: 1,
+            orderBy: { id: 'desc' },
+            include: { servicio: true },
+          },
+        },
+      });
+      const servicio = prestador?.prestadorservicio?.[0]?.servicio || null;
+      descripcionServicio = servicio?.descripcion || null;
+      perfilServicio = prestador?.perfil || null;
+      horariosServicio = servicio?.horarios || null;
+      tipoMascotaServicio = servicio?.tipoMascota || null;
+      precioServicio = servicio?.precio ?? null;
+      duracionServicio = servicio?.duracion || null;
+      estadoServicio = servicio?.disponible ?? null;
+    }
+
+    return res.json({
+      success: true,
+      userData: {
+        id: updatedUser.id?.toString?.() || updatedUser.id,
+        nombre: updatedUser.nombre,
+        apellido: updatedUser.apellido,
+        email: updatedUser.email,
+        celular: updatedUser.celular,
+        rol: updatedUser.rol,
+        descripcion: descripcionServicio || (normalizedRole === 'duenio' ? descripcion : undefined),
+        perfil: perfilServicio || undefined,
+        horarios: horariosServicio || undefined,
+        tipoMascota: tipoMascotaServicio || undefined,
+        precio: precioServicio ?? undefined,
+        duracion: duracionServicio || undefined,
+        serviceActive: estadoServicio ?? undefined,
+        domicilio: updatedUser.domicilio
+          ? {
+              calle: updatedUser.domicilio.calle,
+              numero: updatedUser.domicilio.numero,
+              ciudad: updatedUser.domicilio.ciudad,
+            }
+          : null,
+        creadoEn: updatedUser.creadoEn,
+      },
+    });
+  } catch (err) {
+    if (err.code === 'P2002') {
+      return res.status(409).json({ success: false, message: 'Email ya registrado' });
+    }
+    console.error('perfil update error', err);
+    return res.status(500).json({ success: false, message: 'Error al actualizar perfil' });
+  }
+}
+
+module.exports = {
+  getPerfilController,
+  updatePerfilController,
+};
