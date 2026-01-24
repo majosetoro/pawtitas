@@ -6,7 +6,7 @@ import { View, Text, TextInput, TouchableOpacity, Modal, ScrollView, Image, Acti
 import { Ionicons } from "@expo/vector-icons"; // librería de íconos
 import { useNavigation } from "@react-navigation/native";
 import { useLocation, useAuth } from '../../contexts';
-import { isRouteAllowed } from '../../constants/roles';
+import { isRouteAllowed, ROLES } from '../../constants/roles';
 
 // Componentes de categoría de servicios
 const ServiceCategory = ({ emoji, title, description, onPress }) => (
@@ -20,7 +20,7 @@ const ServiceCategory = ({ emoji, title, description, onPress }) => (
 );
 
 // Componente para el encabezado de la pantalla Home
-const HomeHeader = () => {
+const HomeHeader = ({ hidePendingControls }) => {
   const [locationModalVisible, setLocationModalVisible] = useState(false);
   const { 
     userLocation, 
@@ -61,118 +61,124 @@ const HomeHeader = () => {
     {/* Primer bloque: buscador, notificaciones, modal */}
     <View style={styles.header}>
       {/* Fila superior */}
-      <View style={styles.topRow}>
-        {/* Buscador */}
-        <View style={styles.searchContainer}>
-          <Ionicons name="search" size={18} color="#888" style={styles.searchIcon} />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Buscar servicios, veterinarias..."
-            placeholderTextColor="#999"
-          />
-        </View>
-
-        {/* Notificaciones */}
-        <TouchableOpacity style={styles.notificationButton}>
-          <Ionicons name="notifications-outline" size={24} color="#333" />
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>3</Text>
+      {!hidePendingControls && (
+        <View style={styles.topRow}>
+          {/* Buscador */}
+          <View style={styles.searchContainer}>
+            <Ionicons name="search" size={18} color="#888" style={styles.searchIcon} />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Buscar servicios, veterinarias..."
+              placeholderTextColor="#999"
+            />
           </View>
-        </TouchableOpacity>
-      </View>
+
+          {/* Notificaciones */}
+          <TouchableOpacity style={styles.notificationButton}>
+            <Ionicons name="notifications-outline" size={24} color="#333" />
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>3</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      )}
 
       {/* Fila inferior - Botón de ubicación */}
-      <TouchableOpacity
-        style={[
-          styles.locationButton,
-          userLocation && styles.locationButtonActive
-        ]}
-        onPress={() => setLocationModalVisible(true)}
-      >
-        <Ionicons 
-          name={userLocation ? "location" : "location-outline"} 
-          size={18} 
-          color={userLocation ? "#f5a3c1ff" : "#4f0d01ff"} 
-        />
-        <Text style={[
-          styles.backText,
-          userLocation && styles.locationActiveText
-        ]}>
-          {getLocationButtonText()}
-        </Text>
-      </TouchableOpacity>
+      {!hidePendingControls && (
+        <TouchableOpacity
+          style={[
+            styles.locationButton,
+            userLocation && styles.locationButtonActive
+          ]}
+          onPress={() => setLocationModalVisible(true)}
+        >
+          <Ionicons 
+            name={userLocation ? "location" : "location-outline"} 
+            size={18} 
+            color={userLocation ? "#f5a3c1ff" : "#4f0d01ff"} 
+          />
+          <Text style={[
+            styles.backText,
+            userLocation && styles.locationActiveText
+          ]}>
+            {getLocationButtonText()}
+          </Text>
+        </TouchableOpacity>
+      )}
 
       {/* Modal de ubicación */}
-      <Modal
-        transparent
-        visible={locationModalVisible}
-        animationType="slide"
-        onRequestClose={() => setLocationModalVisible(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Elegí tu ubicación</Text>
-            <Text style={styles.modalSubtitle}>
-              Activá tu ubicación para encontrar servicios cercanos a ti
-            </Text>
-            
-            {locationError && (
-              <View style={styles.errorContainer}>
-                <Ionicons name="alert-circle" size={20} color="#ef4444" />
-                <Text style={styles.errorText}>{locationError}</Text>
-              </View>
-            )}
+      {!hidePendingControls && (
+        <Modal
+          transparent
+          visible={locationModalVisible}
+          animationType="slide"
+          onRequestClose={() => setLocationModalVisible(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Elegí tu ubicación</Text>
+              <Text style={styles.modalSubtitle}>
+                Activá tu ubicación para encontrar servicios cercanos a ti
+              </Text>
+              
+              {locationError && (
+                <View style={styles.errorContainer}>
+                  <Ionicons name="alert-circle" size={20} color="#ef4444" />
+                  <Text style={styles.errorText}>{locationError}</Text>
+                </View>
+              )}
 
-            {isLoadingLocation ? (
-              <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#f5a3c1ff" />
-                <Text style={styles.loadingText}>Obteniendo ubicación...</Text>
-              </View>
-            ) : (
-              <>
+              {isLoadingLocation ? (
+                <View style={styles.loadingContainer}>
+                  <ActivityIndicator size="large" color="#f5a3c1ff" />
+                  <Text style={styles.loadingText}>Obteniendo ubicación...</Text>
+                </View>
+              ) : (
+                <>
+                  {userLocation && (
+                    <View style={styles.locationInfoContainer}>
+                      <Ionicons name="checkmark-circle" size={20} color="#f5a3c1ff" />
+                      <Text style={styles.locationInfoText}>
+                        Ubicación activada correctamente
+                      </Text>
+                    </View>
+                  )}
+
+                  {/* Activar si no hay ubicación */}
+                  {!userLocation && (
+                    <TouchableOpacity
+                      style={styles.modalOptionPrimary}
+                      onPress={handleActivarUbicacion}
+                    >
+                      <Ionicons name="navigate" size={20} color="#fff" />
+                      <Text style={styles.modalOptionTextPrimary}>Activar ubicación GPS</Text>
+                    </TouchableOpacity>
+                  )}
+                </>
+              )}
+
+              <View style={styles.modalButtonsRow}>
                 {userLocation && (
-                  <View style={styles.locationInfoContainer}>
-                    <Ionicons name="checkmark-circle" size={20} color="#f5a3c1ff" />
-                    <Text style={styles.locationInfoText}>
-                      Ubicación activada correctamente
-                    </Text>
-                  </View>
-                )}
-
-                {/* Activar si no hay ubicación */}
-                {!userLocation && (
                   <TouchableOpacity
-                    style={styles.modalOptionPrimary}
-                    onPress={handleActivarUbicacion}
+                    style={styles.modalOptionSecondary}
+                    onPress={handleDesactivarUbicacion}
                   >
-                    <Ionicons name="navigate" size={20} color="#fff" />
-                    <Text style={styles.modalOptionTextPrimary}>Activar ubicación GPS</Text>
+                    <Ionicons name="location-outline" size={16} color="#666" />
+                    <Text style={styles.modalOptionTextSecondary}>Desactivar</Text>
                   </TouchableOpacity>
                 )}
-              </>
-            )}
-
-            <View style={styles.modalButtonsRow}>
-              {userLocation && (
+                
                 <TouchableOpacity
-                  style={styles.modalOptionSecondary}
-                  onPress={handleDesactivarUbicacion}
+                  style={[styles.closeButton, userLocation && styles.closeButtonSmall]}
+                  onPress={() => setLocationModalVisible(false)}
                 >
-                  <Ionicons name="location-outline" size={16} color="#666" />
-                  <Text style={styles.modalOptionTextSecondary}>Desactivar</Text>
+                  <Text style={styles.closeButtonText}>Cerrar</Text>
                 </TouchableOpacity>
-              )}
-              
-              <TouchableOpacity
-                style={[styles.closeButton, userLocation && styles.closeButtonSmall]}
-                onPress={() => setLocationModalVisible(false)}
-              >
-                <Text style={styles.closeButtonText}>Cerrar</Text>
-              </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
-      </Modal>
+        </Modal>
+      )}
     </View>
 
     {/* Segundo bloque: logo y tagline */}
@@ -195,7 +201,10 @@ const HomeHeader = () => {
 
 const HomeScreen = () => {
   const navigation = useNavigation();
-  const { role } = useAuth();
+  const { role, user } = useAuth();
+  const estadoPrestador = String(user?.estadoPrestador || '').toUpperCase();
+  const isPrestadorPendiente =
+    role === ROLES.PRESTADOR && estadoPrestador === 'PENDIENTE';
 
   // Categorías de servicios
   const serviceCategories = [
@@ -224,7 +233,6 @@ const HomeScreen = () => {
       onPress: () => navigation.navigate("Salud"),
     },
 
-    // Al implementar el sistema de roles, este botón debe estar visible para el rol clientes y prestadores de servicios.
     {
       id: "4",
       emoji: "👥",
@@ -234,7 +242,6 @@ const HomeScreen = () => {
       onPress: () => navigation.navigate("MisConexiones"),
     },
 
-    // Al implementar el sistema de roles, este botón debe estar visible únicamente para el rol admin.
     {
       id: "5",
       emoji: "👨‍💻",
@@ -245,9 +252,11 @@ const HomeScreen = () => {
     },
   ];
 
-  const visibleCategories = serviceCategories.filter((category) =>
-    isRouteAllowed(role, category.route)
-  );
+  const visibleCategories = serviceCategories.filter((category) => {
+    if (!isRouteAllowed(role, category.route)) return false;
+    if (isPrestadorPendiente && category.route === 'MisConexiones') return false;
+    return true;
+  });
 
   return (
     <View style={styles.container}>
@@ -256,7 +265,21 @@ const HomeScreen = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        <HomeHeader />
+        <HomeHeader hidePendingControls={isPrestadorPendiente} />
+
+        {isPrestadorPendiente && (
+          <View style={styles.pendingBanner}>
+            <Ionicons name="time-outline" size={18} color="#f5a3c1ff" />
+            <Text style={styles.pendingText}>
+              Tu perfil está en revisión ⏳
+              {'\n'}
+              Muy pronto vas a poder usar todas las funciones.
+              {'\n'}
+              {'\n'}
+              Mientras tanto, podés completar o editar tu información desde Perfil 📝💛
+            </Text>
+          </View>
+        )}
         
         {/* Bloque de categorías */}
         <View style={styles.categoriesContainer}>
@@ -273,7 +296,7 @@ const HomeScreen = () => {
 
         {/* Nuevo container de opciones */}
         <View style={styles.extraContainer}>
-          {isRouteAllowed(role, "Resenas") && (
+          {isRouteAllowed(role, "Resenas") && !isPrestadorPendiente && (
             <TouchableOpacity
               style={styles.option}
               onPress={() => navigation.navigate("Resenas")}
