@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   View, 
   Text, 
   TouchableOpacity, 
   ScrollView,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import { Ionicons } from '@expo/vector-icons';
@@ -19,10 +22,33 @@ const ValidarUsuario = ({
   onActivate, 
   onDeactivate 
 }) => {
+  const [motivoRechazo, setMotivoRechazo] = useState(usuario?.motivoRechazo || '');
+  const [isConfirmingDeactivation, setIsConfirmingDeactivation] = useState(false);
+
+  useEffect(() => {
+    if (isVisible && usuario) {
+      setMotivoRechazo(usuario?.motivoRechazo || '');
+      setIsConfirmingDeactivation(false);
+    }
+  }, [usuario, isVisible]);
+
   // Si no hay usuario, no renderizamos
   if (!usuario) return null;
 
-  // Función para determinar el estilo del estado
+  const handleDesactivarClick = () => {
+    setIsConfirmingDeactivation(true);
+  };
+
+  const handleCancelarDesactivacion = () => {
+    setIsConfirmingDeactivation(false);
+    setMotivoRechazo(usuario?.motivoRechazo || '');
+  };
+
+  const handleConfirmarDesactivacion = () => {
+    onDeactivate(motivoRechazo);
+    setIsConfirmingDeactivation(false);
+  };
+
   const getStatusStyle = (estado) => {
     if (!estado) return {
       badge: styles.statusBadge,
@@ -53,12 +79,10 @@ const ValidarUsuario = ({
     }
   };
 
-  // Obtener el label del estado
   const getStatusLabel = (estado) => {
     return ESTADOS_USUARIO_CONFIG[estado]?.label || estado;
   };
 
-  // Formatear fecha
   const formatDate = (fecha) => {
     if (!fecha) return 'No disponible';
     const date = new Date(fecha);
@@ -69,7 +93,6 @@ const ValidarUsuario = ({
     });
   };
 
-  // Obtener los estilos de estado
   const statusStyle = getStatusStyle(usuario.estado);
 
   return (
@@ -83,8 +106,12 @@ const ValidarUsuario = ({
       propagateSwipe={true}
       backdropTransitionOutTiming={0}
       useNativeDriverForBackdrop={true}
+      avoidKeyboard={true}
     >
-      <View style={styles.contentContainer}>
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.contentContainer}
+      >
         <View style={styles.handle} />
         <View style={styles.header}>
           <Text style={styles.title}>Detalles del Usuario</Text>
@@ -98,10 +125,9 @@ const ValidarUsuario = ({
           showsVerticalScrollIndicator={true}
           bounces={true}
           scrollEventThrottle={16}
+          keyboardShouldPersistTaps="handled"
         >
 
-          {/* Implementar la llamada a la API para obtener la información del usuario*/}
-          {/* Información básica */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Información Personal</Text>
             
@@ -185,25 +211,58 @@ const ValidarUsuario = ({
             </View>
           </View>
 
+          {/* Input de motivo (solo visible cuando está confirmando desactivación) */}
+          {isConfirmingDeactivation && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Motivo de rechazo</Text>
+              <TextInput
+                style={styles.motivoInput}
+                value={motivoRechazo}
+                onChangeText={setMotivoRechazo}
+                placeholder="Escribí el motivo del rechazo"
+                placeholderTextColor={colors.text.secondary}
+                multiline
+                autoFocus
+              />
+            </View>
+          )}
+
           {/* Botones de acción */}
-          <View style={styles.buttonContainer}>            
-            {usuario.estado !== ESTADOS_USUARIO.DESACTIVADO && (
-              <GuardarCancelarBtn 
-                label="Desactivar"
-                onPress={onDeactivate}
-                variant="secondary"
-              />
-            )}
-            {usuario.estado !== ESTADOS_USUARIO.ACTIVADO && (
-              <GuardarCancelarBtn 
-                label="Activar"
-                onPress={onActivate}
-                variant="primary"
-              />
+          <View style={styles.buttonContainer}>
+            {isConfirmingDeactivation ? (
+              <>
+                <GuardarCancelarBtn 
+                  label="Cancelar"
+                  onPress={handleCancelarDesactivacion}
+                  variant="secondary"
+                />
+                <GuardarCancelarBtn 
+                  label="Confirmar"
+                  onPress={handleConfirmarDesactivacion}
+                  variant="primary"
+                />
+              </>
+            ) : (
+              <>
+                {usuario.estado !== ESTADOS_USUARIO.DESACTIVADO && (
+                  <GuardarCancelarBtn 
+                    label="Desactivar"
+                    onPress={handleDesactivarClick}
+                    variant="secondary"
+                  />
+                )}
+                {usuario.estado !== ESTADOS_USUARIO.ACTIVADO && (
+                  <GuardarCancelarBtn 
+                    label="Activar"
+                    onPress={onActivate}
+                    variant="primary"
+                  />
+                )}
+              </>
             )}
           </View>
         </ScrollView>
-      </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 };
