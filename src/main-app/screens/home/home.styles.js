@@ -23,6 +23,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: 24,
     marginBottom: 5,
   },
   logo: {
@@ -67,6 +68,22 @@ export const styles = StyleSheet.create({
     paddingTop: 15,
     paddingBottom: 20,
     alignItems: 'center',
+  },
+  pendingBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginHorizontal: 20,
+    marginTop: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 12,
+    backgroundColor: '#fceeeeff',
+  },
+  pendingText: {
+    ...typography.styles.caption,
+    color: colors.text.secondary,
+    flex: 1,
   },
   categoryCard: {
     width: '45%',

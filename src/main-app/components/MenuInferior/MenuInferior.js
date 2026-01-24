@@ -5,13 +5,15 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { styles } from './MenuInferior.styles';
 import { colors } from '../../../shared/styles';
 import { useAuth } from '../../contexts';
-import { isRouteAllowed } from '../../constants/roles';
+import { isRouteAllowed, ROLES } from '../../constants/roles';
 
-// Componente reutilizable para el menú inferior
 const MenuInferior = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { role } = useAuth();
+  const { role, user } = useAuth();
+  const estadoPrestador = String(user?.estadoPrestador || '').toUpperCase();
+  const isPrestadorPendiente =
+    role === ROLES.PRESTADOR && estadoPrestador === 'PENDIENTE';
   
   // Configuración de las rutas de navegación
   const navItems = [
@@ -28,7 +30,11 @@ const MenuInferior = () => {
     }
   };
 
-  const visibleItems = navItems.filter((item) => isRouteAllowed(role, item.route));
+  const visibleItems = navItems.filter((item) => {
+    if (!isRouteAllowed(role, item.route)) return false;
+    if (isPrestadorPendiente && item.route === 'Chat') return false;
+    return true;
+  });
 
   return (
     <View style={styles.container}>

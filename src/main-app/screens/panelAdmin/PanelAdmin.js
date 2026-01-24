@@ -1,57 +1,57 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { View, FlatList, Text } from 'react-native';
+import { View, FlatList, Text, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { ScreenHeader, MenuInferior, BarraBuscador, Filtros, Paginador } from '../../components';
-import { UsuarioCard, EstadisticasCard } from './components';
+import { UsuarioCard } from './components';
 import { ESTADOS_USUARIO } from '../../constants/estadosUsuario';
 import { usePaginacion } from '../../hooks/usePaginacion';
+import { getPrestadores, updatePrestadorEstado } from '../../services';
 import { styles } from './PanelAdmin.styles';
 import ValidarUsuario from './ValidarUsuario';
 
-// Pantalla del Panel de Administrador
 const PanelAdmin = () => {
   const navigation = useNavigation();
   
-  // Estados para filtros y búsqueda
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('todos');
   const [showFilters, setShowFilters] = useState(false);
-  
-  // Estado para el bottom sheet
   const [selectedUser, setSelectedUser] = useState(null);
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
-  
-  // Implementar la llamada a la API. Estos datos son de ejemplo.
-  const [users, setUsers] = useState([
-    {
-      id: '1',
-      nombre: 'Elisa Ying',
-      email: 'elisa.ying@email.com',
-      perfil: 'Cuidador',
-      estado: ESTADOS_USUARIO.ACTIVADO,
-      fechaRegistro: '2025-06-17',
-      descripcion: 'Cuidadora profesional con 5 años de experiencia en cuidado de mascotas.'
-    },
-    {
-      id: '2',
-      nombre: 'Pedro Gómez',
-      email: 'pedro.gomez@email.com',
-      perfil: 'Veterinario',
-      estado: ESTADOS_USUARIO.PENDIENTE,
-      fechaRegistro: '2025-06-17',
-      descripcion: 'Veterinario profesional con 10 años de experiencia en cuidado de mascotas.'
-    },
-    {
-      id: '3',
-      nombre: 'María Rodríguez',
-      email: 'maria.rodriguez@email.com',
-      perfil: 'Paseador',
-      estado: ESTADOS_USUARIO.ACTIVADO,
-      fechaRegistro: '2025-06-15',
-      descripcion: 'Paseador profesional con 5 años de experiencia en cuidado de mascotas.'
-    }
-  ]);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await getPrestadores();
+        if (cancelled) return;
+        const data = Array.isArray(res?.data) ? res.data : [];
+        setUsers(data.map((u) => ({
+          id: u.id,
+          nombre: u.nombre,
+          nombreApellido: u.nombre,
+          email: u.email,
+          telefono: u.telefono,
+          ubicacion: u.ubicacion,
+          perfil: u.perfil,
+          estado: u.estado,
+          fechaRegistro: u.fechaRegistro,
+          descripcion: u.descripcion ?? '',
+          motivoRechazo: u.motivoRechazo,
+        })));
+      } catch (e) {
+        if (!cancelled) setError(e?.message ?? 'Error al cargar prestadores');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   // Calcular estadísticas
   const statistics = useMemo(() => {
@@ -115,36 +115,36 @@ const PanelAdmin = () => {
     setIsBottomSheetVisible(false);
   };
 
-  // Activar usuario
-  const handleActivateUser = () => {
+  const handleActivateUser = async () => {
     if (!selectedUser) return;
-    
-    setUsers(prevUsers => 
-      prevUsers.map(user => 
-        user.id === selectedUser.id 
-          ? { ...user, estado: ESTADOS_USUARIO.ACTIVADO } 
-          : user
-      )
-    );
-    
-    // Actualizar el usuario seleccionado
-    setSelectedUser(prev => ({ ...prev, estado: ESTADOS_USUARIO.ACTIVADO }));
+    try {
+      await updatePrestadorEstado(selectedUser.id, { estado: 'ACTIVO' });
+      const next = { ...selectedUser, estado: ESTADOS_USUARIO.ACTIVADO };
+      setUsers((prev) =>
+        prev.map((u) => (u.id === selectedUser.id ? next : u))
+      );
+      setSelectedUser(next);
+    } catch (e) {
+      alert(e?.message ?? 'Error al activar');
+    }
   };
-  
-  // Desactivar usuario
-  const handleDeactivateUser = () => {
+
+  const handleDeactivateUser = async (motivoRechazo) => {
     if (!selectedUser) return;
-    
-    setUsers(prevUsers => 
-      prevUsers.map(user => 
-        user.id === selectedUser.id 
-          ? { ...user, estado: ESTADOS_USUARIO.DESACTIVADO } 
-          : user
-      )
-    );
-    
-    // Actualizar el usuario seleccionado
-    setSelectedUser(prev => ({ ...prev, estado: ESTADOS_USUARIO.DESACTIVADO }));
+    try {
+      await updatePrestadorEstado(selectedUser.id, { estado: 'RECHAZADO', motivoRechazo });
+      const next = { 
+        ...selectedUser, 
+        estado: ESTADOS_USUARIO.DESACTIVADO,
+        motivoRechazo: motivoRechazo?.trim?.() || null,
+      };
+      setUsers((prev) =>
+        prev.map((u) => (u.id === selectedUser.id ? next : u))
+      );
+      setSelectedUser(next);
+    } catch (e) {
+      alert(e?.message ?? 'Error al desactivar');
+    }
   };
 
   // Manejar búsqueda
@@ -229,21 +229,32 @@ const PanelAdmin = () => {
 
       {/* Lista de usuarios */}
       <View style={styles.content}>
-        <FlatList
-          data={usuariosActuales}
-          renderItem={renderUser}
-          keyExtractor={(item) => item.id}
-          ItemSeparatorComponent={renderSeparator}
-          showsVerticalScrollIndicator={false}
-          bounces={true}
-          ListFooterComponent={() => (
-            <Paginador
-              paginaActual={paginaActual}
-              totalPaginas={totalPaginas}
-              onCambioPagina={manejarCambioPagina}
-            />
-          )}
-        />
+        {loading ? (
+          <View style={styles.loadingWrap}>
+            <ActivityIndicator size="large" />
+            <Text style={styles.loadingText}>Cargando prestadores</Text>
+          </View>
+        ) : error ? (
+          <View style={styles.loadingWrap}>
+            <Text style={styles.errorText}>{error}</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={usuariosActuales}
+            renderItem={renderUser}
+            keyExtractor={(item) => item.id}
+            ItemSeparatorComponent={renderSeparator}
+            showsVerticalScrollIndicator={false}
+            bounces={true}
+            ListFooterComponent={() => (
+              <Paginador
+                paginaActual={paginaActual}
+                totalPaginas={totalPaginas}
+                onCambioPagina={manejarCambioPagina}
+              />
+            )}
+          />
+        )}
       </View>
       
       {/* Bottom Sheet para validar usuario */}

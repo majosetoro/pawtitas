@@ -21,7 +21,7 @@ import { normalizeRole, ROLES } from "../../constants/roles";
 import { setAuthToken } from "../../services";
 
 const API_BASE =
-  process.env.EXPO_PUBLIC_API_BASE_URL || "http://192.168.1.5:3001";
+  process.env.EXPO_PUBLIC_API_BASE_URL || "http://192.168.1.32:3001";
 
 export default function InicioScreen({ navigation }) {
   const [form, setForm] = useState({ correo: "", password: "" });
@@ -110,25 +110,38 @@ export default function InicioScreen({ navigation }) {
 
       if (response.ok && data.success) {
         const role = normalizeRole(data?.userData?.rol, data?.admin);
+        const estadoPrestador = (data?.userData?.estadoPrestador ?? '').toUpperCase();
+        const cuentaSuspendida = data?.userData?.activo === false;
+        const estadoCuentaRechazado =
+          role === ROLES.PRESTADOR && estadoPrestador === 'RECHAZADO';
 
         setAuthFromLogin(data);
         if (data?.token) {
           setAuthToken(data.token);
         }
 
-        if (role !== ROLES.ADMIN && data?.tokenStream && data?.userData) {
-          // Inicializar el chat si el backend envía token
+        if (!estadoCuentaRechazado && !cuentaSuspendida && role !== ROLES.ADMIN && data?.tokenStream && data?.userData) {
           await initializeChat(
-            data.userData.id,      // ID único del usuario
-            data.userData.nombre,  // Nombre a mostrar
-            data.tokenStream,      // Token generado por tu backend
-            data.userData.avatar,  // URL del avatar (opcional)
+            data.userData.id,
+            data.userData.nombre,
+            data.tokenStream,
+            data.userData.avatar,
             role
           );
         }
 
         if (role === ROLES.ADMIN) {
           navigation.reset({ index: 0, routes: [{ name: "PanelAdmin" }] });
+        } else if (cuentaSuspendida) {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "EstadoCuenta", params: { type: "suspendido" } }],
+          });
+        } else if (estadoCuentaRechazado) {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "EstadoCuenta", params: { type: "rechazado" } }],
+          });
         } else if (role) {
           navigation.reset({ index: 0, routes: [{ name: "Home" }] });
         } else {

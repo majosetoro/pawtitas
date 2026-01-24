@@ -100,6 +100,7 @@ async function registerUser({
           certificaciones: certificadosFile?.name || null,
           documentos: documentosFile?.name || null,
           perfil: especialidad || null,
+          estado: 'PENDIENTE',
         },
       });
 

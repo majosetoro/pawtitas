@@ -131,6 +131,8 @@ model prestador {
   certificaciones   String?
   documentos        String?
   perfil            String
+  estado            prestador_estado    @default(PENDIENTE)
+  motivoRechazo     String?
   usuario           usuario             @relation(fields: [usuarioId], references: [id], map: "Prestador_usuarioId_fkey")
   prestadorservicio prestadorservicio[]
   reserva           reserva[]
@@ -244,4 +246,10 @@ enum reserva_estado {
   EN_PROGRESO
   FINALIZADO
   CANCELADO
+}
+
+enum prestador_estado {
+  PENDIENTE
+  ACTIVO
+  RECHAZADO
 }

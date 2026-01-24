@@ -122,6 +122,22 @@ export const styles = StyleSheet.create({
   separator: {
     height: 16,
   },
+  loadingWrap: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 40,
+  },
+  loadingText: {
+    ...typography.styles.body,
+    color: colors.text.secondary,
+    marginTop: 12,
+  },
+  errorText: {
+    ...typography.styles.body,
+    color: colors.error,
+    textAlign: 'center',
+  },
 });
 
 export default styles;

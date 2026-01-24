@@ -48,3 +48,14 @@ export async function getUserProfile(userId, role) {
   });
 }
 
+export async function getPrestadores() {
+  return apiUsuario('/api/admin/prestadores', { method: 'GET' });
+}
+
+export async function updatePrestadorEstado(usuarioId, { estado, motivoRechazo }) {
+  return apiUsuario(`/api/admin/prestadores/${usuarioId}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ estado, motivoRechazo }),
+  });
+}
+

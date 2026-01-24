@@ -13,7 +13,6 @@ export const styles = StyleSheet.create({
     paddingTop: 20,
     paddingHorizontal: 16,
     maxHeight: '85%',
-    flex: 1,
   },
   handle: {
     width: 40,
@@ -90,6 +89,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     gap: 12,
+    paddingTop: 16,
   },
   button: {
     flex: 1,
@@ -110,6 +110,7 @@ export const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
+    paddingBottom: 20,
   },
   statusBadge: {
     paddingHorizontal: 10,
@@ -138,6 +139,17 @@ export const styles = StyleSheet.create({
   },
   inactiveStatusText: {
     color: colors.error,
+  },
+  motivoInput: {
+    ...typography.styles.body,
+    borderWidth: 1,
+    borderColor: colors.border.light,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    minHeight: 80,
+    color: colors.text.primary,
+    backgroundColor: colors.surface,
   },
   // Estilos para servicios ofrecidos
   servicesContainer: {
