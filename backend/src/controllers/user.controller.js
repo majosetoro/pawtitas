@@ -60,6 +60,7 @@ async function getPerfilController(req, res) {
       apellido: usuario.apellido,
       email: usuario.email,
       celular: usuario.celular,
+      activo: usuario.activo,
       rol: usuario.rol,
       domicilio: usuario.domicilio
         ? {
@@ -86,6 +87,8 @@ async function getPerfilController(req, res) {
       if (servicio?.precio != null) userData.precio = servicio.precio;
       if (servicio?.duracion) userData.duracion = servicio.duracion;
       if (servicio?.disponible != null) userData.serviceActive = Boolean(servicio.disponible);
+      userData.estadoPrestador = prestador?.estado ?? 'PENDIENTE';
+      userData.motivoRechazo = prestador?.motivoRechazo ?? null;
     }
 
     return res.json({ success: true, userData });
@@ -269,7 +272,9 @@ async function updatePerfilController(req, res) {
     let precioServicio = null;
     let duracionServicio = null;
     let estadoServicio = null;
-    
+    let estadoPrestadorVal = null;
+    let motivoRechazoVal = null;
+
     if (updatedUser?.rol === 'PRESTADOR') {
       const prestador = await prisma.prestador.findUnique({
         where: { usuarioId: userId },
@@ -281,42 +286,51 @@ async function updatePerfilController(req, res) {
           },
         },
       });
-      const servicio = prestador?.prestadorservicio?.[0]?.servicio || null;
-      descripcionServicio = servicio?.descripcion || null;
-      perfilServicio = prestador?.perfil || null;
-      horariosServicio = servicio?.horarios || null;
-      tipoMascotaServicio = servicio?.tipoMascota || null;
-      precioServicio = servicio?.precio ?? null;
-      duracionServicio = servicio?.duracion || null;
-      estadoServicio = servicio?.disponible ?? null;
+    
+      const { perfil, estado = 'PENDIENTE', motivoRechazo = null, prestadorservicio } = prestador ?? {};
+      const servicio = prestadorservicio?.[0]?.servicio ?? {};
+    
+      descripcionServicio   = servicio.descripcion   ?? null;
+      perfilServicio        = perfil                 ?? null;
+      horariosServicio      = servicio.horarios      ?? null;
+      tipoMascotaServicio   = servicio.tipoMascota   ?? null;
+      precioServicio        = servicio.precio        ?? null;
+      duracionServicio      = servicio.duracion      ?? null;
+      estadoServicio        = servicio.disponible    ?? null;
+      estadoPrestadorVal    = estado;
+      motivoRechazoVal      = motivoRechazo;
+    }    
+
+    const userDataResponse = {
+      id: updatedUser.id?.toString?.() || updatedUser.id,
+      nombre: updatedUser.nombre,
+      apellido: updatedUser.apellido,
+      email: updatedUser.email,
+      celular: updatedUser.celular,
+      activo: updatedUser.activo,
+      rol: updatedUser.rol,
+      descripcion: descripcionServicio || (normalizedRole === 'duenio' ? descripcion : undefined),
+      perfil: perfilServicio || undefined,
+      horarios: horariosServicio || undefined,
+      tipoMascota: tipoMascotaServicio || undefined,
+      precio: precioServicio ?? undefined,
+      duracion: duracionServicio || undefined,
+      serviceActive: estadoServicio ?? undefined,
+      domicilio: updatedUser.domicilio
+        ? {
+            calle: updatedUser.domicilio.calle,
+            numero: updatedUser.domicilio.numero,
+            ciudad: updatedUser.domicilio.ciudad,
+          }
+        : null,
+      creadoEn: updatedUser.creadoEn,
+    };
+    if (updatedUser?.rol === 'PRESTADOR') {
+      userDataResponse.estadoPrestador = estadoPrestadorVal;
+      userDataResponse.motivoRechazo = motivoRechazoVal;
     }
 
-    return res.json({
-      success: true,
-      userData: {
-        id: updatedUser.id?.toString?.() || updatedUser.id,
-        nombre: updatedUser.nombre,
-        apellido: updatedUser.apellido,
-        email: updatedUser.email,
-        celular: updatedUser.celular,
-        rol: updatedUser.rol,
-        descripcion: descripcionServicio || (normalizedRole === 'duenio' ? descripcion : undefined),
-        perfil: perfilServicio || undefined,
-        horarios: horariosServicio || undefined,
-        tipoMascota: tipoMascotaServicio || undefined,
-        precio: precioServicio ?? undefined,
-        duracion: duracionServicio || undefined,
-        serviceActive: estadoServicio ?? undefined,
-        domicilio: updatedUser.domicilio
-          ? {
-              calle: updatedUser.domicilio.calle,
-              numero: updatedUser.domicilio.numero,
-              ciudad: updatedUser.domicilio.ciudad,
-            }
-          : null,
-        creadoEn: updatedUser.creadoEn,
-      },
-    });
+    return res.json({ success: true, userData: userDataResponse });
   } catch (err) {
     if (err.code === 'P2002') {
       return res.status(409).json({ success: false, message: 'Email ya registrado' });
