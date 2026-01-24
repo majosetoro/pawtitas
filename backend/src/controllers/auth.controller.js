@@ -49,6 +49,7 @@ async function loginController(req, res) {
       apellido: usuario.apellido,
       email: usuario.email,
       celular: usuario.celular,
+      activo: usuario.activo,
       rol: usuario.rol,
       domicilio: usuario.domicilio
         ? {
@@ -60,18 +61,22 @@ async function loginController(req, res) {
       creadoEn: usuario.creadoEn,
     };
 
-    // Agregar datos del servicio si es prestador
-    if (usuario.rol === 'PRESTADOR') {
-      const prestador = await prestadorRepo.findByUsuarioId(usuario.id);
-      const servicio = prestador?.prestadorservicio?.[0]?.servicio || null;
-      
-      if (servicio?.descripcion) userData.descripcion = servicio.descripcion;
-      if (prestador?.perfil) userData.perfil = prestador.perfil;
-      if (servicio?.tipoMascota) userData.tipoMascota = servicio.tipoMascota;
-      if (servicio?.horarios) userData.horarios = servicio.horarios;
-      if (servicio?.precio != null) userData.precio = servicio.precio;
-      if (servicio?.disponible != null) userData.serviceActive = Boolean(servicio.disponible);
-    }
+  // Agregar datos del servicio si es prestador
+  if (usuario.rol === 'PRESTADOR') {
+    const prestador = await prestadorRepo.findByUsuarioId(usuario.id);
+    const servicio = prestador?.prestadorservicio?.[0]?.servicio;
+
+    Object.assign(userData, {
+      descripcion: servicio?.descripcion ?? userData.descripcion,
+      perfil: prestador?.perfil ?? userData.perfil,
+      tipoMascota: servicio?.tipoMascota ?? userData.tipoMascota,
+      horarios: servicio?.horarios ?? userData.horarios,
+      precio: servicio?.precio ?? userData.precio,
+      serviceActive: servicio?.disponible != null ? Boolean(servicio.disponible) : userData.serviceActive,
+      estadoPrestador: prestador?.estado ?? 'PENDIENTE',
+      motivoRechazo: prestador?.motivoRechazo ?? null,
+    });
+  }
 
     return res.json({ success: true, admin: false, user: true, userData });
   } catch (e) {
