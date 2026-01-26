@@ -4,20 +4,23 @@ import { colors } from "../../shared/styles";
 const styles = StyleSheet.create({
   footer: {
     backgroundColor: colors.surface,
-    paddingVertical: 20,
+    paddingVertical: 24,
     paddingHorizontal: 20,
     marginTop: 60,
     borderTopWidth: 1,
     borderTopColor: colors.border.light,
   },
+
   container: {
     maxWidth: 1200,
     width: "100%",
     alignSelf: "center",
-    alignItems: "center",
-    gap: 6,
+    alignItems: "stretch", // ← importante
+    gap: 12,
   },
-  
+
+  /* ---------- MAIN CONTENT ---------- */
+
   mainContent: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -26,68 +29,82 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: 16,
   },
-  
-  // Marca minimalista
+
+  mainContentMobile: {
+    flexDirection: "column",
+    alignItems: "center",
+    textAlign: "center",
+  },
+
+  /* ---------- BRAND ---------- */
+
   brandSection: {
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
+    flexShrink: 1,
   },
+
   logo: {
     width: 40,
     height: 40,
   },
+
   brandText: {
     flexDirection: "column",
-    gap: 1,
+    flexShrink: 1,
   },
+
   appName: {
     fontSize: 20,
     fontWeight: "700",
     color: colors.brand.accentLanding,
-    letterSpacing: 0.5,
   },
+
   tagline: {
     fontSize: 14,
     color: colors.text.secondary,
-    fontWeight: "400",
     opacity: 0.85,
+    flexShrink: 1,
+    flexWrap: "wrap",
   },
-  
-  // Links de navegación
+
+  /* ---------- LINKS ---------- */
+
   navLinks: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 12,
     flexWrap: "wrap",
+    gap: 12,
   },
+
   linkText: {
     fontSize: 14,
     color: colors.text.secondary,
-    fontWeight: "500",
   },
+
   separator: {
     fontSize: 14,
     color: colors.text.disabled,
   },
-  
-  // Redes sociales
+
+  /* ---------- SOCIALS ---------- */
+
   socials: {
     flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
+    gap: 14,
   },
-  
-  // Copyright
+
+  /* ---------- COPYRIGHT ---------- */
+
   copyright: {
     fontSize: 12,
     color: colors.text.secondary,
-    fontWeight: "400",
     textAlign: "center",
     opacity: 0.8,
+    marginTop: 8,
   },
 });
 
 export default styles;
-
