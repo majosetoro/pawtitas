@@ -6,101 +6,152 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.backgroundLanding,
   },
+
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: colors.background,
   },
+
   loadingText: {
     fontSize: 16,
     color: colors.text.secondary,
     marginTop: 16,
   },
-  header: {
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(0, 0, 0, 0.1)",
-    flexWrap: "wrap",
-  },
-  navContainer: {
-    maxWidth: 1200,
-    width: "100%",
-    alignSelf: "center",
-    paddingHorizontal: 20,
-  },
-  logo: {
-    ...typography.styles.h1,
-    color: colors.brand.logo,
-    textAlign: "center",
-    marginVertical: 10,
-    marginBottom: 0,
-  },
-  navMenu: {
-    flexDirection: "row",
-    gap: 24,
-    alignItems: "center",
-    flexWrap: "wrap",
-    justifyContent: "center",
-  },
-  navItem: {
-    fontSize: 12,
-    color: colors.text.secondary,
-    fontWeight: "500",
-    textTransform: "uppercase",
-    letterSpacing: 1.2,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-  },
+
+  /* ================= HEADER ================= */
+
+header: {
+  paddingHorizontal: 20,
+  paddingVertical: 20,
+  justifyContent: "center",
+  alignItems: "center", 
+  borderBottomWidth: 1,
+  borderBottomColor: "rgba(0,0,0,0.1)",
+  width: "100%", 
+},
+
+navContainer: {
+  maxWidth: 1200,
+  width: "100%",
+  alignSelf: "center",
+  alignItems: "center",   
+  justifyContent: "center",
+},
+
+
+/* Desktop */
+navMenu: {
+  flexDirection: "row",
+  gap: 24,
+  alignItems: "center",
+  justifyContent: "center",
+  flexWrap: "wrap",
+  alignSelf: "center", 
+},
+
+/* Mobile */
+navMenuMobile: {
+  flexDirection: "column",
+  alignItems: "center",  
+  justifyContent: "center",
+  gap: 14,
+},
+
+
+navItem: {
+  fontSize: 12,
+  color: colors.text.secondary,
+  fontWeight: "500",
+  textTransform: "uppercase",
+  letterSpacing: 1.2,
+  paddingVertical: 8,
+  paddingHorizontal: 16,
+  textAlign: "center", 
+},
+
+navItemMobile: {
+  textAlign: "center",
+  paddingHorizontal: 0,
+},
+
+logo: {
+  ...typography.styles.h1,
+  color: colors.brand.logo,
+  textAlign: "center",
+  marginVertical: 10,
+  alignSelf: "center", 
+},
+
+  /* ================= HERO ================= */
+
   hero: {
     alignItems: "center",
     paddingHorizontal: 20,
     paddingVertical: 30,
-    textAlign: "center",
   },
+
   heroTitle: {
     ...typography.styles.h2,
+    textAlign: "center",
     color: colors.text.primary,
     marginBottom: 10,
-    textAlign: "center",
   },
+
   highlight: {
     color: colors.brand.accentLanding,
   },
+
   heroSubtitle: {
     ...typography.styles.body,
-    color: colors.text.secondary,
-    marginBottom: 16,
     textAlign: "center",
     maxWidth: 600,
-    lineHeight: 22,
+    marginBottom: 16,
     fontSize: 16,
+    color: colors.text.secondary,
   },
+
+  heroImage: {
+    width: "100%",
+    height: 200,
+    marginVertical: 20,
+  },
+
+  /* ================= BUTTONS ================= */
+
   buttonRow: {
     flexDirection: "row",
-    gap: 10,
+    gap: 12,
     marginBottom: 20,
   },
+
+  buttonRowMobile: {
+    flexDirection: "column",
+    width: "100%",
+    alignItems: "center",
+  },
+
   button: {
     paddingVertical: 14,
     paddingHorizontal: 28,
     borderRadius: 25,
     borderWidth: 2,
   },
+
   playStore: {
     backgroundColor: colors.button.playStore,
   },
+
   appStore: {
     backgroundColor: colors.button.appStore,
     borderWidth: 0,
   },
+
   appStoreContainer: {
     position: "relative",
   },
+
   comingSoonBadge: {
     position: "absolute",
     top: -8,
@@ -109,32 +160,19 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     paddingHorizontal: 8,
     borderRadius: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-    elevation: 3,
   },
+
   comingSoonText: {
     fontSize: 10,
     fontWeight: "700",
     color: colors.text.primary,
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
   },
+
   buttonText: {
     ...typography.styles.button,
     color: colors.text.inverse,
     textAlign: "center",
-    fontWeight: "600",
-  },
-  heroImage: {
-    width: "100%",
-    height: 200,
-    marginTop: 5,
-    marginBottom: 20,
   },
 });
 
 export default styles;
-
