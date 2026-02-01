@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const prisma = require('../config/prisma');
 const usuarioRepo = require('../repositories/usuario.repo');
 const prestadorRepo = require('../repositories/prestador.repo');
+const mascotaRepo = require('../repositories/mascota.repo');
 const { registerUser } = require('../services/registro.service');
 
 // Login
@@ -60,6 +61,14 @@ async function loginController(req, res) {
         : null,
       creadoEn: usuario.creadoEn,
     };
+
+    if (usuario.rol === 'DUENIO' && usuario.duenio) {
+      userData.duenioId = usuario.duenio.id?.toString?.() || usuario.duenio.id;
+      
+      // Contar las mascotas del dueño
+      const mascotas = await mascotaRepo.findByDuenioId(usuario.duenio.id);
+      userData.petsCount = mascotas.length;
+    }
 
   // Agregar datos del servicio si es prestador
   if (usuario.rol === 'PRESTADOR') {
