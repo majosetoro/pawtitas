@@ -4,6 +4,7 @@ const usuarioRepo = require('../repositories/usuario.repo');
 const prestadorRepo = require('../repositories/prestador.repo');
 const duenioRepo = require('../repositories/duenio.repo');
 const servicioRepo = require('../repositories/servicio.repo');
+const mascotaRepo = require('../repositories/mascota.repo');
 const { splitNombreApellido } = require('../utils/strings');
 const { descomponerUbicacion } = require('../utils/ubicacion');
 const {
@@ -72,8 +73,15 @@ async function getPerfilController(req, res) {
       creadoEn: usuario.creadoEn,
     };
 
-    if (usuario.rol === 'DUENIO' && usuario.duenio?.comentarios) {
-      userData.descripcion = usuario.duenio.comentarios;
+    if (usuario.rol === 'DUENIO' && usuario.duenio) {
+      userData.duenioId = usuario.duenio.id?.toString?.() || usuario.duenio.id;
+      if (usuario.duenio.comentarios) {
+        userData.descripcion = usuario.duenio.comentarios;
+      }
+      
+      // Contar las mascotas del dueño
+      const mascotas = await mascotaRepo.findByDuenioId(usuario.duenio.id);
+      userData.petsCount = mascotas.length;
     }
 
     if (usuario.rol === 'PRESTADOR') {
