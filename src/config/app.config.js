@@ -17,6 +17,8 @@ const baseConfig = {
     resizeMode: "contain"
   },
   plugins: [
+    "expo-font",
+    "@react-native-community/datetimepicker",
     [
       "expo-location",
       {
