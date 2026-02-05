@@ -348,7 +348,90 @@ async function updatePerfilController(req, res) {
   }
 }
 
+// Listar prestadores activos con filtros
+async function listPrestadoresController(req, res) {
+  try {
+    const filtros = buildFiltros(req.query);
+    const prestadores = await prestadorRepo.findActivosConFiltros(filtros);
+    const result = prestadores.map(mapPrestadorToDTO);
+
+    return res.json({ success: true, data: result });
+  } catch (err) {
+    console.error('listPrestadores error', err);
+    return res.status(500).json({ 
+      success: false, 
+      message: 'Error al listar prestadores' 
+    });
+  }
+}
+
+function buildFiltros({ perfil, ciudad } = {}) {
+  const filtros = {};
+  
+  if (perfil) filtros.perfil = String(perfil).toLowerCase();
+  if (ciudad) filtros.ciudad = String(ciudad);
+  
+  return filtros;
+}
+
+function mapPrestadorToDTO(prestador) {
+  const { usuario, prestadorservicio = [] } = prestador;
+  const servicioMain = prestadorservicio[0]?.servicio;
+
+  return {
+    id: toStringId(prestador.id),
+    usuarioId: toStringId(usuario?.id),
+    nombre: usuario?.nombre || '',
+    apellido: usuario?.apellido || '',
+    nombreCompleto: buildNombreCompleto(usuario),
+    email: usuario?.email || '',
+    celular: usuario?.celular || '',
+    perfil: prestador.perfil || '',
+    domicilio: mapDomicilio(usuario?.domicilio),
+    servicio: mapServicio(servicioMain),
+    fechaIngreso: prestador.fechaIngreso,
+  };
+}
+
+function buildNombreCompleto(usuario) {
+  return [usuario?.nombre, usuario?.apellido]
+    .filter(Boolean)
+    .join(' ')
+    .trim() || 'Sin nombre';
+}
+
+function mapDomicilio(domicilio) {
+  if (!domicilio) return null;
+
+  const { calle, numero, ciudad } = domicilio;
+  return {
+    calle,
+    numero,
+    ciudad,
+    ubicacion: [calle, numero, ciudad].filter(Boolean).join(', '),
+  };
+}
+
+function mapServicio(servicio) {
+  if (!servicio) return null;
+
+  return {
+    id: toStringId(servicio.id),
+    descripcion: servicio.descripcion || '',
+    precio: servicio.precio || 0,
+    horarios: servicio.horarios || '',
+    tipoMascota: servicio.tipoMascota || '',
+    duracion: servicio.duracion || '',
+    disponible: Boolean(servicio.disponible),
+  };
+}
+
+function toStringId(id) {
+  return id?.toString?.() || id;
+}
+
 module.exports = {
   getPerfilController,
   updatePerfilController,
+  listPrestadoresController,
 };
