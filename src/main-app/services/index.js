@@ -3,5 +3,5 @@
 
 export * from './osmService';
 export * from './api/apiUsuario';
+export * from './api/apiMascota';
 export * from './registroService';
-

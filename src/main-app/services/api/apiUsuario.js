@@ -59,3 +59,14 @@ export async function updatePrestadorEstado(usuarioId, { estado, motivoRechazo }
   });
 }
 
+export async function getPrestadoresPorPerfil(perfil, ciudad = null) {
+  const params = new URLSearchParams();
+  if (perfil) params.append('perfil', perfil);
+  if (ciudad) params.append('ciudad', ciudad);
+  
+  const queryString = params.toString();
+  const url = `/api/prestadores${queryString ? `?${queryString}` : ''}`;
+  
+  return apiUsuario(url, { method: 'GET' });
+}
+

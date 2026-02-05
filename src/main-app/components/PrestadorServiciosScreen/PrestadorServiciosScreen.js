@@ -14,7 +14,6 @@ import { useLocation } from '../../contexts';
 import { usePaginacion } from '../../hooks/usePaginacion';
 import { styles } from './PrestadorServiciosScreen.styles';
 
-// Filtros
 const FILTROS_DATA = [
   { key: 'cercania', label: 'Más cercanos' },
   { key: 'mejor-calificacion', label: 'Mejor calificación' },
@@ -28,23 +27,25 @@ const PrestadorServiciosScreen = ({
   screenTitle,
   screenSubtitle
 }) => {
+  const { userLocation, getDistanceFromUser, isLocationEnabled } = useLocation();
+  
+  // Filtro por defecto: 'cercania' si hay ubicación activada, sino 'mejor-calificacion'
+  const defaultFilter = isLocationEnabled && userLocation ? 'cercania' : 'mejor-calificacion';
+  
   const [searchText, setSearchText] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState('cercania');
+  const [selectedFilter, setSelectedFilter] = useState(defaultFilter);
   const [showFilters, setShowFilters] = useState(false);
   const [selectedProvider, setSelectedProvider] = useState(null);
   const [showDetalles, setShowDetalles] = useState(false);
 
-  const { userLocation, getDistanceFromUser } = useLocation();
-
-  /**
-   * Filtrar y ordenar proveedores basado en búsqueda y filtro seleccionado
-   */
+  // Filtrar y ordenar proveedores basado en búsqueda y filtro seleccionado
+   
   const filteredProviders = useMemo(() => {
     let filtered = providers;
 
     // Distancia a cada proveedor si tiene coordenadas y hay ubicación del usuario
     filtered = filtered.map(provider => {
-      if (provider.latitude && provider.longitude && userLocation) {
+      if (provider.latitude != null && provider.longitude != null && userLocation) {
         const distance = getDistanceFromUser(provider.latitude, provider.longitude);
         return { ...provider, distance };
       }
@@ -97,6 +98,13 @@ const PrestadorServiciosScreen = ({
   useEffect(() => {
     reiniciarPagina();
   }, [searchText, selectedFilter]);
+
+  // Cambiar a filtro de cercanía cuando se active la ubicación
+  useEffect(() => {
+    if (isLocationEnabled && userLocation && selectedFilter !== 'cercania') {
+      setSelectedFilter('cercania');
+    }
+  }, [isLocationEnabled, userLocation]);
 
   const handleSearchChange = (text) => {
     setSearchText(text);

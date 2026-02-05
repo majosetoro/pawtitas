@@ -4,6 +4,7 @@ export { PrestadorServiciosDetailsController } from './MisConexionesController/P
 export { CalendarioPagoController, CALENDARIO_CONFIG } from './MisConexionesController/CalendarioPagoController';
 export { ChatController, CHAT_CONFIG, MOCK_CHAT_USERS } from './ChatController/ChatController';
 export { MapaController, MAPA_CONFIG } from './MapaController/MapaController';
+export { PrestadorController } from './PrestadorController';
 export {
   RegistroController,
   REGISTRO_CONFIG,
