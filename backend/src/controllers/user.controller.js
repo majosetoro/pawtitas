@@ -12,6 +12,7 @@ const {
   buildHorariosFromAvailability,
   buildTipoMascotaFromPetTypes,
 } = require('../utils/mappers');
+const { getCoordinatesForDomicilio } = require('../services/geocoding.service');
 
 // Obtener perfil de usuario
 async function getPerfilController(req, res) {
@@ -273,6 +274,32 @@ async function updatePerfilController(req, res) {
       include: { domicilio: true },
     });
 
+    // Geocodificar domicilio si se actualizó la ubicación
+    if (ubicacion && updatedUser?.domicilioId) {
+      try {
+        const coords = await getCoordinatesForDomicilio({
+          calle,
+          numero,
+          ciudad,
+        });
+
+        if (!coords) return;
+
+        await prisma.domicilio.update({
+          where: { id: updatedUser.domicilioId },
+          data: {
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+          },
+        });
+      } catch (error) {
+        console.warn(
+          'Geocoding domicilio falló:',
+          error?.message ?? error
+        );
+      }
+    }
+
     let descripcionServicio = null;
     let perfilServicio = null;
     let horariosServicio = null;
@@ -348,86 +375,68 @@ async function updatePerfilController(req, res) {
   }
 }
 
-// Listar prestadores activos con filtros
 async function listPrestadoresController(req, res) {
   try {
-    const filtros = buildFiltros(req.query);
+    const { perfil, ciudad } = req.query ?? {};
+
+    const filtros = {
+      ...(perfil && { perfil: String(perfil).toLowerCase() }),
+      ...(ciudad && { ciudad: String(ciudad) }),
+    };
+
     const prestadores = await prestadorRepo.findActivosConFiltros(filtros);
-    const result = prestadores.map(mapPrestadorToDTO);
+
+    const result = prestadores.map((p) => {
+      const { usuario, perfil, fechaIngreso, prestadorservicio = [] } = p;
+      const { domicilio } = usuario ?? {};
+
+      const servicioMain = prestadorservicio[0]?.servicio;
+
+      return {
+        id: String(p.id),
+        usuarioId: usuario?.id ? String(usuario.id) : null,
+
+        nombre: usuario?.nombre ?? '',
+        apellido: usuario?.apellido ?? '',
+        nombreCompleto:
+          [usuario?.nombre, usuario?.apellido].filter(Boolean).join(' ') || 'Sin nombre',
+
+        email: usuario?.email ?? '',
+        celular: usuario?.celular ?? '',
+        perfil: perfil ?? '',
+
+        domicilio: domicilio && {
+          calle: domicilio.calle ?? '',
+          numero: domicilio.numero ?? '',
+          ciudad: domicilio.ciudad ?? '',
+          ubicacion: [domicilio.calle, domicilio.numero, domicilio.ciudad]
+            .filter(Boolean)
+            .join(', '),
+          latitude: domicilio.latitude ?? null,
+          longitude: domicilio.longitude ?? null,
+        },
+
+        servicio: servicioMain && {
+          id: String(servicioMain.id),
+          descripcion: servicioMain.descripcion ?? '',
+          precio: servicioMain.precio ?? 0,
+          horarios: servicioMain.horarios ?? '',
+          tipoMascota: servicioMain.tipoMascota ?? '',
+          duracion: servicioMain.duracion ?? '',
+          disponible: Boolean(servicioMain.disponible),
+        },
+
+        fechaIngreso,
+      };
+    });
 
     return res.json({ success: true, data: result });
-  } catch (err) {
-    console.error('listPrestadores error', err);
-    return res.status(500).json({ 
-      success: false, 
-      message: 'Error al listar prestadores' 
-    });
+  } catch (error) {
+    console.error('listPrestadores error', error);
+    return res
+      .status(500)
+      .json({ success: false, message: 'Error al listar prestadores' });
   }
-}
-
-function buildFiltros({ perfil, ciudad } = {}) {
-  const filtros = {};
-  
-  if (perfil) filtros.perfil = String(perfil).toLowerCase();
-  if (ciudad) filtros.ciudad = String(ciudad);
-  
-  return filtros;
-}
-
-function mapPrestadorToDTO(prestador) {
-  const { usuario, prestadorservicio = [] } = prestador;
-  const servicioMain = prestadorservicio[0]?.servicio;
-
-  return {
-    id: toStringId(prestador.id),
-    usuarioId: toStringId(usuario?.id),
-    nombre: usuario?.nombre || '',
-    apellido: usuario?.apellido || '',
-    nombreCompleto: buildNombreCompleto(usuario),
-    email: usuario?.email || '',
-    celular: usuario?.celular || '',
-    perfil: prestador.perfil || '',
-    domicilio: mapDomicilio(usuario?.domicilio),
-    servicio: mapServicio(servicioMain),
-    fechaIngreso: prestador.fechaIngreso,
-  };
-}
-
-function buildNombreCompleto(usuario) {
-  return [usuario?.nombre, usuario?.apellido]
-    .filter(Boolean)
-    .join(' ')
-    .trim() || 'Sin nombre';
-}
-
-function mapDomicilio(domicilio) {
-  if (!domicilio) return null;
-
-  const { calle, numero, ciudad } = domicilio;
-  return {
-    calle,
-    numero,
-    ciudad,
-    ubicacion: [calle, numero, ciudad].filter(Boolean).join(', '),
-  };
-}
-
-function mapServicio(servicio) {
-  if (!servicio) return null;
-
-  return {
-    id: toStringId(servicio.id),
-    descripcion: servicio.descripcion || '',
-    precio: servicio.precio || 0,
-    horarios: servicio.horarios || '',
-    tipoMascota: servicio.tipoMascota || '',
-    duracion: servicio.duracion || '',
-    disponible: Boolean(servicio.disponible),
-  };
-}
-
-function toStringId(id) {
-  return id?.toString?.() || id;
 }
 
 module.exports = {
