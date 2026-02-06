@@ -77,4 +77,23 @@ export const styles = StyleSheet.create({
   separator: {
     height: 16,
   },
+  emptyState: {
+    flex: 1,
+    paddingVertical: 60,
+    paddingHorizontal: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyTitle: {
+    ...typography.styles.h3,
+    color: colors.text.primary,
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  emptySubtitle: {
+    ...typography.styles.body,
+    color: colors.text.secondary,
+    textAlign: 'center',
+    lineHeight: 22,
+  },
 });

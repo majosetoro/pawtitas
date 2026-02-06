@@ -1,7 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { 
-  ScrollView, 
-} from 'react-native';
+import { ScrollView, View, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ScreenHeader from '../ScreenHeader';
 import BarraBuscador from '../BarraBuscador/BarraBuscador';
@@ -19,6 +17,12 @@ const FILTROS_DATA = [
   { key: 'mejor-calificacion', label: 'Mejor calificación' },
   { key: 'mejor-precio', label: 'Mejor precio' },
 ];
+
+const EMPTY_MESSAGES = {
+  cuidador: { title: 'Aún no hay cuidadores', subtitle: 'Pronto tendremos cuidadores verificados en tu zona.' },
+  paseador: { title: 'Aún no hay paseadores', subtitle: 'Pronto tendremos paseadores verificados en tu zona.' },
+  'médico o clínica veterinaria': { title: 'Aún no hay profesionales de salud', subtitle: 'Pronto tendremos médicos y clínicas veterinarias en tu zona.' },
+};
 
 const PrestadorServiciosScreen = ({ 
   navigation, 
@@ -64,7 +68,7 @@ const PrestadorServiciosScreen = ({
       case 'cercania':
         filtered = filtered.sort((a, b) => {
           if (a.distance === null && b.distance === null) return 0;
-          if (a.distance === null) return 1; // Los sin distancia van al final
+          if (a.distance === null) return 1; // Sin distancia van al final
           if (b.distance === null) return -1;
           return a.distance - b.distance; // Ordenar de menor a mayor distancia
         });
@@ -128,7 +132,6 @@ const PrestadorServiciosScreen = ({
   };
 
   const handleResenas = (provider) => {
-    // Navegar a pantalla de reseñas del prestador
     console.log('Ver reseñas de:', provider.nombre);
     handleCloseDetalles();
   };
@@ -143,6 +146,13 @@ const PrestadorServiciosScreen = ({
     navigation.goBack();
   };
 
+  const isEmptyCategory = providers.length === 0;
+  const showEmptyState = itemsActuales.length === 0;
+
+  const emptyMessage = isEmptyCategory
+    ? (EMPTY_MESSAGES[providerType] || { title: 'No hay prestadores', subtitle: 'Vuelve más tarde.' })
+    : { title: 'No hay resultados', subtitle: 'Prueba con otros términos de búsqueda.' };
+
   return (
     <SafeAreaView style={styles.container}>
 
@@ -153,7 +163,6 @@ const PrestadorServiciosScreen = ({
         onBackPress={handleBackPress}
       />
 
-      {/* Barra de búsqueda */}
       <BarraBuscador
         value={searchText}
         onChangeText={handleSearchChange}
@@ -162,7 +171,6 @@ const PrestadorServiciosScreen = ({
         filterIcon="menu-outline"
       />
 
-      {/* Filtros */}
       <Filtros
         filters={FILTROS_DATA}
         selectedFilter={selectedFilter}
@@ -170,30 +178,36 @@ const PrestadorServiciosScreen = ({
         visible={showFilters}
       />
 
-      {/* Lista de prestadores */}
-      <ScrollView 
+      <ScrollView
         style={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        {itemsActuales.map((provider) => (
-          <PrestadorServiciosCard
-            key={provider.id}
-            provider={provider}
-            providerType={providerType}
-            onPress={() => handleProviderPress(provider)}
-          />
-        ))}
-        <Paginador
-          paginaActual={paginaActual}
-          totalPaginas={totalPaginas}
-          onCambioPagina={manejarCambioPagina}
-        />
+        {showEmptyState ? (
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyTitle}>{emptyMessage.title}</Text>
+            <Text style={styles.emptySubtitle}>{emptyMessage.subtitle}</Text>
+          </View>
+        ) : (
+          <>
+            {itemsActuales.map((provider) => (
+              <PrestadorServiciosCard
+                key={provider.id}
+                provider={provider}
+                providerType={providerType}
+                onPress={() => handleProviderPress(provider)}
+              />
+            ))}
+            <Paginador
+              paginaActual={paginaActual}
+              totalPaginas={totalPaginas}
+              onCambioPagina={manejarCambioPagina}
+            />
+          </>
+        )}
       </ScrollView>
       
-      {/* Bottom Navbar */}
       <MenuInferior />
 
-      {/* Bottom Sheet de Detalles del Prestador */}
       <PrestadorServiciosDetails
         visible={showDetalles}
         provider={selectedProvider}
