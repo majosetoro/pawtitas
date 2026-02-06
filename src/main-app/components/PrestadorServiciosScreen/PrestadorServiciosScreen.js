@@ -39,7 +39,6 @@ const PrestadorServiciosScreen = ({
   const [showDetalles, setShowDetalles] = useState(false);
 
   // Filtrar y ordenar proveedores basado en búsqueda y filtro seleccionado
-   
   const filteredProviders = useMemo(() => {
     let filtered = providers;
 

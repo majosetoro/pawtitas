@@ -35,15 +35,14 @@ export class PrestadorController {
     return {
       id: id?.toString() || '',
       nombre: nombreCompleto || 'Sin nombre',
-      rating: 0, // Implementar sistema de reseñas
+      rating: 0, // TODO: Implementar sistema de ratings
       descripcion: servicio?.descripcion || 'Sin descripción',
       precio: this.formatPrecio(servicio?.precio),
       ubicacion: domicilio?.ubicacion || 'No especificado',
       disponibilidad: servicio?.horarios || 'A convenir',
       horario: servicio?.duracion || 'A convenir',
-      // Coordenadas (se agregan en frontend vía geocoding)
-      latitude: null,
-      longitude: null,
+      latitude: domicilio?.latitude ?? null,
+      longitude: domicilio?.longitude ?? null,
       tipo: perfil || '',
       celular: celular || '',
       tipoMascota: servicio?.tipoMascota || '',
