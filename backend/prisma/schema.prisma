@@ -28,12 +28,14 @@ model chat {
 }
 
 model domicilio {
-  id      BigInt    @id @default(autoincrement())
-  calle   String
-  numero  String
-  ciudad  String
-  persona persona[]
-  usuario usuario[]
+  id        BigInt    @id @default(autoincrement())
+  calle     String
+  numero    String
+  ciudad    String
+  latitude  Float?
+  longitude Float?
+  persona   persona[]
+  usuario   usuario[]
 
   @@map("Domicilio")
 }
