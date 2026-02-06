@@ -35,22 +35,29 @@ export class PrestadorController {
     return {
       id: id?.toString() || '',
       nombre: nombreCompleto || 'Sin nombre',
-      rating: 0, // Implementar sistema de reseñas
+      rating: 0, // TODO: Implementar sistema de ratings
       descripcion: servicio?.descripcion || 'Sin descripción',
       precio: this.formatPrecio(servicio?.precio),
       ubicacion: domicilio?.ubicacion || 'No especificado',
       disponibilidad: servicio?.horarios || 'A convenir',
       horario: servicio?.duracion || 'A convenir',
-      // Coordenadas (se agregan en frontend vía geocoding)
-      latitude: null,
-      longitude: null,
+      // Coordenadas desde backend (geocoding al guardar domicilio)
+      latitude: domicilio?.latitude ?? null,
+      longitude: domicilio?.longitude ?? null,
+      // Tipo de prestador
       tipo: perfil || '',
+      // Datos adicionales
       celular: celular || '',
       tipoMascota: servicio?.tipoMascota || '',
       disponible: servicio?.disponible ?? true,
     };
   }
 
+  /**
+   * Formatea el precio a formato argentino
+   * @param {number|string} precio - Precio a formatear
+   * @returns {string} Precio formateado
+   */
   static formatPrecio(precio) {
     if (!precio || precio === 0) {
       return 'A convenir';
@@ -64,6 +71,12 @@ export class PrestadorController {
     return `$${precioNumerico.toLocaleString('es-AR')}`;
   }
 
+  /**
+   * Filtra prestadores por texto de búsqueda
+   * @param {Array} prestadores - Array de prestadores
+   * @param {string} searchText - Texto de búsqueda
+   * @returns {Array} Prestadores filtrados
+   */
   static filterBySearch(prestadores, searchText) {
     if (!searchText || searchText.trim() === '') {
       return prestadores;
@@ -77,6 +90,11 @@ export class PrestadorController {
     );
   }
 
+  /**
+   * Ordena prestadores por distancia (más cercanos primero)
+   * @param {Array} prestadores - Array de prestadores
+   * @returns {Array} Prestadores ordenados
+   */
   static sortByDistance(prestadores) {
     return [...prestadores].sort((a, b) => {
       if (a.distance === null && b.distance === null) return 0;
@@ -86,10 +104,20 @@ export class PrestadorController {
     });
   }
 
+  /**
+   * Ordena prestadores por rating (mejor calificación primero)
+   * @param {Array} prestadores - Array de prestadores
+   * @returns {Array} Prestadores ordenados
+   */
   static sortByRating(prestadores) {
     return [...prestadores].sort((a, b) => b.rating - a.rating);
   }
 
+  /**
+   * Ordena prestadores por precio (menor precio primero)
+   * @param {Array} prestadores - Array de prestadores
+   * @returns {Array} Prestadores ordenados
+   */
   static sortByPrice(prestadores) {
     return [...prestadores].sort((a, b) => {
       const precioA = this.extractPrecioNumerico(a.precio);
@@ -104,6 +132,11 @@ export class PrestadorController {
     });
   }
 
+  /**
+   * Extrae el valor numérico de un precio formateado
+   * @param {string} precio - Precio formateado
+   * @returns {number} Valor numérico
+   */
   static extractPrecioNumerico(precio) {
     if (precio === 'A convenir') {
       return Infinity;
@@ -112,6 +145,10 @@ export class PrestadorController {
     return isNaN(numerico) ? Infinity : numerico;
   }
 
+  /**
+   * Obtiene los tipos de prestadores disponibles
+   * @returns {Array} Array de tipos
+   */
   static getTiposPrestadores() {
     return [
       { key: 'cuidador', label: 'Cuidador' },
@@ -120,6 +157,11 @@ export class PrestadorController {
     ];
   }
 
+  /**
+   * Valida si un perfil es válido
+   * @param {string} perfil - Perfil a validar
+   * @returns {boolean} True si es válido
+   */
   static isPerfilValido(perfil) {
     const perfiles = ['cuidador', 'paseador', 'salud'];
     return perfiles.includes(perfil?.toLowerCase());
