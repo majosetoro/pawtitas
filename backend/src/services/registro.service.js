@@ -98,25 +98,16 @@ async function registerUser({
       });
 
       if (especialidad) {
-        let servicio = await tx.servicio.findFirst({
-          where: { descripcion: especialidad },
-        });
-        if (!servicio) {
-          servicio = await tx.servicio.create({
-            data: {
-              descripcion: especialidad,
-              tipoMascota: 'General',
-              horarios: '',
-              precio: new Prisma.Decimal(0),
-            },
-          });
-        }
-        await tx.prestadorservicio.upsert({
-          where: {
-            prestadorId_servicioId: { prestadorId: prestador.id, servicioId: servicio.id },
+          const servicio = await tx.servicio.create({
+          data: {
+            descripcion: especialidad,
+            tipoMascota: 'General',
+            horarios: '',
+            precio: new Prisma.Decimal(0),
           },
-          update: {},
-          create: { prestadorId: prestador.id, servicioId: servicio.id },
+        });
+        await tx.prestadorservicio.create({
+          data: { prestadorId: prestador.id, servicioId: servicio.id },
         });
       }
     } else {
