@@ -184,6 +184,41 @@ async function updatePerfilController(req, res) {
     const priceNumber = Number(precio);
     const hasPrice = Number.isFinite(priceNumber);
 
+    let coords = null;
+    if (ubicacion) {
+      try {
+        coords = await getCoordinatesForDomicilio({ calle, numero, ciudad });
+        if (!coords) {
+          await new Promise((r) => setTimeout(r, 400));
+          coords = await getCoordinatesForDomicilio({ calle, numero, ciudad });
+        }
+        if (!coords) {
+          return res.status(400).json({
+            success: false,
+            message:
+              'No se pudieron obtener las coordenadas para la dirección. Verificá calle, número y barrio/ciudad e intentá de nuevo.',
+          });
+        }
+      } catch (err) {
+        console.warn('Geocoding domicilio falló:', err?.message ?? err);
+        return res.status(400).json({
+          success: false,
+          message:
+            'No se pudieron obtener las coordenadas para la dirección. Intentá de nuevo más tarde.',
+        });
+      }
+    }
+
+    const domicilioData = ubicacion
+      ? {
+          calle,
+          numero,
+          ciudad,
+          latitude: coords.latitude,
+          longitude: coords.longitude,
+        }
+      : null;
+
     // Actualizar datos
     await prisma.$transaction(async (tx) => {
       const dataUsuario = {};
@@ -196,15 +231,15 @@ async function updatePerfilController(req, res) {
         await tx.usuario.update({ where: { id: userId }, data: dataUsuario });
       }
 
-      if (ubicacion) {
+      if (domicilioData) {
         if (usuario.domicilioId) {
           await tx.domicilio.update({
             where: { id: usuario.domicilioId },
-            data: { calle, numero, ciudad },
+            data: domicilioData,
           });
         } else {
           const nuevoDom = await tx.domicilio.create({
-            data: { calle, numero, ciudad },
+            data: domicilioData,
           });
           await tx.usuario.update({
             where: { id: userId },
@@ -274,31 +309,6 @@ async function updatePerfilController(req, res) {
       include: { domicilio: true },
     });
 
-    // Geocodificar domicilio si se actualizó la ubicación
-    if (ubicacion && updatedUser?.domicilioId) {
-      const domicilioId = updatedUser.domicilioId;
-      const addressParts = { calle, numero, ciudad };
-      setImmediate(async () => {
-        try {
-          const coords = await getCoordinatesForDomicilio(addressParts);
-          if (coords) {
-            await prisma.domicilio.update({
-              where: { id: domicilioId },
-              data: {
-                latitude: coords.latitude,
-                longitude: coords.longitude,
-              },
-            });
-          }
-        } catch (error) {
-          console.warn(
-            'Geocoding domicilio falló:',
-            error?.message ?? error
-          );
-        }
-      });
-    }
-
     let descripcionServicio = null;
     let perfilServicio = null;
     let horariosServicio = null;
@@ -355,6 +365,8 @@ async function updatePerfilController(req, res) {
             calle: updatedUser.domicilio.calle,
             numero: updatedUser.domicilio.numero,
             ciudad: updatedUser.domicilio.ciudad,
+            latitude: updatedUser.domicilio.latitude ?? undefined,
+            longitude: updatedUser.domicilio.longitude ?? undefined,
           }
         : null,
       creadoEn: updatedUser.creadoEn,
