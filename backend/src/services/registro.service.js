@@ -3,6 +3,7 @@ const { Prisma } = require('@prisma/client');
 const prisma = require('../config/prisma');
 const usuarioRepo = require('../repositories/usuario.repo');
 const { descomponerUbicacion } = require('../utils/ubicacion');
+const { updateDomicilioWithCoordinates } = require('./geocoding.service');
 
 async function registerUser({
   nombre,
@@ -124,6 +125,12 @@ async function registerUser({
 
     return usuarioRow;
   });
+
+  try {
+    await updateDomicilioWithCoordinates(result.domicilioId, { calle, numero, ciudad });
+  } catch (err) {
+    console.warn('Geocoding domicilio en registro falló:', err?.message ?? err);
+  }
 
   return result;
 }

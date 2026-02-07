@@ -1,8 +1,6 @@
-/**
- * Geocoding con Nominatim (OpenStreetMap).
- * Obtiene coordenadas a partir de una dirección.
- */
+// Geocoding con Nominatim (OpenStreetMap)
 
+const prisma = require('../config/prisma');
 const NOMINATIM_API = 'https://nominatim.openstreetmap.org/search';
 const USER_AGENT = 'Pawtitas-Backend';
 
@@ -23,11 +21,6 @@ async function fetchCoords(query, countrycodes) {
   return { latitude: parseFloat(lat), longitude: parseFloat(lon) };
 }
 
-/**
- * Geocodifica una dirección en Argentina.
- * @param {string} address - Dirección (ej: "Virrey del Pino, 100, Belgrano")
- * @returns {Promise<{latitude: number, longitude: number} | null>}
- */
 async function geocodeAddress(address) {
   const trimmed = address?.trim();
   if (!trimmed || trimmed === 'No especificado') return null;
@@ -48,11 +41,6 @@ async function geocodeAddress(address) {
   }
 }
 
-/**
- * Construye el string de dirección desde domicilio.
- * @param {Object} domicilio - { calle, numero, ciudad }
- * @returns {string}
- */
 function buildAddressString(domicilio) {
   if (!domicilio) return '';
   const { calle, numero, ciudad } = domicilio;
@@ -60,19 +48,27 @@ function buildAddressString(domicilio) {
   return parts.join(', ');
 }
 
-/**
- * Obtiene coordenadas para un domicilio y las devuelve (no persiste).
- * @param {Object} domicilio - { calle, numero, ciudad }
- * @returns {Promise<{latitude: number, longitude: number} | null>}
- */
 async function getCoordinatesForDomicilio(domicilio) {
   const address = buildAddressString(domicilio);
   if (!address) return null;
   return geocodeAddress(address);
 }
 
+async function updateDomicilioWithCoordinates(domicilioId, domicilioData) {
+  const coords = await getCoordinatesForDomicilio(domicilioData);
+  if (!coords) return;
+  await prisma.domicilio.update({
+    where: { id: domicilioId },
+    data: {
+      latitude: coords.latitude,
+      longitude: coords.longitude,
+    },
+  });
+}
+
 module.exports = {
   geocodeAddress,
   buildAddressString,
   getCoordinatesForDomicilio,
+  updateDomicilioWithCoordinates,
 };
