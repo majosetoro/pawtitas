@@ -214,7 +214,7 @@ export default function EditarPerfil({ navigation, route }) {
           index: 0,
           routes: [{ name: "Perfil" }],
         });
-      }, 3000);
+      }, 1000);
       
     } catch (error) {
       setMessage({ type: "error", text: error?.message || "Error al guardar el perfil. Inténtalo de nuevo." });
