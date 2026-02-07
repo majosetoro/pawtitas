@@ -37,12 +37,15 @@ async function findActivosConFiltros(filtros = {}) {
     estado: 'ACTIVO',
   };
 
-  if (filtros.perfil) {
-    where.perfil = filtros.perfil;
+  if (filtros.perfilValores?.length) {
+    where.OR = filtros.perfilValores.map((valor) => ({
+      perfil: { contains: valor },
+    }));
   }
 
   if (filtros.ciudad) {
     where.usuario = {
+      ...where.usuario,
       domicilio: {
         ciudad: {
           contains: filtros.ciudad,
