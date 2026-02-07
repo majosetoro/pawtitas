@@ -374,12 +374,21 @@ async function updatePerfilController(req, res) {
   }
 }
 
+const PERFIL_QUERY_MAP = {
+  cuidador: ['Cuidador'],
+  paseador: ['Paseador'],
+  salud: ['Veterinario a domicilio', 'Clínica Veterinaria'],
+};
+
 async function listPrestadoresController(req, res) {
   try {
     const { perfil, ciudad } = req.query ?? {};
 
+    const perfilNorm = perfil ? String(perfil).toLowerCase().trim() : null;
+    const perfilesValores = perfilNorm ? PERFIL_QUERY_MAP[perfilNorm] : null;
+
     const filtros = {
-      ...(perfil && { perfil: String(perfil).toLowerCase() }),
+      ...(perfilesValores?.length && { perfilValores: perfilesValores }),
       ...(ciudad && { ciudad: String(ciudad) }),
     };
 
