@@ -2,14 +2,8 @@ const bcrypt = require('bcryptjs');
 const { Prisma } = require('@prisma/client');
 const prisma = require('../config/prisma');
 const usuarioRepo = require('../repositories/usuario.repo');
-const generoRepo = require('../repositories/genero.repo');
-const domicilioRepo = require('../repositories/domicilio.repo');
-const prestadorRepo = require('../repositories/prestador.repo');
-const duenioRepo = require('../repositories/duenio.repo');
-const servicioRepo = require('../repositories/servicio.repo');
 const { descomponerUbicacion } = require('../utils/ubicacion');
 
-// Registrar nuevo usuario (dueño o prestador)
 async function registerUser({
   nombre,
   apellido,
@@ -43,7 +37,6 @@ async function registerUser({
     throw new Error(`Faltan: ${missing.join(', ')}`);
   }
 
-  // Validar fecha
   const fecha = new Date(fechaNacimiento);
   if (Number.isNaN(fecha.getTime())) {
     throw new Error('fechaNacimiento inválida');
@@ -62,7 +55,6 @@ async function registerUser({
     throw new Error(`Ya existe un usuario registrado con este ${conflicts.join(' y ')}`);
   }
 
-  // Hashear contraseña
   const hashedPassword = await bcrypt.hash(password, 10);
 
   // Crear usuario
@@ -105,15 +97,19 @@ async function registerUser({
       });
 
       if (especialidad) {
-        const servicio = await tx.servicio.upsert({
+        let servicio = await tx.servicio.findFirst({
           where: { descripcion: especialidad },
-          update: {},
-          create: {
-            descripcion: especialidad,
-            tipoMascota: 'General',
-            precio: new Prisma.Decimal(0),
-          },
         });
+        if (!servicio) {
+          servicio = await tx.servicio.create({
+            data: {
+              descripcion: especialidad,
+              tipoMascota: 'General',
+              horarios: '',
+              precio: new Prisma.Decimal(0),
+            },
+          });
+        }
         await tx.prestadorservicio.upsert({
           where: {
             prestadorId_servicioId: { prestadorId: prestador.id, servicioId: servicio.id },
