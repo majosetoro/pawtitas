@@ -276,28 +276,27 @@ async function updatePerfilController(req, res) {
 
     // Geocodificar domicilio si se actualizó la ubicación
     if (ubicacion && updatedUser?.domicilioId) {
-      try {
-        const coords = await getCoordinatesForDomicilio({
-          calle,
-          numero,
-          ciudad,
-        });
-
-        if (!coords) return;
-
-        await prisma.domicilio.update({
-          where: { id: updatedUser.domicilioId },
-          data: {
-            latitude: coords.latitude,
-            longitude: coords.longitude,
-          },
-        });
-      } catch (error) {
-        console.warn(
-          'Geocoding domicilio falló:',
-          error?.message ?? error
-        );
-      }
+      const domicilioId = updatedUser.domicilioId;
+      const addressParts = { calle, numero, ciudad };
+      setImmediate(async () => {
+        try {
+          const coords = await getCoordinatesForDomicilio(addressParts);
+          if (coords) {
+            await prisma.domicilio.update({
+              where: { id: domicilioId },
+              data: {
+                latitude: coords.latitude,
+                longitude: coords.longitude,
+              },
+            });
+          }
+        } catch (error) {
+          console.warn(
+            'Geocoding domicilio falló:',
+            error?.message ?? error
+          );
+        }
+      });
     }
 
     let descripcionServicio = null;
